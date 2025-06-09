@@ -2502,6 +2502,11 @@
                 }
                 focusOnResults();
             });
+
+            resultOutput.addEventListener('dragstart', handleDragStart);
+            resultOutput.addEventListener('dragover', handleDragOver);
+            resultOutput.addEventListener('dragleave', handleDragLeave);
+            resultOutput.addEventListener('drop', handleDrop);
         }
 
         function handleDragStart(e) {
