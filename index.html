@@ -2689,74 +2689,80 @@
                 }
             }
 
-            function attachCalculatorListeners() {
-                btnW2C_main.addEventListener('click', () => switchMode('w2c'));
-                btnC2W_main.addEventListener('click', () => switchMode('c2w'));
-                btnG2W_main.addEventListener('click', () => switchMode('g2w'));
-                btnW2C_top.addEventListener('click', () => switchMode('w2c'));
-                btnC2W_top.addEventListener('click', () => switchMode('c2w'));
-                btnG2W_top.addEventListener('click', () => switchMode('g2w'));
-                
-                if(addInputBtn) addInputBtn.addEventListener('click', addInputFieldAndFocus);
-                if(calculateBtn) calculateBtn.addEventListener('click', handleCalculationTrigger);
-                if (clearAllInputsBtn) {
-                    clearAllInputsBtn.addEventListener('click', () => {
-                        if (mode === 'g2w') {
-                            resourceInput.value = '';
-                            resourceInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        } else {
-                            createInputBoxes(1);
-                        }
-                        clearResults();
-                    });
-                }
-                
-                inputContainer.addEventListener('input', handleInputEvent); 
-                inputContainer.addEventListener('keydown', handleKeyDownEvent); 
-                inputContainer.addEventListener('paste', handlePasteEvent); 
-                inputContainer.addEventListener('click', handleClearButtonEvent);
-                inputContainer.addEventListener('compositionstart', () => { isComposing = true; });
-                inputContainer.addEventListener('compositionend', (e) => { isComposing = false; handleInputEvent(e); });
-                
-                resourceInput.addEventListener('input', handleInputEvent);
-                resourceInput.addEventListener('keydown', handleKeyDownEvent);
-                resourceInput.addEventListener('paste', handlePasteEvent);
-                resourceInput.parentElement.querySelector('.clear-single-input').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    resourceInput.value = '';
-                    resourceInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    resourceInput.classList.remove('error');
+        function attachCalculatorListeners() {
+            btnW2C_main.addEventListener('click', () => switchMode('w2c'));
+            btnC2W_main.addEventListener('click', () => switchMode('c2w'));
+            btnG2W_main.addEventListener('click', () => switchMode('g2w'));
+            btnW2C_top.addEventListener('click', () => switchMode('w2c'));
+            btnC2W_top.addEventListener('click', () => switchMode('c2w'));
+            btnG2W_top.addEventListener('click', () => switchMode('g2w'));
+            
+            if(addInputBtn) addInputBtn.addEventListener('click', addInputFieldAndFocus);
+            if(calculateBtn) calculateBtn.addEventListener('click', handleCalculationTrigger);
+            if (clearAllInputsBtn) {
+                clearAllInputsBtn.addEventListener('click', () => {
+                    if (mode === 'g2w') {
+                        resourceInput.value = '';
+                        resourceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    } else {
+                        createInputBoxes(1);
+                    }
                     clearResults();
                 });
-                document.querySelector('.resource-toggle').addEventListener('change', () => {
-                    resourceRankSelect.classList.toggle('visible', resourceGoldRadio.checked);
-                    if (resultsContainer.classList.contains('visible-true')) handleCalculationTrigger();
-                });
-                
-                inputContainerWrapper.addEventListener('click', (e) => {
-                    if (e.target.closest('button, input')) return;
-    
-                    setInputState(true);
-                });
-
-                resultsContainer.addEventListener('click', (e) => {
-                    if (e.target.closest('button, .card-container, .long-number')) {
-                        return;
-                    }
-                    setInputState(false);
-                });
-
-                resultOutput.addEventListener('dragstart', handleDragStart);
-                resultOutput.addEventListener('dragover', handleDragOver);
-                resultOutput.addEventListener('dragleave', handleDragLeave);
-                resultOutput.addEventListener('drop', handleDrop);
-                calculatorFlexContainer.addEventListener('click', (e) => {
-                     if(e.target === calculatorFlexContainer || e.target === calculatorContentWrapper) {
-                         e.stopPropagation();
-                         handleCalculationTrigger();
-                     }
-                });
             }
+            
+            inputContainer.addEventListener('input', handleInputEvent); 
+            inputContainer.addEventListener('keydown', handleKeyDownEvent); 
+            inputContainer.addEventListener('paste', handlePasteEvent); 
+            inputContainer.addEventListener('click', handleClearButtonEvent);
+            inputContainer.addEventListener('compositionstart', () => { isComposing = true; });
+            inputContainer.addEventListener('compositionend', (e) => { isComposing = false; handleInputEvent(e); });
+            
+            inputContainer.addEventListener('focusin', () => {
+                setInputState(true);
+            });
+            resourceInputContainer.addEventListener('focusin', () => {
+                setInputState(true);
+            });
+
+            resourceInput.addEventListener('input', handleInputEvent);
+            resourceInput.addEventListener('keydown', handleKeyDownEvent);
+            resourceInput.addEventListener('paste', handlePasteEvent);
+            resourceInput.parentElement.querySelector('.clear-single-input').addEventListener('click', (e) => {
+                e.stopPropagation();
+                resourceInput.value = '';
+                resourceInput.dispatchEvent(new Event('input', { bubbles: true }));
+                resourceInput.classList.remove('error');
+                clearResults();
+            });
+            document.querySelector('.resource-toggle').addEventListener('change', () => {
+                resourceRankSelect.classList.toggle('visible', resourceGoldRadio.checked);
+                if (resultsContainer.classList.contains('visible-true')) handleCalculationTrigger();
+            });
+            
+            inputContainerWrapper.addEventListener('click', (e) => {
+                if (e.target.closest('button, input')) return;
+                setInputState(true);
+            });
+
+            resultsContainer.addEventListener('click', (e) => {
+                if (e.target.closest('button, .card-container, .long-number')) {
+                    return;
+                }
+                setInputState(false);
+            });
+
+            resultOutput.addEventListener('dragstart', handleDragStart);
+            resultOutput.addEventListener('dragover', handleDragOver);
+            resultOutput.addEventListener('dragleave', handleDragLeave);
+            resultOutput.addEventListener('drop', handleDrop);
+            calculatorFlexContainer.addEventListener('click', (e) => {
+                 if(e.target === calculatorFlexContainer || e.target === calculatorContentWrapper) {
+                     e.stopPropagation();
+                     handleCalculationTrigger();
+                 }
+            });
+        }
 
             function handleDragStart(e) {
                 if (isTouchDevice || mode === 'g2w') return;
