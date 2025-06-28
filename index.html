@@ -2734,11 +2734,8 @@
                 });
                 
                 inputContainerWrapper.addEventListener('click', (e) => {
-                    if (body.classList.contains('results-focused')) {
-                        clearResults();
-                        return;
-                    }
-                    if (e.target.closest('button')) return;
+                    if (e.target.closest('button, input')) return;
+    
                     setInputState(true);
                 });
 
