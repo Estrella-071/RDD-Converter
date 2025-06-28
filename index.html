@@ -182,11 +182,7 @@
             margin: 0;
         }
         body.input-focused #resultsContainer {
-            transform: translateY(20px) scale(0.98);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
-            visibility: hidden; 
+            display: none !important; /* 強制不參與佈局 */
         }
         
         body.results-focused #calculatorContentWrapper { justify-content: space-between; }
@@ -196,7 +192,6 @@
             flex-basis: 320px; 
             max-width: 320px;
             opacity: 0.7; 
-            margin-right: auto; 
             cursor: pointer;
             transform: none; 
         }
@@ -1823,8 +1818,52 @@
             }
 
             function setInputState(isFocused) {
-                body.classList.toggle('input-focused', isFocused);
-                body.classList.toggle('results-focused', !isFocused);
+                body.classList.remove('input-focused', 'results-focused');
+
+                if (isFocused) {
+                    body.classList.add('input-focused');
+
+                    gsap.to(inputContainerWrapper, {
+                        opacity: 1,
+                        maxWidth: '750px', 
+                        marginRight: '0px',
+                        marginLeft: '0px',
+                        duration: 0.4,
+                        ease: 'power2.out'
+                    });
+
+                    gsap.to(resultsContainer, {
+                        opacity: 0,
+                        duration: 0.2,
+                        ease: 'power1.in',
+                        onComplete: () => {
+                            if (body.classList.contains('input-focused')) {
+                               resultsContainer.style.display = 'none';
+                            }
+                        }
+                    });
+
+                } else { // isFocused is false, meaning results-focused
+                    body.classList.add('results-focused');
+
+                    resultsContainer.style.display = 'flex';
+
+                    gsap.to(inputContainerWrapper, {
+                        opacity: 0.7,
+                        maxWidth: '320px',
+                        marginRight: 'auto',
+                        marginLeft: '0px', 
+                        duration: 0.4,
+                        ease: 'power2.out'
+                    });
+
+                    gsap.fromTo(resultsContainer, { opacity: 0 }, {
+                        opacity: 1,
+                        duration: 0.3,
+                        delay: 0.1, 
+                        ease: 'power1.out'
+                    });
+                }
 
                 if (window.innerWidth <= 1024) { // Only apply this logic for mobile/tablet
                     if (isFocused) {
