@@ -1781,36 +1781,49 @@
                 const staggerDuration = 0.05 * animSpeedMultiplier;
 
                 if (fromInitialSelection) {
-                    gsap.to([modeSelectionHint, document.getElementById('modeSelectionButtonsWrapper')], {
-                        scale: 0.95, filter: prefersReducedMotion ? 'none' : 'blur(5px)',
-                        autoAlpha: 0, y: -30 * animSpeedMultiplier, duration: fadeDuration,
-                        stagger: staggerDuration, ease: CONFIG.animation.easeIn,
-                        onComplete: () => {
-                            gsap.set(modeSelectionView, { display: 'none' });
-                            modeSelectionView.classList.add('hidden');
-                            gsap.set(calculatorView, { display: 'flex', autoAlpha: 0 });
-                            calculatorView.classList.add('visible');
-                            gsap.to(calculatorView, {
-                                autoAlpha: 1, duration: CONFIG.animation.durationLong * animSpeedMultiplier,
-                                delay: 0.05 * animSpeedMultiplier,
-                                onStart: () => { 
-                                    if (mode !== 'g2w') createInputBoxes(1);
-                                    clearResults(true); // Force clear without animation
-                                },
-                                onComplete: () => {
-                                    let firstInput = (mode === 'g2w') ? resourceInput : inputContainer.querySelector('.calc-input');
-                                    if (firstInput && !prefersReducedMotion && !isTouchDevice) {
-                                        setTimeout(() => firstInput.focus({ preventScroll: true }), 50);
-                                    }
-                                }
-                            });
-                            gsap.fromTo(topBar, { autoAlpha: 0, y: -25 * animSpeedMultiplier }, {
-                                autoAlpha: 1, y: 0, duration: fadeDuration,
-                                ease: CONFIG.animation.easeBounce, delay: 0.1 * animSpeedMultiplier,
-                                onStart: () => topBar.classList.add('visible')
-                            });
+                    const animationDuration = 0.25;
+    
+                        gsap.to([modeSelectionHint, document.getElementById('modeSelectionButtonsWrapper')], {
+                            scale: 0.9,
+                            autoAlpha: 0,
+                            y: -15 * animSpeedMultiplier,
+                            duration: animationDuration * animSpeedMultiplier,
+                            ease: 'power1.in',
+                            onComplete: () => {
+                                gsap.set(modeSelectionView, { display: 'none' });
+                                modeSelectionView.classList.add('hidden');
+                            }
+                        });
+
+                        gsap.set(calculatorView, { display: 'flex', autoAlpha: 0 });
+                        calculatorView.classList.add('visible');
+    
+                        if (mode !== 'g2w') {
+                            createInputBoxes(1);
                         }
-                    });
+                        clearResults(true);
+
+                        gsap.to(calculatorView, {
+                            autoAlpha: 1,
+                            duration: (animationDuration + 0.1) * animSpeedMultiplier,
+                            delay: 0.05 * animSpeedMultiplier,
+                            ease: 'power1.out',
+                            onComplete: () => {
+                                let firstInput = (mode === 'g2w') ? resourceInput : inputContainer.querySelector('.calc-input');
+                                if (firstInput && !prefersReducedMotion && !isTouchDevice) {
+                                    setTimeout(() => firstInput.focus({ preventScroll: true }), 50);
+                                }
+                            }
+                        });
+
+                        gsap.fromTo(topBar, { autoAlpha: 0, y: -25 * animSpeedMultiplier }, {
+                            autoAlpha: 1,
+                            y: 0,
+                            duration: (animationDuration + 0.1) * animSpeedMultiplier,
+                            ease: CONFIG.animation.easeBounce,
+                            delay: 0.05 * animSpeedMultiplier,
+                            onStart: () => topBar.classList.add('visible')
+                        });
                 } else { 
                     if (mode !== 'g2w') createInputBoxes(1);
                     clearResults(true); // Force clear on mode switch
