@@ -1952,7 +1952,7 @@
                         newWidth = maxWidth;
                     } else {
                         const charWidth = body.classList.contains('results-focused') ? 16 : 22;
-                        newWidth = Math.max(minWidth, Math.min(maxWidth, (getRawValue(input).length * charWidth) + rightPadding));
+                        newWidth = Math.max(minWidth, Math.min(maxWidth, ((getRawValue(input).length + 2) * charWidth) + rightPadding));
                     }
                     inputWrapper.style.width = newWidth + 'px';
                 };
