@@ -418,15 +418,57 @@
         @media (prefers-reduced-motion: no-preference) { .back-button { transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), background 0.3s ease, box-shadow 0.3s var(--transition-timing); } }
         .back-button:hover { transform: scale(1.12); background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25); }
         .back-button:active { transform: scale(1.02); }
-        .sub-view-panel .module-wrapper { display: flex; justify-content: center; align-items: center; width: 100%; flex-grow: 1; padding: 1.5rem 0; }
-        .sub-view-panel .module { max-width: 1300px; width: 100%; background-color: var(--container-bg); background-image: var(--module-bg-pattern); box-shadow: 0 8px 25px var(--shadow-medium); border: 1px solid var(--table-border); padding: 3rem; border-radius: 1.2rem; overflow: hidden; margin-top: 0; }
-        #chartPanel .chart-container { height: 65vh; min-height: 400px; background: var(--container-bg); border-radius: 1rem; padding: 1.5rem; position: relative; cursor: grab; touch-action: pan-y; border: 1px solid var(--table-border); }
+        .sub-view-panel .module-wrapper { display: flex; justify-content: center; align-items: stretch; width: 100%; flex-grow: 1; padding: 1.5rem 0; }
+        .sub-view-panel .module { display: flex; flex-direction: column; max-width: 1300px; width: 100%; background-color: var(--container-bg); background-image: var(--module-bg-pattern); box-shadow: 0 8px 25px var(--shadow-medium); border: 1px solid var(--table-border); padding: 1.5rem; border-radius: 1.2rem; overflow: hidden; margin-top: 0; }
+        #chartPanel .chart-container { flex-grow: 1; min-height: 400px; background: var(--container-bg); border-radius: 1rem; padding: 1rem; position: relative; cursor: grab; touch-action: pan-y; border: 1px solid var(--table-border); }
         #chartPanel .chart-container.chart-panning { cursor: grabbing; }
-        .chart-zoom-buttons { position: absolute; top: 1.2rem; right: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; z-index: 10; }
-        .chart-zoom-buttons button { background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--text-color); width: 34px; height: 34px; border-radius: 50%; font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(6px); box-shadow: 0 3px 7px var(--shadow-faint), var(--glass-inset-shadow); }
-         @media (prefers-reduced-motion: no-preference) { .chart-zoom-buttons button { transition: background 0.25s, transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28); } }
-        .chart-zoom-buttons button:hover { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25); transform: scale(1.15); }
-        .chart-zoom-buttons button:active { transform: scale(0.96); }
+        .chart-zoom-buttons { position: absolute; top: 1.2rem; right: 1.2rem; z-index: 10; }
+        .chart-zoom-buttons input[type="range"] { display: block; }
+        
+        #chart-pan-container {
+            padding: 1rem 1rem 0 1rem;
+            position: relative;
+            height: 50px; /* 給予足夠高度容納刻度尺 */
+            display: none; /* 初始隱藏 */
+            flex-shrink: 0;
+        }
+        #pan-track {
+            position: absolute;
+            left: 10px; right: 10px; top: 10px;
+            height: 6px;
+            background-color: var(--input-bg);
+            border-radius: 3px;
+        }
+        #pan-thumb {
+            position: absolute;
+            top: 5px; /* (track height - thumb height) / 2 */
+            height: 16px;
+            background-color: var(--primary-color);
+            border: 2px solid var(--container-bg);
+            border-radius: 8px;
+            cursor: grab;
+            box-shadow: 0 2px 8px hsla(0,0%,0%,0.3);
+        }
+        #pan-thumb:active { cursor: grabbing; }
+        #pan-ruler {
+            position: absolute;
+            top: 25px; left: 10px; right: 10px;
+            height: 25px; /* 刻度尺區域高度 */
+            pointer-events: none;
+        }
+        #pan-ruler-svg { width: 100%; height: 100%; }
+        #pan-ruler-svg line {
+            stroke: var(--text-muted-color);
+            stroke-width: 1.2;
+            stroke-linecap: round;
+            transition: all 0.1s linear;
+        }
+        #pan-ruler-svg text {
+            fill: var(--text-muted-color);
+            font-size: 10px;
+            text-anchor: middle;
+        }
+
         #historyPanel .table-responsive, #commonPanel .table-responsive { overflow-y: auto; border: 1px solid var(--table-border); border-radius: 0.8rem; margin-top: 1.5rem; }
         .sub-view-panel table { background: transparent; border-radius: 0; border: none; width: 100%; border-collapse: collapse; table-layout: fixed; }
         .sub-view-panel th { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.12); color: var(--primary-color); padding: 1.1rem 1.3rem; font-size: 1.05rem; border-bottom: 2px solid var(--primary-color); text-align: center; font-family: 'Montserrat', sans-serif;}
@@ -591,9 +633,6 @@
             width: 180px;
         }
         
-        #navWheel .wheel-item .item-icon { font-size: 1.4rem; margin-right: 0.8rem; }
-        #navWheel .wheel-item .item-label { font-size: 1rem; font-weight: 600; white-space: nowrap; }
-        
         #navWheel .wheel-item:hover {
             background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25);
             color: var(--primary-color);
@@ -660,14 +699,14 @@
                 margin-bottom: 0;
                 padding: 1rem 0;
             }
-              .sub-view-panel .module { padding: 2rem; max-width: 95%; } 
+              .sub-view-panel .module { padding: 1.5rem; max-width: 95%; } 
          }
          @media (max-width: 900px) {
              #resultsContainer.visible-true { max-height: none; }
              #bottomNavBar { bottom: 1rem; gap: 1.2rem; padding: 0.7rem 1.2rem; }
              .sub-view-panel { padding-top: 5.8rem; padding-left: 1rem; padding-right: 1rem; }
              .sub-view-panel .module-wrapper { padding: 0.5rem 0; }
-             .sub-view-panel .module { padding: 2rem; width: 100%; max-width: 95%; } 
+             .sub-view-panel .module { padding: 1.5rem; width: 100%; max-width: 95%; } 
              #commonPanel .table-container { flex-direction: column; gap: 1.8rem; align-items: center; }
              .sub-view-panel .table-box { max-width: 100%; flex-basis: auto; }
              #chartPanel .chart-container { height: 60vh; min-height: 380px; }
@@ -707,7 +746,7 @@
              .nav-item span { font-size: 0.8rem; bottom: 0.5rem; }
              .sub-view-panel { padding: 0.5rem; padding-top: 5rem; }
              .sub-view-panel .module-wrapper { padding: 0.2rem 0;}
-             .sub-view-panel .module { width: 100%; padding: 1.5rem; border-radius: 1rem; }
+             .sub-view-panel .module { width: 100%; padding: 1rem; border-radius: 1rem; }
              .sub-view-panel td, .sub-view-panel th { padding: 0.8rem 0.5rem; font-size: 0.9rem; }
              #historyPanel table th:nth-child(1) { width: 20%; }
              #historyPanel table th:nth-child(2) { width: 15%; }
@@ -729,7 +768,6 @@
              #settingsToggleGlobal { top: 1.5rem; left: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
              #settingsToggleGlobal:hover { width: 105px; }
              .chart-zoom-buttons { top: 0.8rem; right: 0.8rem; }
-             .chart-zoom-buttons button { width: 30px; height: 30px; font-size: 1.1rem; }
          }
     </style>
 </head>
@@ -766,7 +804,7 @@
              <button class="mode-toggle" id="btnG2W_top"></button>
         </div>
         <button id="settingsToggleGlobal" title="設定" aria-label="設定" class="glow-on-hover">
-             <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.08-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.08.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
+             <svg viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.08-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69-.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.08.49 0 .61.22l2-3.46c.12-.22.07.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"></path></svg>
              <span class="button-text"></span>
         </button>
         <div id="settingsPopupGlobal" class="glass">
@@ -911,11 +949,17 @@
                      <div class="chart-container">
                          <canvas id="chartPanelCanvas"></canvas>
                          <div class="chart-zoom-buttons">
-                             <button id="zoomInBtn" title="放大" class="glow-on-hover">+</button>
-                             <button id="zoomOutBtn" title="縮小" class="glow-on-hover">-</button>
-                             <button id="resetZoomBtn" title="重設縮放" class="glow-on-hover">↺</button>
+                             <input type="range" id="chartZoomSlider" min="1" max="50" step="0.1" value="1" style="width: 120px;">
                          </div>
                      </div>
+                     <div id="chart-pan-container">
+                        <div id="pan-track">
+                            <div id="pan-thumb"></div>
+                        </div>
+                        <div id="pan-ruler">
+                            <svg id="pan-ruler-svg"></svg>
+                        </div>
+                    </div>
                  </div>
             </div>
         </div>
@@ -1067,13 +1111,11 @@
                 }
             }
 
-            const APP_VERSION = "1.3.1"; 
+            const APP_VERSION = "1.3.6"; 
             const LS_KEYS = { language: "converter_language_v10", theme: "converter_theme_v10", cursor: "converter_cursor_v10", lastRank: "converter_lastRank_v10", history: "converter_history_v10", mode: "converter_mode_v10"};
             const CONFIG = {
-                baseThreshold: 45, baseArray: [0,1,2,4,5],
-                extraRanges: [ {a: 46, b: 111, f: 1}, {a: 112, b: 500, f: 2}, {a: 501, b: 1000, f: 3}, {a: 1001, b: 1500, f: 4}, {a: 1501, b: Infinity, f: 5} ],
-                chart: { maxWaves: 1600, step: 50, safetyLimit: 10n**18n, plotLimit: Number.MAX_SAFE_INTEGER,  yAxisMargin: 1.15, yAxisMax: 20000, yAxisStepSize: 4000 },
-                historyRecordsPerPage: 8, maxInputs: 5,
+                chart: { maxWaves: 1600, safetyLimit: 10n**18n, plotLimit: Number.MAX_SAFE_INTEGER,  yAxisMargin: 1.15, yAxisInitialMax: 20000 },
+                historyRecordsPerPage: 8, maxInputs: 8,
                 animation: { durationShort: 0.2, durationNormal: 0.3, durationLong: 0.4, easeStandard: "power2.out", easeStrong: "expo.out", easeBounce: "back.out(1.4)", easeIn: "power2.in" }, 
                 dust: { count: 80, countMobile: 40 },
                 cardsPerBox: 40n,
@@ -1267,41 +1309,67 @@
             }
 
             function wavesToCards(waveInput) {
-                try {
-                    const T = BigInt(waveInput);
-                    if (T === 0n) return 0n;
-                    if (T < 0n) {
-                        const positiveResult = wavesToCards(-T);
-                        return typeof positiveResult === 'bigint' ? -positiveResult : 0n;
+                const T = BigInt(waveInput);
+                if (T <= 0n) return 0n;
+
+                let cards = 0n;
+                // 1-45
+                if (T <= 45n) {
+                    const cycle = [1n, 1n, 2n, 1n, 3n];
+                    const numCycles = (T - 1n) / 5n;
+                    cards += numCycles * 8n;
+                    const remainder = (T - 1n) % 5n;
+                    for (let i = 0; i < remainder; i++) {
+                        cards += cycle[i];
                     }
-                    const bT = BigInt(CONFIG.baseThreshold);
-                    const bA = CONFIG.baseArray.map(x => BigInt(x));
-                    const baseWave = T <= bT ? T : bT;
-                    const fullSets = baseWave / 5n;
-                    const remainderIndex = Number(baseWave % 5n);
-                    const baseCards = fullSets * 8n + bA[remainderIndex];
-                    let extraCards = 0n;
-                    if (T > bT) {
-                        CONFIG.extraRanges.forEach(range => {
-                            const rangeStart = BigInt(range.a);
-                            const factor = BigInt(range.f);
-                            if (T >= rangeStart) {
-                                const rangeEnd = (range.b === Infinity) ? T : BigInt(range.b);
-                                const upperLimit = T < rangeEnd ? T : rangeEnd;
-                                const term1 = upperLimit - rangeStart + 1n;
-                                const term2_floor_x = (upperLimit + 1n) / 2n;
-                                const term2_floor_a = rangeStart / 2n;
-                                const term2 = 2n * (term2_floor_x - term2_floor_a);
-                                const rangeSum = 2n * factor * (term1 + term2);
-                                extraCards += rangeSum;
-                            }
-                        });
-                    }
-                    return baseCards + extraCards;
-                } catch (e) {
-                    console.error("wavesToCards Error:", waveInput, e);
-                    return 0n;
+                    cards += cycle[Number(remainder)];
+                    return cards;
                 }
+                cards = 72n; // Cards at wave 45
+                
+                // 46-111
+                if (T <= 111n) {
+                    const wavesInThisRange = T - 45n;
+                    const cycle = [2n, 6n];
+                    const numCycles = (wavesInThisRange - 1n) / 2n;
+                    cards += numCycles * 8n;
+                    const remainder = (wavesInThisRange - 1n) % 2n;
+                    for (let i = 0; i < remainder + 1n; i++) {
+                        cards += cycle[i];
+                    }
+                    return cards;
+                }
+                cards = 336n; // Cards at wave 111
+
+                const ranges = [
+                    { start: 112n, end: 500n, cycle: [4n, 12n] },
+                    { start: 501n, end: 1000n, cycle: [6n, 18n] },
+                    { start: 1001n, end: 1500n, cycle: [8n, 24n] },
+                    { start: 1501n, end: Infinity, cycle: [10n, 30n] }
+                ];
+
+                let lastWave = 111n;
+
+                for (const range of ranges) {
+                    if (T > lastWave) {
+                        const wavesInRange = (T > range.end ? range.end : T) - lastWave;
+                        if (wavesInRange <= 0n) continue;
+                        
+                        const cycleSum = range.cycle.reduce((a, b) => a + b, 0n);
+                        const cycleLen = BigInt(range.cycle.length);
+
+                        const numCycles = (wavesInRange - 1n) / cycleLen;
+                        cards += numCycles * cycleSum;
+
+                        const remainder = (wavesInRange - 1n) % cycleLen;
+                        for (let i = 0n; i < remainder + 1n; i++) {
+                            cards += range.cycle[Number(i)];
+                        }
+                    }
+                    lastWave = range.end;
+                    if (T <= range.end) break;
+                }
+                return cards;
             }
             
             function cardsToWaves(cardInput) {
@@ -1547,9 +1615,9 @@
             function updateChartText() {
                 if(!t.chart) return;
                 document.querySelector('#chartPanel h2').textContent = t.chart.title;
-                document.getElementById('zoomInBtn')?.setAttribute('title', t.chart.zoomIn);
-                document.getElementById('zoomOutBtn')?.setAttribute('title', t.chart.zoomOut);
-                document.getElementById('resetZoomBtn')?.setAttribute('title', t.chart.resetZoom);
+                document.getElementById('chartZoomSlider')?.setAttribute('title', t.chart.zoomIn + '/' + t.chart.zoomOut);
+                document.getElementById('pan-track')?.setAttribute('title', t.chart.xAxis);
+
 
                 if (myChart?.options) {
                      myChart.options.scales.x.title.text = t.chart.xAxis;
@@ -2387,29 +2455,10 @@
                 
                 if (absInputBig === 0n) { html += `<dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">0</dd></dl>`; }
                 else if (mode === "w2c") {
-                    const T = absInputBig; const bT = BigInt(CONFIG.baseThreshold); const baseWave = T <= bT ? T : bT;
-                    const bA = CONFIG.baseArray.map(x => BigInt(x));
-                    const fullSets = baseWave / 5n; const modIndex = Number(baseWave % 5n); const lookupValue = bA[modIndex]; const baseCards = fullSets * 8n + lookupValue;
-                    let runningTotal = baseCards;
-                    html += `<div class="process-subtitle">${t.process.w2cBaseTitle}</div>`;
-                    html += `<dl><dt>${t.process.w2cBaseCalcLabel}</dt><dd>${t.process.w2cBaseCalcValue.replace('{baseWave}', baseWave.toString())} = ${formatBigIntWithCommas(baseCards)}</dd></dl>`;
-                    if (T > bT) {
-                        html += `<div class="process-subtitle">${t.process.w2cExtraTitle}</div><dl>`;
-                        CONFIG.extraRanges.forEach(range => {
-                            const rangeStart = BigInt(range.a);
-                            if (T >= rangeStart) {
-                                const rangeEnd = (range.b === Infinity) ? T : BigInt(range.b); const factor = BigInt(range.f);
-                                const upperLimit = T < rangeEnd ? T : rangeEnd;
-                                const term1 = upperLimit - rangeStart + 1n; const term2_floor_x = (upperLimit + 1n) / 2n; const term2_floor_a = rangeStart / 2n;
-                                const term2 = 2n * (term2_floor_x - term2_floor_a);
-                                const rangeSum = 2n * factor * (term1 + term2);
-                                html += `<dt>${(t.process.w2cExtraRangeLabel || 'Range {a}~{b}').replace("{a}", range.a).replace("{b}", range.b === Infinity ? "∞" : range.b)}</dt><dd>+${formatBigIntWithCommas(rangeSum)}</dd>`;
-                                runningTotal += rangeSum;
-                            }
-                        });
-                         html += `</dl>`;
-                    }
-                    html += `<hr><dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">${formatBigIntWithCommas(wavesToCards(absInputBig))}</dd></dl>`;
+                    const T = absInputBig;
+                    let cards = wavesToCards(T);
+                    html += `<div class="process-subtitle">${t.process.w2cTitle}</div>`;
+                    html += `<dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">${formatBigIntWithCommas(cards)}</dd></dl>`;
                 } else {
                     html += `<div class="process-subtitle">${t.process.c2wDescTitle}</div><p style="text-align:center; margin: 0; padding: 0 1rem;">${t.process.c2wDesc}</p><hr>`;
                     if (steps && steps.length > 0) {
@@ -2541,7 +2590,116 @@
                 });
                 attachResultInteractionListeners("#commonPanel");
             }
+            
+            function getPrettyTick(value) {
+                if (value <= 0) return 1;
+                const niceNumbers = [1, 2, 5, 10];
+                const exponent = Math.floor(Math.log10(value));
+                const powerOf10 = 10 ** exponent;
+                const fraction = value / powerOf10;
+                let niceFraction = niceNumbers[niceNumbers.length - 1];
+                for (let n of niceNumbers) {
+                    if (fraction <= n) {
+                        niceFraction = n;
+                        break;
+                    }
+                }
+                return niceFraction * powerOf10;
+            }
 
+            function syncTickSpacing(chart) {
+                if (!chart || !chart.scales.x || !chart.scales.y || !chart.chartArea) return;
+                const xAxis = chart.scales.x;
+                const yAxis = chart.scales.y;
+
+                const yTicks = yAxis.getTicks();
+                if (yTicks.length < 2) return;
+
+                const yTickPixelDiff = Math.abs(yAxis.getPixelForTick(1) - yAxis.getPixelForTick(0));
+                if (yTickPixelDiff <= 0) return;
+
+                const yTickDataDiff = yTicks[1].value - yTicks[0].value;
+                const yPixelsPerUnit = yTickPixelDiff / yTickDataDiff;
+
+                const xPixelsPerUnit = yPixelsPerUnit;
+                
+                const requiredXRangeInData = chart.chartArea.width / xPixelsPerUnit;
+                
+                const currentCenter = (xAxis.min + xAxis.max) / 2;
+                let newMin = currentCenter - requiredXRangeInData / 2;
+                let newMax = currentCenter + requiredXRangeInData / 2;
+                
+                xAxis.min = Math.ceil(newMin);
+                xAxis.max = Math.ceil(newMax);
+            }
+            
+            function updateYAxisRange(chart) {
+                if (!chart) return;
+                const { min: xMin, max: xMax } = chart.scales.x;
+                const data = chart.data.datasets[0].data;
+                const yValuesInRange = data.filter(p => p.x >= xMin && p.x <= xMax).map(p => p.y);
+                
+                if (yValuesInRange.length === 0) {
+                    const yMax = Number(wavesToCards(BigInt(Math.floor(xMax))));
+                    chart.options.scales.y.max = yMax > 0 ? Math.ceil(yMax * CONFIG.chart.yAxisMargin) : CONFIG.chart.yAxisInitialMax;
+                } else {
+                    const yMax = Math.max(...yValuesInRange);
+                    chart.options.scales.y.max = Math.ceil(yMax * CONFIG.chart.yAxisMargin);
+                }
+                chart.options.scales.y.min = 0;
+            }
+
+            function updateChartSlidersState(chart) {
+                if (!chart) return;
+                const zoomSlider = document.getElementById('chartZoomSlider');
+                const panContainer = document.getElementById('chart-pan-container');
+                const panThumb = document.getElementById('pan-thumb');
+                const track = document.getElementById('pan-track');
+                if (!zoomSlider || !panContainer || !panThumb || !track) return;
+
+                const initialXRange = CONFIG.chart.maxWaves;
+                const currentXRange = chart.scales.x.max - chart.scales.x.min;
+                const currentXMin = chart.scales.x.min;
+                
+                const zoomLevel = initialXRange / currentXRange;
+                zoomSlider.value = zoomLevel;
+                
+                const maxPanRange = initialXRange - currentXRange;
+                if (maxPanRange > 1) {
+                    panContainer.style.display = 'block';
+                    const trackWidth = track.clientWidth;
+                    const thumbWidth = Math.max(20, (currentXRange / initialXRange) * trackWidth);
+                    const thumbPos = (currentXMin / maxPanRange) * (trackWidth - thumbWidth);
+                    
+                    gsap.set(panThumb, {
+                        width: thumbWidth,
+                        x: thumbPos
+                    });
+                    updatePanRuler(chart);
+                } else {
+                    panContainer.style.display = 'none';
+                }
+            }
+            
+            function generateChartData(maxWaves) {
+                const dataPoints = new Set();
+                const keyPoints = [0, 1, 44, 45, 46, 110, 111, 112, 500, 501, 1000, 1001, 1500, 1501];
+                keyPoints.forEach(p => {
+                    if (p <= maxWaves) dataPoints.add(p);
+                });
+
+                for (let p = 0; p <= Math.min(maxWaves, 200); p += 1) { dataPoints.add(p); }
+                for (let p = 200; p <= maxWaves; p += 5) { dataPoints.add(p); }
+                
+                const sortedPoints = Array.from(dataPoints).sort((a,b) => a-b);
+                const finalData = [];
+                for (let i = 0; i < sortedPoints.length; i++) {
+                    const p = sortedPoints[i];
+                    finalData.push({ x: p, y: Number(wavesToCards(BigInt(p))) });
+                }
+                return finalData.sort((a,b) => a.x - b.x);
+            }
+            
             function generateChartForPanel() {
                 if (!chartPanelCanvas || !t) return;
                 const chartAvailable = typeof Chart !== 'undefined' && Chart.registry.plugins.get('annotation') && Chart.registry.plugins.get('datalabels') && Chart.registry.plugins.get('zoom');
@@ -2550,11 +2708,10 @@
                 if (!chartPanelCanvas.offsetParent) { requestAnimationFrame(generateChartForPanel); return; }
                 
                 try {
-                    const maxWaves = CONFIG.chart.maxWaves; const step = CONFIG.chart.step; const dataPoints = [];
-                    const specialWaves = [45, 111, 501, 1001, 1501]; let yAxisMax = CONFIG.chart.yAxisMax;
-                    for (let w = 0; w <= maxWaves; w += step) { const cardsBigInt = wavesToCards(BigInt(w)); let cardsNum = cardsBigInt < BigInt(yAxisMax) ? Number(cardsBigInt) : yAxisMax; dataPoints.push({ x: w, y: cardsNum }); }
-                    specialWaves.forEach(sw => { if (sw <= maxWaves && !dataPoints.some(p => p.x === sw)) { const cardsBigInt = wavesToCards(BigInt(sw)); let cardsNum = cardsBigInt < BigInt(yAxisMax) ? Number(cardsBigInt) : yAxisMax; dataPoints.push({ x: sw, y: cardsNum }); } });
-                    dataPoints.sort((a, b) => a.x - b.x); if (myChart) { myChart.destroy(); myChart = null; }
+                    const maxWaves = CONFIG.chart.maxWaves;
+                    const dataPoints = generateChartData(maxWaves);
+                    
+                    if (myChart) { myChart.destroy(); myChart = null; }
                     const isMobile = window.innerWidth <= 480;
                     const axisColor = getComputedStyle(body).getPropertyValue('--text-muted-color').trim(); 
                     const gridColor = getComputedStyle(body).getPropertyValue('--table-border').trim();
@@ -2562,42 +2719,110 @@
                     const annotationColor = getComputedStyle(body).getPropertyValue('--error-color').trim();
                     const glassBg = getComputedStyle(body).getPropertyValue('--glass-bg').trim(); const textColor = getComputedStyle(body).getPropertyValue('--text-color').trim();
                     const annotationsConfig = {};
+                    const specialWaves = [45, 111, 501, 1001, 1501];
                     specialWaves.forEach(wave => { if (wave <= maxWaves) { annotationsConfig[`vline${wave}`] = { type: 'line', scaleID: 'x', value: wave, borderColor: annotationColor, borderWidth: 1, borderDash: [6, 6], label: { display: true, content: `${wave}${t.units.waveSingle}`, position: 'start', backgroundColor: 'hsla(0, 0%, 15%, 0.75)', color: '#fff', font: { size: isMobile ? 8 : 10 }, padding: { top: 2, bottom: 2, left: 4, right: 4 }, borderRadius: 3, yAdjust: isMobile ? 12 : 5, pointerEvents: 'none' } }; } });
                     annotationsConfig['crosshairY'] = { type: 'line', scaleID: 'x', display: false, borderColor: primaryActiveColor, borderWidth: 1.5, pointerEvents: 'none' };
                     annotationsConfig['crosshairX'] = { type: 'line', scaleID: 'y', display: false, borderColor: primaryActiveColor, borderWidth: 1.5, pointerEvents: 'none' };
                     annotationsConfig['crosshairLabel'] = { type: 'label', display: false, content: '', position: 'center', xValue: 0, yValue: 0, backgroundColor: glassBg, font: {size: isMobile ? 9 : 11}, color: textColor, padding: 6, borderRadius: 5, xAdjust: 10, yAdjust: -10, callout: { display: true, position: 'left', margin: 5 }, pointerEvents: 'none' };
-                    const zoomPluginConfig = { zoom: { wheel: { enabled: true, speed: 0.1 }, pinch: { enabled: true }, mode: 'x', }, pan: { enabled: true, mode: 'x', threshold: 5 }, limits: { x: { min: -50, max: maxWaves + (maxWaves * 0.1) }, y: { min: -1000, max: yAxisMax * 1.1 } } };
-                    myChart = new Chart(ctx, { type: 'line', data: { datasets: [{ label: t.chart.yAxis, data: dataPoints, borderColor: primaryColor, pointRadius: (ctx) => specialWaves.includes(ctx.raw?.x) ? (isMobile ? 3 : 4) : 0, pointBackgroundColor: annotationColor, pointBorderColor: annotationColor, pointHoverRadius: isMobile ? 5 : 7, pointHoverBackgroundColor: primaryActiveColor, pointHoverBorderColor: primaryActiveColor, fill: false, tension: 0.1, borderWidth: 2 }] },
-                        options: { responsive: true, maintainAspectRatio: false, animation: prefersReducedMotion ? false : { duration: CONFIG.animation.durationNormal * animSpeedMultiplier, easing: 'easeOutQuart' }, interaction: { mode: 'x', intersect: false }, plugins: { tooltip: { enabled: false }, legend: { display: false }, annotation: { annotations: annotationsConfig }, datalabels: { display: false }, zoom: zoomPluginConfig },
-                            scales: { 
+                    
+                    myChart = new Chart(ctx, { 
+                        type: 'line', 
+                        data: { datasets: [{ 
+                            label: t.chart.yAxis, 
+                            data: dataPoints, 
+                            borderColor: primaryColor, 
+                            pointRadius: 0, 
+                            pointHoverRadius: isMobile ? 5 : 7, 
+                            pointHoverBackgroundColor: primaryActiveColor, 
+                            pointHoverBorderColor: primaryActiveColor, 
+                            fill: false, 
+                            tension: 0, 
+                            borderWidth: 1.5, 
+                            stepped: false 
+                        }] },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false, 
+                            animation: prefersReducedMotion ? false : { duration: CONFIG.animation.durationNormal * animSpeedMultiplier, easing: 'easeOutQuart' }, 
+                            interaction: { mode: 'x', intersect: false }, 
+                            plugins: { 
+                                tooltip: { enabled: false }, 
+                                legend: { display: false }, 
+                                annotation: { annotations: annotationsConfig }, 
+                                datalabels: { display: false }, 
+                                zoom: { 
+                                    pan: { enabled: true, mode: 'x', onPanComplete: ({chart}) => { updateYAxisRange(chart); updateChartSlidersState(chart); } }, 
+                                    zoom: { wheel: { enabled: false }, pinch: { enabled: true }, onZoomComplete: ({chart}) => { updateYAxisRange(chart); updateChartSlidersState(chart); } } 
+                                }
+                            },
+                                                        scales: { 
                                 x: { 
                                     type: "linear", 
                                     title: { display: true, text: t.chart.xAxis, font: { size: isMobile ? 11 : 13 }, color: axisColor }, 
                                     min: 0, 
-                                    ticks: { font: { size: isMobile ? 9 : 11 }, color: axisColor, callback: value => Math.round(value), maxTicksLimit: isMobile ? 6 : 10 }, 
-                                    grid: { display: true, color: gridColor, borderDash: [3, 3] } 
+                                    max: maxWaves,
+                                    ticks: { 
+                                        color: axisColor,
+                                        autoSkip: true,
+                                        maxTicksLimit: 10,
+                                        callback: function(value) {
+                                            return formatBigIntWithCommas(BigInt(Math.round(value)));
+                                        }
+                                    }, 
+                                    grid: { display: true, color: gridColor, borderDash: [3, 3] },
                                 },
                                 y: { 
                                     type: 'linear', 
                                     title: { display: true, text: t.chart.yAxis, font: { size: isMobile ? 11 : 13 }, color: axisColor }, 
                                     min: 0, 
                                     beginAtZero: true, 
-                                    max: yAxisMax, 
-                                    ticks: { stepSize: CONFIG.chart.yAxisStepSize, callback: value => value >= 1000 ? `${value/1000}k` : value, font: { size: isMobile ? 9 : 11 }, color: axisColor }, 
+                                    max: CONFIG.chart.yAxisInitialMax, 
+                                    ticks: { 
+                                        color: axisColor, 
+                                        autoSkip: true,
+                                        maxTicksLimit: 8,
+                                        callback: function(value) {
+                                            return formatBigIntWithCommas(BigInt(Math.round(value)));
+                                        }
+                                    }, 
                                     grid: { display: true, color: gridColor, borderDash: [3, 3] } 
                                 } 
+                            },
+                            afterUpdate: (chart) => {
+                                const yAxis = chart.scales.y;
+                                const xAxis = chart.scales.x;
+                                if (!yAxis || !xAxis || yAxis.ticks.length < 2) return;
+
+                                const yTickPixelDiff = Math.abs(yAxis.getPixelForTick(1) - yAxis.getPixelForTick(0));
+                                if (yTickPixelDiff <= 0) return;
+                                
+                                const yTickDataDiff = yAxis.ticks[1].value - yAxis.ticks[0].value;
+                                const yPixelsPerUnit = yTickPixelDiff / yTickDataDiff;
+
+                                const requiredXRangeInData = chart.chartArea.width / yPixelsPerUnit;
+                                const currentXRange = xAxis.max - xAxis.min;
+
+                                if (Math.abs(currentXRange - requiredXRangeInData) / currentXRange > 0.01) {
+                                    const currentCenter = (xAxis.min + xAxis.max) / 2;
+                                    xAxis.min = Math.ceil(currentCenter - requiredXRangeInData / 2);
+                                    xAxis.max = Math.ceil(currentCenter + requiredXRangeInData / 2);
+                                    
+                                    setTimeout(() => chart.update('none'), 0);
+                                }
                             }
                         }
                     });
-                    attachZoomButtonListeners();
+                    attachChartControlListeners();
                     setupChartHover();
+                    updateChartSlidersState(myChart);
                 } catch (e) {
                     const container = chartPanelCanvas?.parentElement;
                     if (container) container.innerHTML = `<p style='color: var(--error-color); text-align: center; padding: 2rem;'>Chart error: ${e.message}.</p>`;
                     if (myChart) { myChart.destroy(); myChart = null; }
+                    return;
                 }
             }
-
+            
             function renderHistoryPanel() {
                 if (!historyTablePanelBody || !historyPaginationPanel) return;
                 historyTablePanelBody.innerHTML = "";
@@ -3222,26 +3447,126 @@
                 historyPaginationPanel.appendChild(createButton(t.pagination.next, nextSVG, currentHistoryPage + 1, currentHistoryPage >= totalPages - 1));
             }
             
-            function attachZoomButtonListeners() {
-                const zoomInBtn = document.getElementById('zoomInBtn');
-                const zoomOutBtn = document.getElementById('zoomOutBtn');
-                const resetZoomBtn = document.getElementById('resetZoomBtn');
-                if (!myChart || !zoomInBtn || !zoomOutBtn || !resetZoomBtn) return;
-                const newZoomIn = zoomInBtn.cloneNode(true);
-                const newZoomOut = zoomOutBtn.cloneNode(true);
-                const newResetZoom = resetZoomBtn.cloneNode(true);
-                zoomInBtn.parentNode.replaceChild(newZoomIn, zoomInBtn);
-                zoomOutBtn.parentNode.replaceChild(newZoomOut, zoomOutBtn);
-                resetZoomBtn.parentNode.replaceChild(newResetZoom, resetZoomBtn);
-                newZoomIn.onclick = () => { if (myChart) myChart.zoom(1.2); };
-                newZoomOut.onclick = () => { if (myChart) myChart.zoom(0.8); };
-                newResetZoom.onclick = () => { if (myChart) myChart.resetZoom(); };
-                myChart.options.plugins.zoom.zoom.onZoomComplete = ({chart}) => {
-                    const initialXRange = chart.config.options.scales.x.max - chart.config.options.scales.x.min;
-                    const currentXRange = chart.scales.x.max - chart.scales.x.min;
-                    newZoomOut.disabled = currentXRange >= initialXRange * 0.99;
+            function attachChartControlListeners() {
+                if (!myChart) return;
+                const zoomSlider = document.getElementById('chartZoomSlider');
+                const panContainer = document.getElementById('chart-pan-container');
+                const panThumb = document.getElementById('pan-thumb');
+                const track = document.getElementById('pan-track');
+                
+                chartPanelCanvas.addEventListener('wheel', (event) => {
+                    if (!myChart) return;
+                    event.preventDefault();
+                    
+                    const zoomFactor = event.deltaY < 0 ? 0.9 : 1.1;
+                    const currentXMax = myChart.options.scales.x.max;
+                    let newXMax = Math.max(10, currentXMax * zoomFactor);
+                    
+                    myChart.options.scales.x.min = 0;
+                    myChart.options.scales.x.max = Math.min(Math.ceil(newXMax), CONFIG.chart.maxWaves);
+                    
+                    updateYAxisRange(myChart);
+                    myChart.update('none');
+                    updateChartSlidersState(myChart);
+                }, { passive: false });
+
+
+                zoomSlider.oninput = () => {
+                    if (!myChart) return;
+                    const zoomLevel = parseFloat(zoomSlider.value);
+                    const newXRange = CONFIG.chart.maxWaves / zoomLevel;
+                    const currentXMin = myChart.scales.x.min;
+                    
+                    myChart.options.scales.x.max = Math.ceil(currentXMin + newXRange);
+
+                    updateYAxisRange(myChart);
+                    myChart.update('none');
+                    updateChartSlidersState(myChart);
                 };
+                
+                let isDragging = false;
+                let dragStartX = 0;
+                let initialThumbX = 0;
+
+                panThumb.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    dragStartX = e.clientX;
+                    initialThumbX = panThumb.getBoundingClientRect().left - track.getBoundingClientRect().left;
+                    panThumb.style.cursor = 'grabbing';
+                    body.style.cursor = 'grabbing';
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging || !myChart) return;
+                    const dx = e.clientX - dragStartX;
+                    const trackWidth = track.clientWidth;
+                    const thumbWidth = panThumb.offsetWidth;
+                    const newThumbX = Math.max(0, Math.min(trackWidth - thumbWidth, initialThumbX + dx));
+                    const panRatio = newThumbX / (trackWidth - thumbWidth);
+                    
+                    const totalRange = CONFIG.chart.maxWaves;
+                    const visibleRange = myChart.scales.x.max - myChart.scales.x.min;
+                    const maxMin = totalRange - visibleRange;
+                    
+                    const newXMin = panRatio * maxMin;
+
+                    myChart.options.scales.x.min = Math.ceil(newXMin);
+                    myChart.options.scales.x.max = Math.ceil(newXMin + visibleRange);
+                    
+                    updateYAxisRange(myChart);
+                    myChart.update('none');
+                    updateChartSlidersState(myChart);
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        panThumb.style.cursor = 'grab';
+                        body.style.cursor = '';
+                    }
+                });
             }
+
+            function updatePanRuler(chart) {
+                const rulerSvg = document.getElementById('pan-ruler-svg');
+                const track = document.getElementById('pan-track');
+                if (!rulerSvg || !track) return;
+
+                const { min: viewMin, max: viewMax } = chart.scales.x;
+                const viewRange = viewMax - viewMin;
+                const trackWidth = track.clientWidth;
+                
+                rulerSvg.innerHTML = ''; 
+                
+                const step = getPrettyTick(viewRange / 10);
+                const startTick = Math.ceil(viewMin / step) * step;
+
+                for (let i = startTick; i <= viewMax; i += step) {
+                    if (i < viewMin) continue;
+
+                    const posPercent = (i - viewMin) / viewRange;
+                    const posPx = posPercent * trackWidth;
+                    
+                    const centerDist = Math.abs(posPx - trackWidth / 2);
+                    const focusFactor = Math.cos((centerDist / (trackWidth / 2)) * (Math.PI / 2));
+                    
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute('x1', posPx);
+                    line.setAttribute('y1', 0);
+                    line.setAttribute('x2', posPx);
+                    line.setAttribute('y2', 5 + focusFactor * 10);
+                    rulerSvg.appendChild(line);
+
+                    if (focusFactor > 0.5) { 
+                        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                        text.setAttribute('x', posPx);
+                        text.setAttribute('y', 22);
+                        text.textContent = formatBigIntWithCommas(BigInt(Math.round(i)));
+                        rulerSvg.appendChild(text);
+                    }
+                }
+            }
+
 
             function setupChartHover() {
                 if (!chartPanelCanvas || !myChart) return;
@@ -3249,7 +3574,7 @@
                 canvas.removeEventListener('mousemove', handleChartMouseMove);
                 canvas.removeEventListener('mouseout', handleChartMouseOut);
                 canvas.removeEventListener('mousedown', handleChartMouseDown);
-                            document.removeEventListener('mouseup', handleChartMouseUp);
+                document.removeEventListener('mouseup', handleChartMouseUp);
                 canvas.addEventListener('mousemove', handleChartMouseMove);
                 canvas.addEventListener('mouseout', handleChartMouseOut);
                 canvas.addEventListener('mousedown', handleChartMouseDown);
@@ -3267,6 +3592,9 @@
                     }
                 }
                 if(chartPanelCanvas?.parentElement) chartPanelCanvas.parentElement.classList.remove('chart-panning');
+                 if(myChart) {
+                    updateChartSlidersState(myChart);
+                }
             }
 
             function handleChartMouseMove(event) {
@@ -3280,8 +3608,8 @@
                     if (waveValueRaw >= 0) {
                         const waveForCalc = Math.round(waveValueRaw);
                         const cardValueBigInt = wavesToCards(BigInt(waveForCalc));
-                        let cardValueNumForPlot = cardValueBigInt < BigInt(CONFIG.chart.yAxisMax) ? Number(cardValueBigInt) : CONFIG.chart.yAxisMax;
-                        cardValueNumForPlot = Math.max(myChart.scales.y.min ?? 0, Math.min(cardValueNumForPlot, myChart.scales.y.max ?? CONFIG.chart.yAxisMax));
+                        let cardValueNumForPlot = Number(cardValueBigInt);
+                        cardValueNumForPlot = Math.max(myChart.scales.y.min ?? 0, Math.min(cardValueNumForPlot, myChart.scales.y.max ?? CONFIG.chart.yAxisInitialMax));
                         updateCrosshairAnnotations(waveValueRaw, cardValueNumForPlot, cardValueBigInt, xPixel, yPixel, rect);
                     } else {
                         updateCrosshairAnnotations(null, null, null);
@@ -3294,7 +3622,7 @@
             function handleChartMouseOut(event) {
                 const relatedTarget = event.relatedTarget;
                 const chartContainer = chartPanelCanvas.parentElement;
-                if (!relatedTarget || (!chartContainer.contains(relatedTarget) && !relatedTarget.closest('.chart-zoom-buttons'))) {
+                if (!relatedTarget || (!chartContainer.contains(relatedTarget) && !relatedTarget.closest('.chart-zoom-buttons, #chart-pan-container'))) {
                     updateCrosshairAnnotations(null, null, null);
                 }
             }
@@ -3582,14 +3910,14 @@
             body.addEventListener("mouseover", e => { if (body.classList.contains('native-cursor')) { setCursorState('default'); return; } if (isPanningChart) return; if ((cursorIsSelectingText && !cursorJustStartedSelection)) return; 
                 const target = e.target; let newState = "default"; cursorTargetHeight = 25;
                 const isDisabled = target.closest("[disabled]");
-                const isInteractiveButton = target.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label");
+                const isInteractiveButton = target.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb");
                 const isLink = target.closest("a:not([disabled])");
                 const isSelect = target.closest("select:not([disabled])");
                 const isCheckboxLabel = target.closest('input[type="checkbox"]:not([disabled]), label[for]');
                 const isCardContainer = target.closest(".card-container:not(.negative-cards)");
                 const isLongNumber = target.closest(".long-number");
                 const isTextInputElement = target.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])');
-                const isChartCanvas = target.closest("#chartPanelCanvas");
+                const isChartCanvas = target.closest("#chartPanelCanvas, #chartZoomSlider");
                 const isResultOutputCell = target.closest(".result-output-cell");
                 const isGeneralTextContent = target.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3");
                 if (isDisabled) { newState = "disabled"; } else if (isChartCanvas) { newState = "button"; } else if (isInteractiveButton || isLink || isSelect || isCheckboxLabel || isResultOutputCell) { newState = "button"; } else if (isCardContainer || isLongNumber) { newState = "button"; } else if (isTextInputElement) { newState = (document.activeElement === isTextInputElement) ? "input" : "text"; cursorTargetHeight = Math.max(18, parseFloat(window.getComputedStyle(isTextInputElement).fontSize) * 1.5); } else if (isGeneralTextContent) { newState = "text"; cursorTargetHeight = Math.max(16, parseFloat(window.getComputedStyle(isGeneralTextContent).fontSize) * 1.4); }
@@ -3598,7 +3926,7 @@
             document.querySelectorAll("input:not([type='checkbox']), textarea, select").forEach(element => { element.addEventListener("focus", () => { if(body.classList.contains('native-cursor')) return; cursorKillBreathing(); setCursorState(element.hasAttribute("disabled") ? "disabled" : "input"); }); element.addEventListener("blur", (e) => { if(body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); setTimeout(() => { const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); if (!elementUnderCursor || elementUnderCursor !== element || cursorIsSelectingText) { if (!cursorIsSelectingText) { if (elementUnderCursor) { elementUnderCursor.dispatchEvent(new MouseEvent("mouseover", { view: window, bubbles: true, cancelable: true })); } else { setCursorState("default"); } } } else { if (!element.hasAttribute("disabled")) { setCursorState("text"); } } }, 10); }); });
             document.addEventListener("selectionchange", () => { if (body.classList.contains('native-cursor')) return; cursorKillBreathing(); if (cursorRafSelectId) cancelAnimationFrame(cursorRafSelectId); cursorRafSelectId = requestAnimationFrame(cursorUpdateSelectionBoxVisibility); });
             function cursorUpdateSelectionBoxVisibility() { if (body.classList.contains('native-cursor')) { cursorHideSelectionBox(); cursorHideSelectionIndicator(); return; }; const selection = window.getSelection(); let hasVisibleSelection = false; if (selection && selection.type === "Range" && selection.rangeCount > 0) { const range = selection.getRangeAt(0); if (!range.collapsed && selection.toString().trim().length > 0) { const rects = range.getClientRects(); if (rects.length > 0) { hasVisibleSelection = true; let bounds = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }; for (const rect of rects) { bounds.left = Math.min(bounds.left, rect.left); bounds.top = Math.min(bounds.top, rect.top); bounds.right = Math.max(bounds.right, rect.right); bounds.bottom = Math.max(bounds.bottom, rect.bottom); } let left = bounds.left; let top = bounds.top; let width = bounds.right - left; let height = bounds.bottom - top; cursorShowSelectionBox(); gsap.to(selectionBox, { left: left - SELECTION_BOX_PADDING_X, top: top - SELECTION_BOX_PADDING_Y, width: width + (2 * SELECTION_BOX_PADDING_X), height: height + (2 * SELECTION_BOX_PADDING_Y), duration: ANIM_DURATION_FAST, ease: EASE_STANDARD, onStart: () => { if (cursorState !== "textSelect") setCursorState("textSelect"); cursorShowSelectionIndicator(); }, overwrite: true }); } } } if (!hasVisibleSelection) { cursorHideSelectionBox(); gsap.set(selectionIndicator, { autoAlpha: 0 }); if (cursorIsSelectingText) { cursorRestoreCursorStateAfterSelection(); } } }
-            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; gsap.set(selectionIndicator, { autoAlpha: 0 }); const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])'); const isChartCanvas = elementUnderCursor.closest("#chartPanelCanvas"); const isResultOutputCell = elementUnderCursor.closest(".result-output-cell"); const isGeneralTextContent = elementUnderCursor.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3"); if (isDisabled) newState = "disabled"; else if (isChartCanvas) newState = "button"; else if (isInteractiveButton || isLink || isSelect || isCheckboxLabel || isResultOutputCell) newState = "button"; else if (isCardContainer || isLongNumber) newState = "button"; else if (isTextInputElement) { newState = (document.activeElement === isTextInputElement) ? "input" : "text"; cursorTargetHeight = Math.max(18, parseFloat(window.getComputedStyle(isTextInputElement).fontSize) * 1.5); } else if (isGeneralTextContent) { newState = "text"; cursorTargetHeight = Math.max(16, parseFloat(window.getComputedStyle(isGeneralTextContent).fontSize) * 1.4); } } setCursorState(newState); }
+            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; gsap.set(selectionIndicator, { autoAlpha: 0 }); const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])'); const isChartCanvas = elementUnderCursor.closest("#chartPanelCanvas, #chartZoomSlider"); const isResultOutputCell = elementUnderCursor.closest(".result-output-cell"); const isGeneralTextContent = target.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3"); if (isDisabled) newState = "disabled"; else if (isChartCanvas) newState = "button"; else if (isInteractiveButton || isLink || isSelect || isCheckboxLabel || isResultOutputCell) newState = "button"; else if (isCardContainer || isLongNumber) newState = "button"; else if (isTextInputElement) { newState = (document.activeElement === isTextInputElement) ? "input" : "text"; cursorTargetHeight = Math.max(18, parseFloat(window.getComputedStyle(isTextInputElement).fontSize) * 1.5); } else if (isGeneralTextContent) { newState = "text"; cursorTargetHeight = Math.max(16, parseFloat(window.getComputedStyle(isGeneralTextContent).fontSize) * 1.4); } } setCursorState(newState); }
             const themeObserver=new MutationObserver(mutations=>{ if (body.classList.contains('native-cursor')) return; for(let mutation of mutations){ if(mutation.type==="attributes"&&mutation.attributeName==="class"){ if(cursorState==="default"){ const currentShadow = defaultShadowThemed(); if(cursorRecoverTween) { gsap.to(cursorRecoverTween.targets()[0],{boxShadow:currentShadow, overwrite:true}); } else if (!cursorBreathingTween) { gsap.set(cursorInner,{boxShadow:currentShadow}); } } if (gsap.getProperty(selectionBox, "opacity") > 0) { const borderColor = getComputedStyle(document.body).getPropertyValue('--selection-border').trim(); const bgColor = getComputedStyle(document.body).getPropertyValue('--selection-bg').trim(); gsap.to(selectionBox, {borderColor: borderColor, backgroundColor: bgColor, duration: 0.2 * animSpeedMultiplier }); } } } });
             themeObserver.observe(document.body,{attributes:true});
             const cursorSettingObserver = new MutationObserver(mutations => { for (let mutation of mutations) { if (mutation.type === "attributes" && mutation.attributeName === "class") { if (body.classList.contains('native-cursor')) { gsap.set([cursor, selectionBox, selectionIndicator], { autoAlpha: 0 }); cursorKillBreathing(); if(cursorRecoverTween) cursorRecoverTween.kill(); gsap.set(cursorInner, { transform: "none" }); cursorIsVisible = false; } else { if (cursorLastClientX > 0 || cursorLastClientY > 0) { cursorShowCursor(); const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); if(elementUnderCursor) { elementUnderCursor.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, cancelable: true })); } else { setCursorState('default'); } } } } } });
