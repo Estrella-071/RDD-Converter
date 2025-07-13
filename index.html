@@ -3643,7 +3643,7 @@
                     if (!myChart) return;
                     event.preventDefault();
                     
-                    const zoomFactor = event.deltaY < 0 ? 0.9 : 1.1;
+                    const zoomFactor = event.deltaY < 0 ? 0.97 : 1.03;
                     const { min: currentXMin, max: currentXMax } = myChart.options.scales.x;
                     let newRange = (currentXMax - currentXMin) * zoomFactor;
 
