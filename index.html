@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         :root {
             --hue-primary: 212; --sat-primary: 85%;
@@ -20,8 +21,8 @@
             --bg-color-dark: hsl(225, 15%, 9%);
             --bg-gradient-start-dark: hsla(222, 18%, 11%, 0.8);
             --bg-gradient-end-dark: hsla(232, 15%, 7%, 0.9);
-            --text-color-dark: hsl(var(--hue-text), var(--sat-text), 92%);
-            --text-muted-color-dark: hsla(var(--hue-text), var(--sat-text), 92%, 0.55);
+            --text-color-dark: hsl(var(--hue-text), var(--sat-text), 95%);
+            --text-muted-color-dark: hsla(var(--hue-text), var(--sat-text), 92%, 0.7);
             --container-bg-dark: hsl(222, 12%, 14%);
             --primary-color-dark: hsl(var(--hue-primary), var(--sat-primary), 72%);
             --primary-active-dark: hsl(var(--hue-primary), var(--sat-primary), 62%);
@@ -41,8 +42,8 @@
             --bg-color-light: hsl(210, 33%, 97%);
             --bg-gradient-start-light: hsla(210, 40%, 99%, 0.8);
             --bg-gradient-end-light: hsla(220, 30%, 95%, 0.9);
-            --text-color-light: hsl(var(--hue-text), 25%, 15%);
-            --text-muted-color-light: hsla(var(--hue-text), 25%, 15%, 0.6);
+            --text-color-light: hsl(var(--hue-text), 25%, 12%);
+            --text-muted-color-light: hsla(var(--hue-text), 25%, 15%, 0.65);
             --container-bg-light: hsl(0, 0%, 100%);
             --primary-color-light: hsl(var(--hue-primary), var(--sat-primary), 58%);
             --primary-active-light: hsl(var(--hue-primary), var(--sat-primary), 48%);
@@ -78,12 +79,11 @@
             --input-focus-shadow: var(--input-focus-shadow-dark);
             --modal-content-bg: var(--modal-content-bg-dark);
             --dust-color: var(--dust-color-dark);
-            --dust-shadow-color-dark: var(--dust-shadow-color-dark);
 
             --error-color: hsl(0, 80%, 70%);
             --transition-duration: 0.3s;
             --transition-timing: cubic-bezier(0.22, 0.61, 0.36, 1);
-            --vh: 1vh;
+            --viewport-height: 100vh;
         }
         body.light-theme {
             --bg-color: var(--bg-color-light);
@@ -109,7 +109,7 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         html { height: -webkit-fill-available; }
-        body { width: 100%; height: 100%; height: calc(var(--vh, 1vh) * 100); overflow: hidden; font-family: 'Open Sans', sans-serif; line-height: 1.6; background: var(--bg-color); color: var(--text-color); font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; position: relative; background-image: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); }
+        body { width: 100%; height: var(--viewport-height); overflow: hidden; font-family: 'Open Sans', sans-serif; line-height: 1.6; background: var(--bg-color); color: var(--text-color); font-size: 16.5px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; position: relative; background-image: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); }
         @media (prefers-reduced-motion: no-preference) { html, body { transition: background var(--transition-duration) var(--transition-timing), color var(--transition-duration) var(--transition-timing); } }
         #dustCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
         .glass { background: var(--glass-bg); backdrop-filter: blur(18px) saturate(180%); border: 1px solid var(--glass-border); box-shadow: 0 8px 32px 0 var(--shadow-faint), var(--glass-inset-shadow); border-radius: 1.5rem; }
@@ -117,17 +117,17 @@
         .glow-on-hover:hover:not(:disabled):not(.active) {
             box-shadow: 0 5px 20px hsla(var(--hue-primary), var(--sat-primary), 50%, 0.55), var(--glass-inset-shadow) !important;
         }
-        #landingPage { perspective: 1000px; position: fixed; top: 0; left: 0; width: 100%; height: 100%; height: calc(var(--vh, 1vh) * 100); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 20000; background: var(--bg-color); opacity: 0; visibility: hidden; background-image: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); }
+        #landingPage { perspective: 1000px; position: fixed; top: 0; left: 0; width: 100%; height: var(--viewport-height); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 20000; background: var(--bg-color); opacity: 0; visibility: hidden; background-image: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); }
         @media (prefers-reduced-motion: no-preference) { #landingPage { transition: background 0.5s ease; } }
         #landing-perspective-wrapper { transform-style: preserve-3d; will-change: transform; transition: transform 0.2s ease-out; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         body:not(.is-touch-device) #landing-perspective-wrapper { transition: none; }
-        #landingContent { opacity: 0; transform: translateY(20px); color: var(--text-color); background: rgba(15, 17, 25, 0.5); padding: 2.5rem 3rem; border-radius: 1.2rem; margin-bottom: 2rem; backdrop-filter: blur(5px); }
+        #landingContent { opacity: 0; transform: translateY(20px); color: var(--text-color); background: rgba(15, 17, 25, 0.5); padding: 2.5rem 3rem; border-radius: 1.2rem; backdrop-filter: blur(5px); }
         body.light-theme #landingContent { background: rgba(255, 255, 255, 0.2); }
         #landingTitle { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 9vw, 5rem); font-weight: 700; line-height: 1.1; margin-bottom: 0.5rem; text-shadow: 0 5px 15px var(--shadow-medium); }
         #landingTitle .sub { display: block; font-size: clamp(1.2rem, 4vw, 2rem); font-family: 'Montserrat', sans-serif; font-weight: 700; margin-top: 0.8rem; color: var(--primary-color); letter-spacing: 0.08em; text-shadow: 0 2px 5px hsla(var(--hue-primary), var(--sat-primary), 40%, 0.5); }
         #clickPrompt { font-size: clamp(1rem, 2.8vw, 1.2rem); font-weight: 600; margin-top: 2.5rem; opacity: 0; color: var(--text-muted-color); }
         @media (prefers-reduced-motion: no-preference) { #clickPrompt { animation: pulse 2.2s infinite ease-in-out; } @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.03); opacity: 0.9; } } }
-        #languageSelector { opacity: 0; transform: translateY(20px); position: relative; margin: 0 auto; padding: 1.8rem 2.2rem; text-align: left; width: 90%; max-width: 340px; }
+        #languageSelector { opacity: 0; transform: translateY(20px); position: absolute; top: 50%; right: 4rem; transform: translateY(-50%); padding: 1.8rem 2.2rem; text-align: left; width: auto; max-width: 280px; }
         #languageSelector.glass { backdrop-filter: blur(20px) saturate(190%); border-radius: 1.3rem; }
         #languageTitle { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 1.8rem; color: var(--text-color); display: flex; align-items: center; gap: 0.6rem;}
         #languageTitle svg { width: 1.3em; height: 1.3em; fill: currentColor; opacity: 0.85;}
@@ -140,7 +140,28 @@
         #landingThemeToggle svg { width: 1em; height: 1em; fill: currentColor; }
         @media (prefers-reduced-motion: no-preference) { #landingThemeToggle { transition: color 0.3s, transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); } }
         #landingThemeToggle:hover { color: var(--primary-color); transform: scale(1.15) rotate(18deg); }
-        @media (max-width: 768px) { #languageSelector { transform: translateY(20px); width: 85%; padding: 1.5rem 2rem; } #languageList button { text-align: center; } #landingContent { transform: translateY(0); padding: 2rem; margin-bottom: 1.5rem; } #landingThemeToggle { top: 1rem; right: 1rem; font-size: 1.4rem; } }
+        @media (max-width: 900px) {
+            #landing-perspective-wrapper {
+                 width: 90%;
+            }
+            #languageSelector {
+                position: relative;
+                top: auto; right: auto;
+                transform: translateY(0);
+                width: 100%;
+                max-width: 400px;
+                padding: 1.5rem 2rem;
+                margin-top: 2.5rem;
+            }
+            #languageList button { text-align: center; }
+            #landingContent {
+                transform: translateY(0);
+                padding: 2rem;
+                margin-bottom: 0;
+                width: 100%;
+            }
+            #landingThemeToggle { top: 1rem; right: 1rem; font-size: 1.4rem; }
+        }
         #appContainer { position: relative; width: 100%; height: 100%; display: none; flex-direction: column; opacity: 0; visibility: hidden; overflow: hidden; z-index: 1; }
         @media (prefers-reduced-motion: no-preference) { #appContainer { transition: opacity 0.4s ease; } } 
         body.app-loaded #appContainer { opacity: 1; visibility: visible; }
@@ -166,51 +187,46 @@
         @media (prefers-reduced-motion: no-preference) { #calculatorView { transition: opacity 0.4s ease, visibility 0s linear 0.4s; } } 
         #calculatorView.visible { display: flex; opacity: 1; visibility: visible; }
         #calculatorFlexContainer { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; overflow-y: auto; padding: 1rem; cursor: default; }
-        #calculatorContentWrapper { display: flex; flex-direction: row; align-items: center; gap: 3rem; width: 100%; max-width: 1300px; margin: 0 auto; padding: 1rem; transition: justify-content 0.5s var(--transition-timing); }
+        #calculatorContentWrapper { position: relative; display: flex; justify-content: center; align-items: center; gap: 3rem; width: 100%; max-width: 1300px; padding: 1rem; }
 
         #inputContainerWrapper, #resultsContainer {
-            transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-            will-change: opacity, transform, max-width, margin;
+            transition: opacity 0.5s var(--transition-timing), transform 0.5s var(--transition-timing), z-index 0s linear 0.5s;
+            will-change: opacity, transform;
+            position: absolute;
         }
         
-        body.input-focused #calculatorContentWrapper { justify-content: center; }
         body.input-focused #inputContainerWrapper {
-            max-width: 750px;
             opacity: 1;
-            transform: none;
-            cursor: default;
-            margin: 0;
+            transform: translateX(0);
+            z-index: 10;
         }
         body.input-focused #resultsContainer {
-            display: none !important; /* 強制不參與佈局 */
+            opacity: 0;
+            transform: translateX(50px) scale(0.95);
+            pointer-events: none;
+            z-index: 9;
+            transition: opacity 0.4s var(--transition-timing), transform 0.4s var(--transition-timing), z-index 0s linear 0.4s;
         }
         
-        body.results-focused #calculatorContentWrapper { justify-content: space-between; }
         body.results-focused #inputContainerWrapper {
-            flex-shrink: 1;
-            flex-grow: 0;
-            flex-basis: 320px; 
-            max-width: 320px;
             opacity: 0.7; 
             cursor: pointer;
-            transform: none; 
+            transform: translateX(calc(-50% - 1.5rem)); 
+            z-index: 10;
         }
         body.results-focused #resultsContainer {
-            flex-grow: 1; 
-            max-width: 750px;
-            margin: 0 auto;
             opacity: 1;
-            transform: translateY(0);
+            transform: translateX(calc(50% + 1.5rem)); 
             pointer-events: auto;
+            z-index: 10;
+            transition: opacity 0.5s var(--transition-timing), transform 0.5s var(--transition-timing), z-index 0s linear 0s;
         }
-        #resultsContainer:not(.visible-true) { display: none !important; }
 
         #inputContainerWrapper { 
-            position: relative; 
             display: flex; flex-direction: column; 
             align-items: center; width: 100%;
-            overflow: visible; /* For glowing border */
-            flex-shrink: 0;
+            max-width: 600px;
+            overflow: visible; 
             padding: 1.5rem;
             z-index: 10;
         }
@@ -238,13 +254,14 @@
         }
 
         #resultsContainer { 
-            flex-shrink: 0; 
-            width: 100%; 
+            width: 100%;
+            max-width: 600px;
             z-index: 10; 
-            visibility: visible;
-            transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1), visibility 0s;
         }
-        #inputLabel { font-size: 1.15rem; font-weight: 600; color: var(--text-muted-color); margin-bottom: 1.5rem; opacity: 0; transform: translateY(-10px); text-align: center; width: 100%; }
+        #resultsContainer:not(.visible-true) {
+             opacity: 0; transform: translateX(50px) scale(0.95); pointer-events: none; z-index: 9;
+        }
+        #inputLabel { font-size: 1.2rem; font-weight: 600; color: var(--text-color); margin-bottom: 1.5rem; opacity: 0; transform: translateY(-10px); text-align: center; width: 100%; }
         
         #inputContainer {
             display: flex;
@@ -310,7 +327,7 @@
         .input-action-btn:hover:not(:disabled) { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.2); color: var(--primary-color); transform: scale(1.06); }
         .input-action-btn:active:not(:disabled) { transform: scale(0.97); }
         #addInputBtn { font-size: 1.3rem; line-height: 1; padding: 0.6rem 0.9rem; }
-        #calculationHint { font-size: 0.88rem; color: var(--text-muted-color); text-align: center; margin-top: 0.7rem; opacity: 0.75; width: 100%; line-height: 1.45; }
+        #calculationHint { font-size: 0.9rem; color: var(--text-muted-color); text-align: center; margin-top: 0.7rem; opacity: 0.85; width: 100%; line-height: 1.5; }
         #calculationHint kbd { font-family: monospace; background: var(--input-bg); padding: 0.15em 0.5em; border-radius: 4px; border: 1px solid var(--glass-border); font-size: 1.15em; box-shadow: 0 1px 2px hsla(0,0%,0%,0.2); }
         
         .calc-input:focus { box-shadow: inset 0 1px 5px hsla(0, 0%, 0%, 0.6), 0 9px 20px var(--shadow-strong), 0 0 0 3.5px var(--input-focus-shadow); background: hsla(0, 0%, 100%, 0.1); border-color: var(--primary-color); }
@@ -323,26 +340,35 @@
         .input-wrapper:hover .clear-single-input, .calc-input:focus + .clear-single-input, .calc-input:not(:placeholder-shown) + .clear-single-input { display: block; }
         .clear-single-input:hover { opacity: 1; transform: translateY(-50%) scale(1.18); }
 
-        #resultsContainer { position: relative; padding: 2.2rem; max-height: 80vh; overflow: hidden; transform-origin: center center; width: 100%; display: flex; flex-direction: column; }
+        #resultsContainer { position: relative; padding: 1.5rem 2.2rem; max-height: 80vh; overflow: hidden; transform-origin: center center; width: 100%; display: flex; flex-direction: column; }
         #resultsContainer.glass { backdrop-filter: blur(20px) saturate(190%); box-shadow: 0 14px 45px var(--shadow-strong), var(--glass-inset-shadow); border-radius: 2rem; }
-        #resultOutput { max-height: calc(80vh - 120px); overflow-y: auto; padding-right: 0.8rem; scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; }
+        #resultOutput { max-height: calc(80vh - 150px); overflow-y: auto; padding-right: 0.8rem; scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; }
         #resultOutput::-webkit-scrollbar { width: 7px; } #resultOutput::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 3.5px; } #resultOutput::-webkit-scrollbar-track { background: transparent; }
-        #resultOutput table { width: 100%; border-collapse: separate; border-spacing: 0 0.8rem; table-layout: fixed; }
-        #resultOutput th { display: none; }
-        #resultOutput td { padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--table-border); text-align: left; vertical-align: middle; word-break: break-word; font-size: 1.05rem; position:relative; }
+        #resultOutput table { width: 100%; border-collapse: separate; border-spacing: 0 0.8rem; table-layout: auto; }
+        #resultOutput td { padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--table-border); text-align: left; vertical-align: middle; word-break: break-word; font-size: 1.1rem; position:relative; }
         .result-item-actions {
-            position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); display: flex;
-            gap: 0.5rem; opacity: 0; visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+            display: flex;
+            gap: 0.6rem;
         }
-        #resultOutput tr:hover .result-item-actions { 
-            opacity: 1; visibility: visible; transition-delay: 0s; 
+        #resultsContainer.multi-copy-active #resultOutput tr {
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+        }
+        #resultsContainer.multi-copy-active #resultOutput tr.selected {
+            opacity: 1;
+            background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.2);
+            transform: scale(1.01);
+        }
+        #resultsContainer.multi-copy-active #resultOutput tr:hover:not(.selected) {
+             background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.15);
+             opacity: 0.8;
         }
         .result-item-btn {
             background: hsla(var(--hue-primary), var(--sat-primary), 60%, 0.2);
             border: 1px solid hsla(var(--hue-primary), var(--sat-primary), 60%, 0.5);
             color: var(--primary-color);
-            width: 28px; height: 28px;
+            width: 30px; height: 30px;
             display: flex; align-items: center; justify-content: center;
             font-size: 1.1rem;
             font-weight: 600; border-radius: 50%; cursor: pointer; 
@@ -350,18 +376,28 @@
             transition: transform 0.2s var(--transition-timing), background 0.2s ease, box-shadow 0.2s var(--transition-timing);
         }
         .result-item-btn svg { width: 0.9em; height: 0.9em; fill: currentColor; }
-        .result-item-btn:hover { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.35); transform: scale(1.1); }
+        .result-item-btn:hover { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.35); transform: scale(1.1); box-shadow: 0 4px 10px hsla(var(--hue-primary), var(--sat-primary), 50%, 0.3); }
         #resultOutput tr:last-child td { border-bottom: none; }
         #resultOutput tr.dragging { opacity: 0.5; background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.2); }
         #resultOutput tr.drag-over { box-shadow: 0 0 0 3px var(--primary-color); border-radius: 0.5rem; }
-        #resultOutput td.result-input-cell { font-weight: 600; color: var(--text-color); opacity: 0.95; width: 45%; cursor: default; }
-        #resultOutput td.result-output-cell { font-weight: 700; color: var(--primary-color); width: 40%; }
-        #resultOutput td.result-actions-cell { width: 15%; text-align: right; vertical-align: middle; }
+        #resultOutput td.result-input-cell { font-weight: 600; color: var(--text-color); opacity: 0.95; text-align: right; padding-right: 1rem;}
+        #resultOutput td.result-arrow-cell { text-align: center; color: var(--text-muted-color); font-size: 1.2rem; font-weight: 600; width: 30px; }
+        #resultOutput td.result-output-cell { font-weight: 700; color: var(--primary-color); text-align: left; padding-left: 1rem; }
+        #resultOutput td.result-actions-cell { width: 85px; text-align: right; vertical-align: middle; }
         #resultOutput .card-container, #resultOutput .long-number, #resultOutput .negative-value { display: inline; }
         #resultOutput .negative-value { color: var(--text-color); font-style: italic; opacity: 0.85; }
         #resultOutput tr:nth-child(even) { background-color: hsla(0, 0%, 50%, 0.04); }
-        @media (prefers-reduced-motion: no-preference) { #resultOutput tr { transition: background-color 0.25s ease, box-shadow 0.25s ease; } #resultOutput tr:hover { background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.1); } }
-        #resultInteractionHint { font-size: 0.85rem; color: var(--text-muted-color); text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); opacity: 0.8; }
+        @media (prefers-reduced-motion: no-preference) { #resultOutput tr { transition: background-color 0.25s ease, box-shadow 0.25s ease; } #resultOutput tr:not(.multi-copy-active tr):hover { background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.1); } }
+        #resultsFooter { text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 1rem; }
+        #resultInteractionHint { font-size: 0.85rem; color: var(--text-muted-color); opacity: 0.8; text-align: left; }
+        @keyframes soft-glow {
+            from { box-shadow: 0 0 8px hsla(var(--hue-primary), var(--sat-primary), 70%, 0.4), 0 0 12px hsla(var(--hue-primary), var(--sat-primary), 70%, 0.2); }
+            to { box-shadow: 0 0 16px hsla(var(--hue-primary), var(--sat-primary), 70%, 0.7), 0 0 25px hsla(var(--hue-primary), var(--sat-primary), 70%, 0.5); }
+        }
+        #multiCopyBtn.glow-active {
+            animation: soft-glow 1.8s infinite alternate;
+            color: var(--primary-color);
+        }
         
         .details-modal-like {
             position: relative; overflow: hidden;
@@ -399,6 +435,26 @@
              font-weight: 600; font-family: 'Montserrat', sans-serif; text-align: center;
              padding-bottom: 0.8rem; border-bottom: 1px dashed var(--table-border);
         }
+        .details-modal-like code {
+            font-family: monospace;
+            background: rgba(0,0,0,0.2);
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        #processDetailsContent .mjx-container {
+            font-size: 1.1em;
+            text-align: left;
+            padding: 0.5rem 0;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        #processDetailsContent p {
+            font-size: 1em;
+            text-align: left;
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
 
         #bottomNavBar { position: absolute; bottom: 1.5rem; left: 50%; display: flex; gap: 2rem; padding: 0.9rem 1.6rem; z-index: 1000; opacity: 0; transform: translate(-50%, 35px); }
         @media (prefers-reduced-motion: no-preference) { #bottomNavBar { transition: opacity 0.4s ease 0.3s, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.3s; } }
@@ -418,9 +474,10 @@
         @media (prefers-reduced-motion: no-preference) { .back-button { transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), background 0.3s ease, box-shadow 0.3s var(--transition-timing); } }
         .back-button:hover { transform: scale(1.12); background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25); }
         .back-button:active { transform: scale(1.02); }
-        .sub-view-panel .module-wrapper { display: flex; justify-content: center; align-items: stretch; width: 100%; flex-grow: 1; padding: 1.5rem 0; }
-        .sub-view-panel .module { display: flex; flex-direction: column; max-width: 1300px; width: 100%; background-color: var(--container-bg); background-image: var(--module-bg-pattern); box-shadow: 0 8px 25px var(--shadow-medium); border: 1px solid var(--table-border); padding: 1.5rem; border-radius: 1.2rem; overflow: hidden; margin-top: 0; }
-        #chartPanel .chart-container { flex-grow: 1; min-height: 400px; background: var(--container-bg); border-radius: 1rem; padding: 1rem; position: relative; cursor: grab; touch-action: pan-y; border: 1px solid var(--table-border); }
+        .sub-view-panel .module-wrapper { display: flex; justify-content: center; align-items: stretch; width: 100%; flex-grow: 1; padding: 0.5rem 0; }
+        .sub-view-panel .module { display: flex; flex-direction: column; max-width: 1300px; width: 100%; background-color: var(--container-bg); background-image: var(--module-bg-pattern); box-shadow: 0 8px 25px var(--shadow-medium); border: 1px solid var(--table-border); padding: 1.5rem; border-radius: 1.2rem; overflow: hidden; flex-grow: 1; }
+        #chartPanel .module { padding: 1rem; }
+        #chartPanel .chart-container { flex-grow: 1; min-height: 300px; height: calc(100% - 60px); background: var(--container-bg); border-radius: 1rem; position: relative; cursor: grab; touch-action: pan-y; border: 1px solid var(--table-border); }
         #chartPanel .chart-container.chart-panning { cursor: grabbing; }
         .chart-zoom-buttons { position: absolute; top: 1.2rem; right: 1.2rem; z-index: 10; }
         .chart-zoom-buttons input[type="range"] { display: block; }
@@ -428,8 +485,8 @@
         #chart-pan-container {
             padding: 1rem 1rem 0 1rem;
             position: relative;
-            height: 50px; /* 給予足夠高度容納刻度尺 */
-            display: none; /* 初始隱藏 */
+            height: 50px;
+            display: none;
             flex-shrink: 0;
         }
         #pan-track {
@@ -441,19 +498,20 @@
         }
         #pan-thumb {
             position: absolute;
-            top: 5px; /* (track height - thumb height) / 2 */
+            top: 5px; 
             height: 16px;
             background-color: var(--primary-color);
             border: 2px solid var(--container-bg);
             border-radius: 8px;
             cursor: grab;
             box-shadow: 0 2px 8px hsla(0,0%,0%,0.3);
+            touch-action: none;
         }
         #pan-thumb:active { cursor: grabbing; }
         #pan-ruler {
             position: absolute;
             top: 25px; left: 10px; right: 10px;
-            height: 25px; /* 刻度尺區域高度 */
+            height: 25px; 
             pointer-events: none;
         }
         #pan-ruler-svg { width: 100%; height: 100%; }
@@ -474,15 +532,18 @@
         .sub-view-panel th { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.12); color: var(--primary-color); padding: 1.1rem 1.3rem; font-size: 1.05rem; border-bottom: 2px solid var(--primary-color); text-align: center; font-family: 'Montserrat', sans-serif;}
         .sub-view-panel tr:nth-child(even) { background-color: hsla(0, 0%, 100%, 0.035); }
         @media (prefers-reduced-motion: no-preference) { .sub-view-panel tr { transition: background-color 0.25s ease; } .sub-view-panel tr:hover { background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.1); } }
-        .sub-view-panel td { border-bottom: 1px solid var(--table-border); padding: 1.1rem 1.3rem; text-align: center; word-break: break-word; vertical-align: middle; }
+        .sub-view-panel td { border-bottom: 1px solid var(--table-border); padding: 1.1rem 1.3rem; text-align: center; word-break: break-word; vertical-align: middle; font-weight: 600; }
         #commonPanel .table-container { display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center; }
         .sub-view-panel .table-box { flex: 1 1 40%; min-width: 300px; max-width: 520px; background: transparent; padding: 0; border-radius: 1rem; box-shadow: none; }
         .sub-view-panel .table-box h3 { text-align: center; margin-bottom: 1.5rem; color: var(--primary-color); font-family: 'Montserrat', sans-serif; font-size: 1.25rem;}
         #commonPanel .table-responsive { border-radius: 1rem; border: 1px solid var(--table-border); }
         #commonPanel table th { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.12); }
-        #historyPanel .table-responsive { border: none; }
+        #historyPanel .table-responsive { border: none; flex-grow: 1; overflow-y: auto; }
+        #historyPanel .module { display: flex; flex-direction: column; }
+        #historyPanel .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+        #historyPanel .history-header h2 { margin: 0; }
         #historyPanel table th { background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.12); }
-        #historyPaginationPanel { margin-top: 1.8rem; display: flex; justify-content: center; align-items: center; }
+        #historyPaginationPanel { margin-top: 1.8rem; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         .subtle-btn { background: none; border: 1px solid var(--glass-border); color: var(--text-muted-color); padding: 0.6rem 1.1rem; border-radius: 0.6rem; cursor: pointer; font-size: 0.95rem; margin: 0 0.4rem; display: inline-flex; align-items: center; gap: 0.4em; }
         .subtle-btn svg { width: 1em; height: 1em; fill: currentColor;}
         @media (prefers-reduced-motion: no-preference) { .subtle-btn { transition: background 0.25s, color 0.25s, transform 0.2s ease, box-shadow 0.2s var(--transition-timing); } }
@@ -528,15 +589,16 @@
             width: 90%;
             max-width: 480px;
             max-height: 90vh;
-            overflow: visible; /* Allow shadows */
+            overflow: visible; 
             will-change: transform, opacity;
         }
 
-        #cardActionChoiceModal, #longNumModal, #processDetailsModal, #rangeResultModal {
+        #cardActionChoiceModal, #longNumModal, #rangeResultModal {
             max-width: inherit;
         }
         #cardActionChoiceModal.modal-content-container { max-width: 320px; }
-        #longNumModal.modal-content-container, #processDetailsModal.modal-content-container, #rangeResultModal.modal-content-container { max-width: 520px; }
+        #longNumModal.modal-content-container, #rangeResultModal.modal-content-container { max-width: 520px; }
+        #processDetailsModal.modal-content-container { max-width: 720px; }
         
         .modal-content-container .modal-content-wrapper {
              max-height: calc(90vh - 4.4rem); overflow-y: auto; padding-right: 0.8rem;
@@ -650,9 +712,7 @@
         .selection-cursor-indicator { position: fixed; width: 4px; height: 4px; background-color: white; border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 100000; opacity: 0; visibility: hidden; will-change: transform, opacity, scale; scale: 1; box-shadow: 0 0 5px 1px white; }
         @media (prefers-reduced-motion: no-preference) { .selection-cursor-indicator { transition: background-color 0.2s ease, box-shadow 0.2s ease; } }
         body.native-cursor .cursor, body.native-cursor .selection-box, body.native-cursor .selection-cursor-indicator, body.native-cursor .click-effect { display: none !important; visibility: hidden !important; opacity: 0 !important; }
-        .loader { font-size: 1.5rem; display: inline-block; color: var(--primary-color); margin: 1rem auto; }
-        @media (prefers-reduced-motion: no-preference) { .loader { animation: spin 1s linear infinite; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } }
-         
+        
         .tooltip { position: fixed; background: var(--glass-bg); color: var(--text-color); padding: 0.7rem 1.1rem; border-radius: 0.7rem; font-size: 0.95rem; white-space: nowrap; z-index: 15000; opacity: 0; visibility: hidden; pointer-events: none; backdrop-filter: blur(12px); border: 1px solid var(--glass-border); box-shadow: 0 5px 15px var(--shadow-medium); transition: opacity 0.1s ease, visibility 0s linear 0.1s; } 
         .tooltip.visible { opacity: 1; visibility: visible; transition-delay: 0s; }
         .tooltip-content dl { margin: 0; display: flex; flex-direction: column; gap: 0.4rem; }
@@ -661,43 +721,34 @@
         .tooltip-content .hint { font-size: 0.82em; opacity: 0.85; margin-top: 0.5rem; text-align: center; }
 
          @media (max-width: 1024px) { 
-            body.input-focused #calculatorContentWrapper,
-            body.results-focused #calculatorContentWrapper {
+            #calculatorFlexContainer {
+                align-items: flex-start;
+                padding-top: 6rem;
+                padding-bottom: 2rem;
+            }
+            #calculatorContentWrapper {
                 flex-direction: column !important;
-                align-items: center !important;
                 gap: 1.5rem;
                 max-width: 580px;
                 padding: 0.5rem;
                 justify-content: flex-start !important;
             }
-            body.input-focused #inputContainerWrapper,
-            body.results-focused #inputContainerWrapper,
-            #inputContainerWrapper,
-            body.input-focused #resultsContainer,
-            body.results-focused #resultsContainer,
-            #resultsContainer {
-                flex-basis: auto !important;
-                max-width: 100% !important;
+            #inputContainerWrapper, #resultsContainer {
+                position: relative; 
                 transform: none !important;
                 opacity: 1 !important;
-                margin: 0 !important;
+                max-width: 100% !important;
+                transition: transform 0.4s var(--transition-timing), opacity 0.4s var(--transition-timing);
             }
-
-            #inputContainerWrapper.input-area-minimized {
-                max-height: 70px;
-                opacity: 0.6 !important;
-                overflow: hidden;
+            body.results-focused #inputContainerWrapper {
                 cursor: pointer;
-                transition: max-height 0.4s var(--transition-timing), opacity 0.4s var(--transition-timing), padding 0.4s var(--transition-timing);
+                opacity: 0.6 !important;
+                transform: translateY(-20px) scale(0.98) !important;
             }
-            #inputContainerWrapper.input-area-minimized > *:not(#inputLabel) {
-                display: none;
-            }
-            #inputContainerWrapper.input-area-minimized #inputLabel {
-                transform: none;
-                opacity: 1;
-                margin-bottom: 0;
-                padding: 1rem 0;
+            body.input-focused #resultsContainer.visible-true {
+                opacity: 0 !important;
+                transform: translateY(100%) !important;
+                pointer-events: none;
             }
               .sub-view-panel .module { padding: 1.5rem; max-width: 95%; } 
          }
@@ -712,47 +763,51 @@
              #chartPanel .chart-container { height: 60vh; min-height: 380px; }
              .chart-zoom-buttons { top: 1rem; right: 1rem; }
              .input-wrapper:focus-within { transform: translateY(-4px) scale(1.03) !important; }
-             body.input-focused .calc-input, body.results-focused .calc-input { font-size: 1.6rem; padding: 1.2rem 3.5rem 1.2rem 1.6rem; }
          }
          @media (max-width: 768px) {
             #navWheel { display: none !important; }
          }
          @media (max-width: 480px) { 
-             body { font-size: 15px; }
              #mainView { padding: 0.5rem; padding-top: 5rem; }
              #calculatorFlexContainer { padding: 0.2rem; padding-top: 5rem; }
              #calculatorContentWrapper { gap: 1.2rem; padding: 0.2rem; max-width: 100%; }
+             body.results-focused #inputContainerWrapper {
+                transform: translateY(-30px) scale(0.95) !important;
+             }
              .mode-select-btn { padding: 1.1rem 1.5rem; min-width: auto; font-size: clamp(0.9rem, 3.5vw, 1rem); flex-grow: 1; }
              #modeSelectionButtonsWrapper { gap: 1rem; width: 95%;}
              #inputContainer { gap: 1rem; padding: 1rem 0.5rem; }
+             .input-wrapper { flex-grow: 1; }
              .calc-input { font-size: 1.4rem !important; padding: 1rem 3.2rem 1rem 1.2rem !important; border-radius: 0.9rem !important; }
              #inputActions { margin-top: 1rem; gap: 0.9rem;}
-             .input-action-btn { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+             .input-action-btn { padding: 0.6rem 1rem; font-size: 0.9rem; }
              #addInputBtn { padding: 0.5rem 0.8rem; font-size: 1.2rem; }
              #clearAllInputsBtn { padding: 0.5rem 0.8rem; }
-             #calculationHint { font-size: 0.82rem; margin-top: 0.5rem;}
+             #calculationHint { font-size: 0.85rem; margin-top: 0.5rem;}
              #resultsContainer { padding: 1.5rem 1.2rem; } 
              #resultOutput { max-height: 40vh; }
-             #resultOutput td { padding: 0.6rem 0.4rem; font-size: 0.9rem; }
-             #resultOutput td.result-input-cell { width: 45%; } 
-             #resultOutput td.result-output-cell { width: 40%; font-size: 0.95rem; }  
-             #resultOutput td.result-actions-cell { width: 15%; } 
-             .result-item-actions { right: 0.2rem; gap: 0.3rem; }
-             .result-item-btn { width: 24px; height: 24px; }
-             .result-item-btn svg { width: 0.8em; height: 0.8em;}
-             #resultInteractionHint { font-size: 0.8rem; margin-top: 1rem; padding-top: 1rem;}
+             #resultOutput td { padding: 0.6rem 0.4rem; font-size: 0.95rem; }
+             #resultOutput td.result-input-cell { width: auto; } 
+             #resultOutput td.result-arrow-cell { width: auto; } 
+             #resultOutput td.result-output-cell { width: auto; font-size: 1rem; }  
+             #resultOutput td.result-actions-cell { width: auto; } 
+             .result-item-actions { right: 0.2rem; gap: 0.4rem; }
+             .result-item-btn { width: 28px; height: 28px; }
+             .result-item-btn svg { width: 0.85em; height: 0.85em;}
+             #resultsFooter { margin-top: 1rem; padding-top: 1rem; }
+             #resultInteractionHint { font-size: 0.8rem; }
              #bottomNavBar { gap: 1rem; padding: 0.6rem 1rem; border-radius: 1.8rem; }
              .nav-item { width: 75px; height: 55px; border-radius: 1rem; }
              .nav-item span { font-size: 0.8rem; bottom: 0.5rem; }
              .sub-view-panel { padding: 0.5rem; padding-top: 5rem; }
              .sub-view-panel .module-wrapper { padding: 0.2rem 0;}
              .sub-view-panel .module { width: 100%; padding: 1rem; border-radius: 1rem; }
-             .sub-view-panel td, .sub-view-panel th { padding: 0.8rem 0.5rem; font-size: 0.9rem; }
+             .sub-view-panel td, .sub-view-panel th { padding: 0.8rem 0.5rem; font-size: 0.95rem; }
              #historyPanel table th:nth-child(1) { width: 20%; }
              #historyPanel table th:nth-child(2) { width: 15%; }
              #historyPanel table th:nth-child(3) { width: 32%; }
              #historyPanel table th:nth-child(4) { width: 33%; }
-             #historyPanel td { font-size: 0.85rem; }
+             #historyPanel td { font-size: 0.9rem; }
              #settingsPopupGlobal { width: calc(100% - 2rem); left: 1rem; top: calc(1.5rem + 48px); max-height: 75vh; overflow-y: auto; padding: 1.5rem; border-radius: 1rem; min-width: unset; }
              .settings-item label { white-space: normal; margin-bottom: 0.5rem; font-size: 0.9rem; }
              #settingsPopupGlobal select { font-size: 0.9rem; min-width: 100px; max-width: 130px; } 
@@ -761,10 +816,9 @@
              .modal-content-container .modal-content-wrapper { max-height: calc(90vh - 3.6rem); }
              .details-modal-like dt, .details-modal-like dd { font-size: 0.95rem;}
              #landingContent { width: 90%; padding: 2rem 1.5rem; }
-             #languageSelector { width: 90%; padding: 1.5rem 1.8rem; }
-             #chartPanel .chart-container { height: 65vh; min-height: 350px; padding: 1rem; }
+             #chartPanel .chart-container { height: 65vh; min-height: 350px; padding: 0.5rem; }
              #topBar { top: 1.5rem; right: 1rem; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 4rem); }
-             #topBar .mode-toggle { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+             #topBar .mode-toggle { padding: 0.6rem 1rem; font-size: 0.9rem; }
              #settingsToggleGlobal { top: 1.5rem; left: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
              #settingsToggleGlobal:hover { width: 105px; }
              .chart-zoom-buttons { top: 0.8rem; right: 0.8rem; }
@@ -782,18 +836,18 @@
                  <h1 id="landingTitle">RANDOM DICE : PvP Defence<span class="sub"></span></h1>
                  <p id="clickPrompt"></p>
             </div>
-            <div id="languageSelector" class="glass">
-                 <h3 id="languageTitle">
-                      <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"></path></svg>
-                 </h3>
-                 <div id="languageList">
-                      <button data-lang="zh-CN">简中</button>
-                      <button data-lang="zh-TW">繁中</button>
-                      <button data-lang="en">English</button>
-                      <button data-lang="ja">日本語</button>
-                      <button data-lang="ko">한국어</button>
-                 </div>
-            </div>
+        </div>
+        <div id="languageSelector" class="glass">
+             <h3 id="languageTitle">
+                  <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"></path></svg>
+             </h3>
+             <div id="languageList">
+                  <button data-lang="zh-CN">简中</button>
+                  <button data-lang="zh-TW">繁中</button>
+                  <button data-lang="en">English</button>
+                  <button data-lang="ja">日本語</button>
+                  <button data-lang="ko">한국어</button>
+             </div>
         </div>
     </div>
 
@@ -881,7 +935,13 @@
 
                         <div id="resultsContainer" class="glass">
                             <div id="resultOutput"><div style="text-align: center; padding: 2rem 0; color: var(--text-muted-color);" data-i18n="calculator.resultPlaceholder"></div></div>
-                            <p id="resultInteractionHint"></p>
+                            <div id="resultsFooter">
+                                <p id="resultInteractionHint"></p>
+                                <button id="multiCopyBtn" class="subtle-btn glow-on-hover" style="display: none;">
+                                    <svg viewBox="0 0 24 24" style="width: 1.1em; height: 1.1em; margin-right: 0.5em;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-1 16H8V7h11v14zM10 9h7v2h-7zm0 4h7v2h-7zm0 4h5v2h-5z"></path></svg>
+                                    <span></span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -949,7 +1009,7 @@
                      <div class="chart-container">
                          <canvas id="chartPanelCanvas"></canvas>
                          <div class="chart-zoom-buttons">
-                             <input type="range" id="chartZoomSlider" min="1" max="50" step="0.1" value="1" style="width: 120px;">
+                             <input type="range" id="chartZoomSlider" min="1" max="100" step="0.1" value="1" style="width: 120px;">
                          </div>
                      </div>
                      <div id="chart-pan-container">
@@ -969,13 +1029,13 @@
              </button>
             <div class="module-wrapper">
                  <div class="module">
-                     <h2></h2>
-                     <div style="text-align: right; margin-bottom: 1.2rem;">
-                         <button id="clearHistoryPanel" class="subtle-btn glow-on-hover">
-                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
-                            <span class="text"></span>
-                         </button>
-                     </div>
+                    <div class="history-header">
+                        <h2></h2>
+                        <button id="clearHistoryPanel" class="subtle-btn glow-on-hover">
+                           <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>
+                           <span class="text"></span>
+                        </button>
+                    </div>
                      <div class="table-responsive">
                          <table id="historyTablePanel">
                              <thead><tr><th></th><th></th><th></th><th></th></tr></thead>
@@ -1055,10 +1115,25 @@
             "use strict";
             const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
             if (isTouchDevice) { document.body.classList.add('is-touch-device'); }
+            
+            const setViewportHeight = () => {
+                if (window.visualViewport) {
+                    document.documentElement.style.setProperty('--viewport-height', `${window.visualViewport.height}px`);
+                } else {
+                    document.documentElement.style.setProperty('--viewport-height', `${window.innerHeight}px`);
+                }
+            };
+            setViewportHeight();
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', setViewportHeight);
+            } else {
+                window.addEventListener('resize', setViewportHeight);
+            }
+
             const landingPage=document.getElementById("landingPage"),landingContent=document.getElementById("landingContent"),languageSelector=document.getElementById("languageSelector"),languageList=document.getElementById("languageList"),clickPrompt=document.getElementById("clickPrompt"),mainContent=document.getElementById("appContainer"),body=document.body,landingThemeToggle=document.getElementById("landingThemeToggle"),perspectiveWrapper = document.getElementById("landing-perspective-wrapper");const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;const animSpeedMultiplier = prefersReducedMotion ? 0 : 1;let landingLang=localStorage.getItem("converter_language_v10")?JSON.parse(localStorage.getItem("converter_language_v10")):"auto";if (landingLang === "auto") { const browserLang = navigator.language.toLowerCase(); if (browserLang.startsWith("zh-cn")) landingLang = "zh-CN"; else if (browserLang.startsWith("zh")) landingLang = "zh-TW"; else if (browserLang.startsWith("ja")) landingLang = "ja"; else if (browserLang.startsWith("ko")) landingLang = "ko"; else landingLang = "en"; } languageList.querySelectorAll("button").forEach(btn => { btn.classList.toggle('active', btn.dataset.lang === landingLang); }); const tempTranslations={ "zh-CN": {sub: "回合数 - 奖励换算器", prompt: "点击任意处继续", langTitle: "语言"}, "zh-TW": {sub: "回合數 - 獎勵換算器", prompt: "點擊任意處繼續", langTitle: "語言"}, "en": {sub: "Wave - Reward Converter", prompt: "Click anywhere to continue", langTitle: "Language"}, "ja": {sub: "ウェーブ数・報酬換算機", prompt: "クリックして続行", langTitle: "言語"}, "ko": {sub: "웨이브 수 - 보상 변환기", prompt: "클릭하여 계속하기", langTitle: "언어"} }; const tt=tempTranslations[landingLang]||tempTranslations.en; document.getElementById("landingTitle").querySelector(".sub").textContent=tt.sub; clickPrompt.textContent=tt.prompt; const langTitleNode = document.getElementById("languageTitle").childNodes[2]; if (langTitleNode && langTitleNode.nodeType === Node.TEXT_NODE) { langTitleNode.nodeValue = ` ${tt.langTitle}`; } let currentTheme = localStorage.getItem("converter_theme_v10") ? JSON.parse(localStorage.getItem("converter_theme_v10")) : "system"; const applyTheme = (themePreference) => { const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; let finalTheme = themePreference; if (finalTheme === 'system') { finalTheme = systemPrefersDark ? 'dark' : 'light'; } body.classList.remove('light-theme', 'dark-theme'); body.classList.add(finalTheme === 'light' ? 'light-theme' : 'dark-theme'); landingThemeToggle.innerHTML = finalTheme === 'light' ? `<svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.03-.17.06-.33.1-.5H2v1zm18-.5c.04.17.07.33.1.5h2v-1h-2.1zM11 .55h2V3.5h-2V.55zm11 11.45V14h2.5v-2H22zm-11 8h2V23.5h-2V22zM3.5 18.09l1.41-1.41 1.06 1.06L4.56 19.15 3.5 18.09zm14.18-14.18 1.06-1.06 1.41 1.41-1.06 1.06-1.41-1.41zM4.56 4.85 3.5 5.91 4.56 7l1.06-1.06-1.06-1.06zM18.09 19.15l1.41 1.41 1.06-1.06-1.41-1.41-1.06 1.06z"></path></svg>` : `<svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"></path></svg>`; return finalTheme; }; applyTheme(currentTheme); landingThemeToggle.addEventListener('click', (e) => { e.stopPropagation(); const isLight = body.classList.contains('light-theme'); let nextThemePref; if (currentTheme === 'system') { nextThemePref = isLight ? 'dark' : 'light'; } else if (currentTheme === 'light') { nextThemePref = 'dark'; } else { nextThemePref = 'system'; } currentTheme = nextThemePref; applyTheme(currentTheme); localStorage.setItem("converter_theme_v10", JSON.stringify(currentTheme)); }); 
             gsap.to(landingPage,{autoAlpha:1, duration: 0.3 * animSpeedMultiplier}); 
             gsap.to(landingContent, {autoAlpha:1, y:0, duration: 0.4 * animSpeedMultiplier, ease:"power2.out", delay: 0.1 * animSpeedMultiplier});
-            gsap.to(languageSelector, {autoAlpha:1, y:0, duration: 0.4 * animSpeedMultiplier, ease:"power2.out", delay: 0.15 * animSpeedMultiplier});
+            gsap.to(languageSelector, {autoAlpha:1, y: '+=0', duration: 0.4 * animSpeedMultiplier, ease:"power2.out", delay: 0.15 * animSpeedMultiplier});
             gsap.to(clickPrompt,{opacity:1, duration: 0.4 * animSpeedMultiplier, delay: 0.4 * animSpeedMultiplier}); 
             languageList.addEventListener("click", e => { if(e.target.tagName==="BUTTON"){ const lang = e.target.dataset.lang; languageList.querySelectorAll("button").forEach(b => {b.classList.toggle("active", b === e.target)}); landingLang = lang; localStorage.setItem("converter_language_v10", JSON.stringify(lang)); const newT = tempTranslations[lang]||tempTranslations.en; document.getElementById("landingTitle").querySelector(".sub").textContent=newT.sub; clickPrompt.textContent = newT.prompt; const newLangTitleNode = document.getElementById("languageTitle").childNodes[2]; if (newLangTitleNode && newLangTitleNode.nodeType === Node.TEXT_NODE) { newLangTitleNode.nodeValue = ` ${newT.langTitle}`; } e.stopPropagation(); } }); 
             
@@ -1111,10 +1186,10 @@
                 }
             }
 
-            const APP_VERSION = "1.3.6"; 
+            const APP_VERSION = "1.4.3"; 
             const LS_KEYS = { language: "converter_language_v10", theme: "converter_theme_v10", cursor: "converter_cursor_v10", lastRank: "converter_lastRank_v10", history: "converter_history_v10", mode: "converter_mode_v10"};
             const CONFIG = {
-                chart: { maxWaves: 1600, safetyLimit: 10n**18n, plotLimit: Number.MAX_SAFE_INTEGER,  yAxisMargin: 1.15, yAxisInitialMax: 20000 },
+                chart: { maxWaves: 1600, safetyLimit: 10n**18n, plotLimit: Number.MAX_SAFE_INTEGER, yAxisInitialMax: 20000, minZoomRange: 16 },
                 historyRecordsPerPage: 8, maxInputs: 8,
                 animation: { durationShort: 0.2, durationNormal: 0.3, durationLong: 0.4, easeStandard: "power2.out", easeStrong: "expo.out", easeBounce: "back.out(1.4)", easeIn: "power2.in" }, 
                 dust: { count: 80, countMobile: 40 },
@@ -1123,11 +1198,11 @@
             const REWARDS = { 1:{c:14,r:4,h:2,l:0.01,g:320,d:3}, 2:{c:20,r:5,h:2,l:0.01,g:432,d:3}, 3:{c:25,r:6,h:3,l:0.01,g:544,d:3}, 4:{c:28,r:8,h:4,l:0.01,g:640,d:3}, 5:{c:33,r:9,h:4,l:0.01,g:736,d:3}, 6:{c:37,r:10,h:5,l:0.01,g:832,d:3}, 7:{c:42,r:11,h:5,l:0.01,g:925,d:3}, 8:{c:46,r:12,h:6,l:0.01,g:1024,d:3}, 9:{c:49,r:14,h:7,l:0.01,g:1120,d:3}, 10:{c:54,r:15,h:7,l:0.01,g:1312,d:3}, 11:{c:63,r:17,h:8,l:0.01,g:1408,d:3}, 12:{c:67,r:18,h:9,l:0.01,g:1504,d:3}, 13:{c:71,r:19,h:9,l:0.01,g:1594,d:3}, 14:{c:77,r:20,h:10,l:0.01,g:1687,d:3}, 15:{c:82,r:21,h:10,l:0.01,g:1775,d:3}, 16:{c:87,r:22,h:11,l:0.01,g:1866,d:3}, 17:{c:92,r:23,h:11,l:0.01,g:1951,d:3}, 18:{c:99,r:24,h:12,l:0.01,g:2044,d:3}, 19:{c:105,r:25,h:12,l:0.01,g:2133,d:3}, 20:{c:111,r:26,h:13,l:0.01,g:2222,d:3} };
 
             const translations = {
-                "zh-TW": { clear: "清除", nav: { calculator: "換算器", common: "常用表", chartSection: "關係圖", history: "紀錄", back: "返回" }, calculator: { title: "卡片數 / 回合數 換算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "資源 ❯ 回合", inputLabel: "輸入{modeLabel} (最多{max}個):", inputLabelResource: "輸入資源數量:", gold: "金幣", diamond: "鑽石", calcBtn: "換算", copyItem: "複製此項", processItem: "查看過程", resultInteractionHint: { desktop: "點擊結果項目可進行操作。<br>懸停於卡片數可預覽詳情。", mobile: "點擊結果項目可進行操作。<br>點擊卡片數可察看獎勵詳情。"}, dragDropHint: "拖動一個結果到另一個上以計算區間。", invalidInput: "請輸入有效整數", copyText: "複製", placeholder: "點此輸入", maxValues: "最多 {max} 個數值", negativeInfo: "支援負數計算", modeSelectionHint: "選擇換算模式開始計算", resultPlaceholder: "計算結果將顯示在此處", addInput: "新增欄位", calculationHint: "點擊任意空白處開始計算", fillEmpty: "請先填寫空白欄位", removeDuplicates: "存在重複的數值", addInputCommaHint: "或按 <kbd>,</kbd> 新增欄位", clearAll: "清除全部"}, common: { title: "常用換算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡數 - 回合數關係圖", chartTypeLabel: "圖表類型:", optionLine: "折線圖", optionBar: "柱狀圖", xAxis: "回合數", yAxis: "卡片數", waveSuffix: "", clickPrompt: "點擊圖表查看數值", zoomIn: "放大", zoomOut: "縮小", resetZoom: "重設縮放" }, history: { title: "歷史紀錄", clearHistory: "清除紀錄", noRecord: "無紀錄" }, process: { title: "換算過程", stepTitle: "{modeTitle} | 輸入: {input}", w2cTitle: "回合 → 卡片", c2wTitle: "卡片 → 回合", g2wTitle: "資源 → 回合", w2cBaseTitle: "基礎計算 (45回合內)", w2cBaseCalcLabel: "基礎卡片", w2cBaseCalcValue: "({baseWave} ÷ 5) × 8 + 額外獎勵", w2cExtraTitle: "額外範圍計算 (超過45回合)", w2cExtraRangeLabel: "區間 {a}～{b}", w2cExtraCalcLabel: "增加卡片", w2cFinalTotalLabel: "最終總計", c2wDescTitle: "搜尋方法", c2wDesc: "使用二分搜尋法，在龐大的回合數中快速定位最接近的目標。", c2wSearchStep: "第{step}次猜測", c2wSearchGuess: "猜測回合: {guess}", c2wSearchResult: "得到卡片: {cards}", c2wSearchAdjust: "結果{comparison}目標，縮小範圍至 [{low} , {high}]", c2wSearchComparison_low: "小於", c2wSearchComparison_high: "大於或等於", negTitle: "負數處理", negW2C: "負數回合數對應負數卡片數", negC2W: "負數卡片數對應負數回合數" }, range: { title: "區間計算結果", from: "從", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "時間", header2: "模式", header3: "輸入", header4: "結果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "階" }, pagination: { prev: "上頁", next: "下頁", pageInfo: "{current}/{total}頁" }, language: "語言", settings: { title: "設定", language: "語言", theme: "主題", cursor: "游標樣式" }, autoSelectLanguage: "自動偵測", themeOptions: { system: "系統", light: "淺色", dark: "深色"}, cursorOptions: { custom: "自訂", native: "系統預設"}, reward: { title: "卡片獎勵詳情", selectRank: "選擇段位:", boxes: "箱子數", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "傳說", gold: "金幣", diamonds: "鑽石", expected: "(期望)", clickHint: "點擊卡片數可查看獎勵詳情" }, longNum: { copy: "複製完整數字", choiceTitle: "選擇操作", choiceShowFull: "顯示完整數字", choiceShowReward: "獎勵詳情", fullValueTitle: "完整數值", fullNumberLabel: "完整數字" }, copied: "已複製", close: "關閉"},
-                "en": { clear: "Clear", nav: { calculator: "Converter", common: "Tables", chartSection: "Chart", history: "History", back: "Back" }, calculator: { title: "Card / Wave Converter", modeW2C: "Wave ❯ Cards", modeC2W: "Cards ❯ Wave", modeG2W: "Resource ❯ Wave", inputLabel: "Enter {modeLabel} (Max {max}):", inputLabelResource: "Enter Resource Amount:", gold: "Gold", diamond: "Diamond", calcBtn: "Calculate", copyItem: "Copy Item", processItem: "View Process", resultInteractionHint: { desktop: "Click a result item for actions.<br>Hover over card numbers for a preview.", mobile: "Click a result item for actions.<br>Tap card numbers for reward details."}, dragDropHint: "Drag a result onto another to calculate the range.", invalidInput: "Enter valid integers", copyText: "Copy", placeholder: "Enter number...", maxValues: "Max {max} values", negativeInfo: "Negative number calculation supported", modeSelectionHint: "Select a conversion mode to begin calculation", resultPlaceholder: "Calculation results will appear here", addInput: "Add Input", calculationHint: "Click any empty space to calculate", fillEmpty: "Please fill empty fields first", removeDuplicates: "Please remove duplicate values", addInputCommaHint: "or press <kbd>,</kbd> to add input", clearAll: "Clear All"}, common: { title: "Common Conversions", w2c: "Wave → Cards", c2w: "Cards → Wave" }, chart: { title: "Cards vs. Waves", chartTypeLabel: "Chart Type:", optionLine: "Line", optionBar: "Bar", xAxis: "Waves", yAxis: "Cards", waveSuffix: "", clickPrompt: "Click chart for values", zoomIn: "Zoom In", zoomOut: "Zoom Out", resetZoom: "Reset Zoom" }, history: { title: "History", clearHistory: "Clear History", noRecord: "No records" }, process: { title: "Calculation Process", stepTitle: "{modeTitle} | Input: {input}", w2cTitle: "Wave → Cards", c2wTitle: "Cards → Wave", g2wTitle: "Resource → Wave", w2cBaseTitle: "Base Calculation (within 45 waves)", w2cBaseCalcLabel: "Base Cards", w2cBaseCalcValue: "({baseWave} ÷ 5) × 8 + Bonus", w2cExtraTitle: "Extra Range Calculation (over 45 waves)", w2cExtraRangeLabel: "Range {a} ~ {b}", w2cExtraCalcLabel: "Add Cards", w2cFinalTotalLabel: "Final Total", c2wDescTitle: "Search Method", c2wDesc: "Using binary search to quickly find the target among vast wave numbers.", c2wSearchStep: "Attempt #{step}", c2wSearchGuess: "Guess Wave: {guess}", c2wSearchResult: "Yields Cards: {cards}", c2wSearchAdjust: "Result is {comparison} target, narrowing range to [{low}, {high}]", c2wSearchComparison_low: "less than", c2wSearchComparison_high: "greater than or equal to", negTitle: "Negative Handling", negW2C: "Negative waves correspond to negative cards", negC2W: "Negative cards correspond to negative waves" }, range: { title: "Range Calculation", from: "From", to: "To", difference: "Difference" }, tables: { w2c: { header1: "Wave", header2: "Cards" }, c2w: { header1: "Cards", header2: "Wave" }, history: { header1: "Time", header2: "Mode", header3: "Input", header4: "Result" } }, units: { waves: "Waves", cards: "Cards", waveSingle: "Wave", cardSingle: "Card", rank: "Rank" }, pagination: { prev: "Prev", next: "Next", pageInfo: "Page {current}/{total}" }, language: "Language", settings: { title: "Settings", language: "Language", theme: "Theme", cursor: "Cursor Style" }, autoSelectLanguage: "Auto-Detect", themeOptions: { system: "System", light: "Light", dark: "Dark"}, cursorOptions: { custom: "Custom", native: "System Default"}, reward: { title: "Card Reward Details", selectRank: "Select Rank:", boxes: "Boxes", commonDice: "Common", rareDice: "Rare", heroDice: "Hero", legendaryDice: "Legendary", gold: "Gold", diamonds: "Diamonds", expected: "(Exp.)", clickHint: "Click card number for details" }, longNum: { copy: "Copy Full Number", choiceTitle: "Select Action", choiceShowFull: "Show Full Number", choiceShowReward: "Reward Details", fullValueTitle: "Full Value", fullNumberLabel: "Full Number" }, copied: "Copied", close: "Close" },
-                "zh-CN": { clear: "清除", nav: { calculator: "换算", common: "常用表", chartSection: "关系图", history: "历史", back: "返回" }, calculator: { title: "卡片数 / 回合数 换算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "资源 ❯ 回合", inputLabel: "输入{modeLabel} (最多{max}个):", inputLabelResource: "输入资源数量:", gold: "金币", diamond: "钻石", calcBtn: "换算", copyItem: "复制此项", processItem: "查看过程", resultInteractionHint: { desktop: "点击结果项目可进行操作。<br>悬停于卡片数可预览详情。", mobile: "点击结果项目可进行操作。<br>点击卡片数可察看奖励详情。"}, dragDropHint: "拖动一个结果到另一个上以计算区间。", invalidInput: "请输入有效整数", copyText: "复制", placeholder: "点此输入", maxValues: "最多 {max} 个数值", negativeInfo: "支持负数计算", modeSelectionHint: "选择换算模式开始计算", resultPlaceholder: "计算结果将显示在此处", addInput: "新增字段", calculationHint: "点击任意空白处开始计算", fillEmpty: "请先填写空白字段", removeDuplicates: "存在重复的数值", addInputCommaHint: "或按 <kbd>,</kbd> 新增字段", clearAll: "清除全部"}, common: { title: "常用换算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡数 - 回合数关系图", chartTypeLabel: "图表类型:", optionLine: "折线图", optionBar: "柱状图", xAxis: "回合数", yAxis: "卡片数", waveSuffix: "", clickPrompt: "点击图表查看数值", zoomIn: "放大", zoomOut: "缩小", resetZoom: "重置缩放" }, history: { title: "历史记录", clearHistory: "清除历史", noRecord: "无记录" }, process: { title: "换算过程", stepTitle: "{modeTitle} | 输入: {input}", w2cTitle: "回合 → 卡片", c2wTitle: "卡片 → 回合", g2wTitle: "资源 → 回合", w2cBaseTitle: "基础计算 (45回合内)", w2cBaseCalcLabel: "基础卡片", w2cBaseCalcValue: "({baseWave} ÷ 5) × 8 + 额外奖励", w2cExtraTitle: "额外范围计算 (超过45回合)", w2cExtraRangeLabel: "区间 {a}～{b}", w2cExtraCalcLabel: "增加卡片", w2cFinalTotalLabel: "最终总计", c2wDescTitle: "查找方法", c2wDesc: "使用二分查找法，在庞大的回合数中快速定位最接近的目标。", c2wSearchStep: "第{step}次猜测", c2wSearchGuess: "猜测回合: {guess}", c2wSearchResult: "得到卡片: {cards}", c2wSearchAdjust: "结果{comparison}目标，缩小范围至 [{low} , {high}]", c2wSearchComparison_low: "小于", c2wSearchComparison_high: "大于或等于", negTitle: "负数处理", negW2C: "负数回合数对应负数卡片数", negC2W: "负数卡片数对应负数回合数" }, range: { title: "区间计算结果", from: "从", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "时间", header2: "模式", header3: "输入", header4: "结果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "阶" }, pagination: { prev: "上页", next: "下页", pageInfo: "{current}/{total}页" }, language: "语言", settings: { title: "设置", language: "语言", theme: "主题", cursor: "光标样式" }, autoSelectLanguage: "自动检测", themeOptions: { system: "系统", light: "浅色", dark: "深色" }, cursorOptions: { custom: "自定义", native: "系统默认" }, reward: { title: "卡片奖励详情", selectRank: "选择段位:", boxes: "箱子数", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "传说", gold: "金币", diamonds: "钻石", expected: "(期望)", clickHint: "点击卡片数可查看奖励详情" }, longNum: { copy: "复制完整数字", choiceTitle: "选择操作", choiceShowFull: "显示完整数字", choiceShowReward: "奖励详情", fullValueTitle: "完整数值", fullNumberLabel: "完整数字" }, copied: "已复制", close: "关闭" },
-                "ja": { clear: "クリア", nav: { calculator: "換算", common: "一覧", chartSection: "グラフ", history: "履歴", back: "戻る" }, calculator: { title: "カード/ウェーブ数 換算", modeW2C: "ウェーブ ❯ カード", modeC2W: "カード ❯ ウェーブ", modeG2W: "リソース ❯ ウェーブ", inputLabel: "{modeLabel}入力 (最大{max}個):", inputLabelResource: "リソース数量入力:", gold: "ゴールド", diamond: "ダイヤ", calcBtn: "換算", copyItem: "この項目をコピー", processItem: "過程を見る", resultInteractionHint: { desktop: "結果項目をクリックしてアクションを選択。<br>カード数にホバーで詳細プレビュー。", mobile: "結果項目をクリックしてアクションを選択。<br>カード数をタップして報酬詳細を表示。"}, dragDropHint: "ある結果を別の結果にドラッグして区間を計算します。", invalidInput: "有効な整数を入力", copyText: "コピー", placeholder: "入力...", maxValues: "最大{max}個", negativeInfo: "負の数計算対応", modeSelectionHint: "換算モードを選択して開始", resultPlaceholder: "計算結果はここに表示", addInput: "入力欄追加", calculationHint: "空白の場所をクリックして計算開始", fillEmpty: "空の欄を先に記入してください", removeDuplicates: "重複する値を削除してください", addInputCommaHint: "または <kbd>,</kbd> で入力欄追加", clearAll: "全てクリア"}, common: { title: "常用換算表", w2c: "ウェーブ → カード", c2w: "カード → ウェーブ" }, chart: { title: "カード vs ウェーブ", chartTypeLabel: "グラフ種類:", optionLine: "線グラフ", optionBar: "棒グラフ", xAxis: "ウェーブ数", yAxis: "カード数", waveSuffix: "", clickPrompt: "グラフをクリックして値表示", zoomIn: "拡大", zoomOut: "縮小", resetZoom: "リセット" }, history: { title: "履歴", clearHistory: "履歴削除", noRecord: "記録なし" }, process: { title: "計算過程", stepTitle: "{modeTitle} | 入力: {input}", w2cTitle: "ウェーブ → カード", c2wTitle: "カード → ウェーブ", g2wTitle: "リソース → ウェーブ", w2cBaseTitle: "基本計算 (45ウェーブ以内)", w2cBaseCalcLabel: "基本カード", w2cBaseCalcValue: "({baseWave} ÷ 5) × 8 + ボーナス", w2cExtraTitle: "追加範囲計算 (45ウェーブ以上)", w2cExtraRangeLabel: "区間 {a}～{b}", w2cExtraCalcLabel: "加算カード", w2cFinalTotalLabel: "最終合計", c2wDescTitle: "検索方法", c2wDesc: "二分探索で広大なウェーブ数から素早く目標値を特定します。", c2wSearchStep: "試行#{step}", c2wSearchGuess: "推測ウェーブ: {guess}", c2wSearchResult: "獲得カード: {cards}", c2wSearchAdjust: "結果が目標より{comparison}、範囲を [{low}, {high}] に絞り込む", c2wSearchComparison_low: "小さい", c2wSearchComparison_high: "大きいか等しい", negTitle: "負の数の処理", negW2C: "負のウェーブは負のカードに対応", negC2W: "負のカードは負のウェーブに対応" }, range: { title: "区間計算結果", from: "から", to: "まで", difference: "差分" }, tables: { w2c: { header1: "ウェーブ", header2: "カード" }, c2w: { header1: "カード", header2: "ウェーブ" }, history: { header1: "日時", header2: "モード", header3: "入力", header4: "結果" } }, units: { waves: "ウェーブ", cards: "カード", waveSingle: "ウェーブ", cardSingle: "カード", rank: "クラス" }, pagination: { prev: "前へ", next: "次へ", pageInfo: "{current}/{total}ページ" }, language: "言語", settings: { title: "設定", language: "言語", theme: "テーマ", cursor: "カーソル" }, autoSelectLanguage: "自動検出", themeOptions: { system: "システム", light: "ライト", dark: "ダーク" }, cursorOptions: { custom: "カスタム", native: "システム標準" }, reward: { title: "カード報酬詳細", selectRank: "クラス選択:", boxes: "箱の数", commonDice: "ノーマル", rareDice: "レア", heroDice: "エピック", legendaryDice: "伝説", gold: "ゴールド", diamonds: "ダイヤ", expected: "(期待値)", clickHint: "カード数をクリックして報酬詳細表示" }, longNum: { copy: "全数値コピー", choiceTitle: "アクション選択", choiceShowFull: "全数値表示", choiceShowReward: "報酬詳細", fullValueTitle: "全数値", fullNumberLabel: "全数値" }, copied: "コピー完了", close: "閉じる" },
-                "ko": { clear: "지우기", nav: { calculator: "변환", common: "표", chartSection: "차트", history: "기록", back: "뒤로" }, calculator: { title: "카드 / 웨이브 변환기", modeW2C: "웨이브 ❯ 카드", modeC2W: "카드 ❯ 웨이브", modeG2W: "자원 ❯ 웨이브", inputLabel: "{modeLabel} 입력 (최대 {max}개):", inputLabelResource: "자원 수량 입력:", gold: "골드", diamond: "다이아몬드", calcBtn: "변환", copyItem: "항목 복사", processItem: "과정 보기", resultInteractionHint: { desktop: "작업할 결과 항목을 클릭하십시오.<br>카드 번호 위에 마우스를 올리면 미리보기가 표시됩니다。", mobile: "작업할 결과 항목을 클릭하십시오.<br>보상 세부 정보를 보려면 카드 번호를 탭하세요."}, dragDropHint: "결과를 다른 결과 위로 드래그하여 범위를 계산합니다。", invalidInput: "유효한 정수 입력", copyText: "복사", placeholder: "입력...", maxValues: "최대 {max}개", negativeInfo: "음수 계산 지원", modeSelectionHint: "변환 모드를 선택하여 시작", resultPlaceholder: "계산 결과가 여기에 표시됩니다", addInput: "입력 추가", calculationHint: "빈 공간을 클릭하여 계산 시작", fillEmpty: "먼저 빈 칸을 채워주세요", removeDuplicates: "중복된 값을 제거해주세요", addInputCommaHint: "또는 <kbd>,</kbd> 로 입력 추가", clearAll: "모두 지우기"}, common: { title: "자주 쓰는 변환표", w2c: "웨이브 → 카드", c2w: "카드 → 웨이브" }, chart: { title: "카드 vs 웨이브", chartTypeLabel: "차트 종류:", optionLine: "선", optionBar: "막대", xAxis: "웨이브 수", yAxis: "카드 수", waveSuffix: "", clickPrompt: "차트 클릭하여 값 확인", zoomIn: "확대", zoomOut: "축소", resetZoom: "확대/축소 초기화" }, history: { title: "기록", clearHistory: "기록 삭제", noRecord: "기록 없음" }, process: { title: "계산 과정", stepTitle: "{modeTitle} | 입력: {input}", w2cTitle: "웨이브 → 카드", c2wTitle: "카드 → 웨이브", g2wTitle: "자원 → 웨이브", w2cBaseTitle: "기본 계산 (45 웨이브 이내)", w2cBaseCalcLabel: "기본 카드", w2cBaseCalcValue: "({baseWave} ÷ 5) × 8 + 보너스", w2cExtraTitle: "추가 범위 계산 (45 웨이브 초과)", w2cExtraRangeLabel: "구간 {a}～{b}", w2cExtraCalcLabel: "추가 카드", w2cFinalTotalLabel: "최종 합계", c2wDescTitle: "검색 방법", c2wDesc: "이진 탐색을 사용하여 방대한 웨이브 수에서 목표값을 빠르게 찾습니다。", c2wSearchStep: "시도 #{step}", c2wSearchGuess: "추측 웨이브: {guess}", c2wSearchResult: "획득 카드: {cards}", c2wSearchAdjust: "결과가 목표보다 {comparison}, 범위를 [{low}, {high}]로 좁힘", c2wSearchComparison_low: "작음", c2wSearchComparison_high: "크거나 같음", negTitle: "음수 처리", negW2C: "음수 웨이브는 음수 카드에 해당", negC2W: "음수 카드는 음수 웨이브에 해당" }, range: { title: "범위 계산 결과", from: "부터", to: "까지", difference: "차이" }, tables: { w2c: { header1: "웨이브", header2: "카드" }, c2w: { header1: "카드", header2: "웨이브" }, history: { header1: "시간", header2: "모드", header3: "입력", header4: "결과" } }, units: { waves: "웨이브", cards: "카드", waveSingle: "웨이브", cardSingle: "카드", rank: "클래스" }, pagination: { prev: "이전", next: "다음", pageInfo: "{current}/{total} 페이지" }, language: "언어", settings: { title: "설정", language: "언어", theme: "테마", cursor: "커서 스타일" }, autoSelectLanguage: "자동 감지", themeOptions: { system: "시스템", light: "라이트", dark: "다크" }, cursorOptions: { custom: "사용자 지정", native: "시스템 기본값" }, reward: { title: "카드 보상 상세", selectRank: "클래스 선택:", boxes: "상자 수", commonDice: "일반", rareDice: "희귀", heroDice: "영웅", legendaryDice: "전설", gold: "골드", diamonds: "다이아", expected: "(예상)", clickHint: "자세한 보상 정보를 보려면 카드 번호를 클릭하세요." }, longNum: { copy: "전체 숫자 복사", choiceTitle: "작업 선택", choiceShowFull: "전체 숫자 보기", choiceShowReward: "보상 세부 정보", fullValueTitle: "전체 값", fullNumberLabel: "전체 숫자" }, copied: "복사됨", close: "닫기" }
+                "zh-TW": { clear: "清除", nav: { calculator: "換算器", common: "常用表", chartSection: "關係圖", history: "紀錄", back: "返回" }, calculator: { title: "卡片/回合數 換算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "資源 ❯ 回合", inputLabel: "輸入{modeLabel}:", inputLabelResource: "輸入資源數量:", gold: "金幣", diamond: "鑽石", calcBtn: "換算", copyItem: "複製此項", processItem: "查看過程", resultInteractionHint: "- 點擊卡片數查看卡片寶箱掉落換算。<br>- 拖動一個結果到另一個上以計算區間。", invalidInput: "請輸入有效整數", copyText: "複製", copyAll: "複製全部", multiCopy: "多選複製", copySelected: "複製選取", placeholder: "點此輸入", maxValues: "最多 {max} 個數值", negativeInfo: "支援負數計算", modeSelectionHint: "選擇換算模式開始計算", resultPlaceholder: "計算結果將顯示在此處", addInput: "新增欄位", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白處開始換算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增輸入框，上限8個。", fillEmpty: "請先填寫空白欄位", removeDuplicates: "存在重複的數值", addInputCommaHint: "或按 <kbd>,</kbd> 新增欄位", clearAll: "清除全部"}, common: { title: "常用換算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡數 - 回合數關係圖", chartTypeLabel: "圖表類型:", optionLine: "折線圖", optionBar: "柱狀圖", xAxis: "回合數", yAxis: "卡片數", waveSuffix: "回合", clickPrompt: "點擊圖表查看數值", zoomIn: "放大", zoomOut: "縮小", resetZoom: "重設縮放" }, history: { title: "歷史紀錄", clearHistory: "清除紀錄", noRecord: "無紀錄" }, process: { title: "換算過程", stepTitle: "{modeTitle} | 輸入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "資源 → 回合(W)", negTitle: "負數處理", negInfo: "輸入的負數將對應到其絕對值的負數結果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合區間 = {start} ~ {end}", w2cFinalTotalLabel: "最終總計", g2wStep1Title: "資源 → 箱子數", g2wStep2Title: "箱子數 → 卡片數", g2wStep3Title: "卡片數 → 回合數", c2wSearchTitle: "二分搜尋法過程", c2wStep3Info: "『卡片 → 回合』二分搜尋", formula: "公式", calculation: "計算", finalResult: "最終結果", searchStep: "第 {n} 次猜測", guess: "猜測回合數", check: "驗算卡片數", adjustRange: "調整範圍", resourcePerBox: "每箱資源", newRange: "新範圍" }, range: { title: "區間計算結果", from: "從", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "時間", header2: "模式", header3: "輸入", header4: "結果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "階" }, pagination: { prev: "上一頁", next: "下一頁", pageInfo: "{current}/{total}頁" }, language: "語言", settings: { title: "設定", language: "語言", theme: "主題", cursor: "游標樣式" }, autoSelectLanguage: "自動偵測", themeOptions: { system: "系統", light: "淺色", dark: "深色"}, cursorOptions: { custom: "自訂", native: "系統預設"}, reward: { title: "卡片獎勵詳情", selectRank: "選擇段位:", boxes: "箱子數", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "傳說", gold: "金幣", diamonds: "鑽石", expected: "(期望)", clickHint: "點擊卡片數可查看獎勵詳情" }, longNum: { copy: "複製完整數字", choiceTitle: "選擇操作", choiceShowFull: "顯示完整數字", choiceShowReward: "獎勵詳情", fullValueTitle: "完整數值", fullNumberLabel: "完整數字" }, copied: "已複製", close: "關閉"},
+                "en": { clear: "Clear", nav: { calculator: "Converter", common: "Tables", chartSection: "Chart", history: "History", back: "Back" }, calculator: { title: "Card / Wave Converter", modeW2C: "Waves ❯ Cards", modeC2W: "Cards ❯ Waves", modeG2W: "Resource ❯ Waves", inputLabel: "Enter {modeLabel}:", inputLabelResource: "Enter Resource Amount:", gold: "Gold", diamond: "Diamond", calcBtn: "Calculate", copyItem: "Copy Item", processItem: "View Process", resultInteractionHint: "- Click card numbers for reward details.<br>- Drag a result onto another to calculate the range.", invalidInput: "Enter valid integers", copyText: "Copy", copyAll: "Copy All", multiCopy: "Multi-copy", copySelected: "Copy Selected", placeholder: "Enter number...", maxValues: "Max {max} values", negativeInfo: "Negative number calculation supported", modeSelectionHint: "Select a conversion mode to begin calculation", resultPlaceholder: "Calculation results will appear here", addInput: "Add Input", calculationHint: "- Press <kbd>Enter</kbd> or click empty space to calculate.<br>- Press <kbd>,</kbd> or <kbd>+</kbd> to add an input field (max 8).", fillEmpty: "Please fill empty fields first", removeDuplicates: "Please remove duplicate values", addInputCommaHint: "or press <kbd>,</kbd> to add input", clearAll: "Clear All"}, common: { title: "Common Conversions", w2c: "Waves → Cards", c2w: "Cards → Waves" }, chart: { title: "Cards vs. Waves", chartTypeLabel: "Chart Type:", optionLine: "Line", optionBar: "Bar", xAxis: "Waves", yAxis: "Cards", waveSuffix: "W", clickPrompt: "Click chart for values", zoomIn: "Zoom In", zoomOut: "Zoom Out", resetZoom: "Reset Zoom" }, history: { title: "History", clearHistory: "Clear History", noRecord: "No records" }, process: { title: "Calculation Process", stepTitle: "{modeTitle} | Input: {input}", w2cTitle: "Waves(W) → Cards(C)", c2wTitle: "Cards(C) → Waves(W)", g2wTitle: "Resource → Waves(W)", negTitle: "Negative Handling", negInfo: "A negative input corresponds to the negative result of its absolute value, i.e., f(-x) = -f(x).", w2cFormulaTitle: "Formula Principle", w2cSegmentTitle: "Wave Segment W = {start} to {end}", w2cFinalTotalLabel: "Final Total", g2wStep1Title: "Step 1: Resource → Boxes", g2wStep2Title: "Step 2: Boxes → Cards (C)", g2wStep3Title: "Step 3: Cards (C) → Waves (W)", c2wSearchTitle: "Binary Search Process", c2wStep3Info: "This step uses the same algorithm as 'Cards → Waves' to find the final wave number.", formula: "Formula", calculation: "Calculation", finalResult: "Final Result", searchStep: "Iteration {n}", guess: "Guess W", check: "Resulting C", adjustRange: "Adjust Range", resourcePerBox: "Resource per Box", newRange: "New Range" }, range: { title: "Range Calculation", from: "From", to: "To", difference: "Difference" }, tables: { w2c: { header1: "Waves", header2: "Cards" }, c2w: { header1: "Cards", header2: "Waves" }, history: { header1: "Time", header2: "Mode", header3: "Input", header4: "Result" } }, units: { waves: "Waves", cards: "Cards", waveSingle: "Wave", cardSingle: "Card", rank: "Rank" }, pagination: { prev: "Prev", next: "Next", pageInfo: "Page {current}/{total}" }, language: "Language", settings: { title: "Settings", language: "Language", theme: "Theme", cursor: "Cursor Style" }, autoSelectLanguage: "Auto-Detect", themeOptions: { system: "System", light: "Light", dark: "Dark"}, cursorOptions: { custom: "Custom", native: "System Default"}, reward: { title: "Card Reward Details", selectRank: "Select Rank:", boxes: "Boxes", commonDice: "Common", rareDice: "Rare", heroDice: "Hero", legendaryDice: "Legendary", gold: "Gold", diamonds: "Diamonds", expected: "(Exp.)", clickHint: "Click card number for details" }, longNum: { copy: "Copy Full Number", choiceTitle: "Select Action", choiceShowFull: "Show Full Number", choiceShowReward: "Reward Details", fullValueTitle: "Full Value", fullNumberLabel: "Full Number" }, copied: "Copied", close: "Close" },
+                "zh-CN": { clear: "清除", nav: { calculator: "换算", common: "常用表", chartSection: "关系图", history: "历史", back: "返回" }, calculator: { title: "卡片/回合数 换算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "资源 ❯ 回合", inputLabel: "输入{modeLabel}:", inputLabelResource: "输入资源数量:", gold: "金币", diamond: "钻石", calcBtn: "换算", copyItem: "复制此项", processItem: "查看过程", resultInteractionHint: "- 点击卡片数查看卡片宝箱掉落换算。<br>- 拖动一个结果到另一个上以计算区间。", invalidInput: "请输入有效整数", copyText: "复制", copyAll: "复制全部", multiCopy: "多选复制", copySelected: "复制选取", placeholder: "点此输入", maxValues: "最多 {max} 个数值", negativeInfo: "支持负数计算", modeSelectionHint: "选择换算模式开始计算", resultPlaceholder: "计算结果将显示在此处", addInput: "新增字段", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白处开始换算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增输入框，上限8个。", fillEmpty: "请先填写空白字段", removeDuplicates: "存在重复的数值", addInputCommaHint: "或按 <kbd>,</kbd> 新增字段", clearAll: "清除全部"}, common: { title: "常用换算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡数 - 回合数关系图", chartTypeLabel: "图表类型:", optionLine: "折线图", optionBar: "柱状图", xAxis: "回合数", yAxis: "卡片数", waveSuffix: "回合", clickPrompt: "点击图表查看数值", zoomIn: "放大", zoomOut: "缩小", resetZoom: "重置缩放" }, history: { title: "历史记录", clearHistory: "清除历史", noRecord: "无记录" }, process: { title: "换算过程", stepTitle: "{modeTitle} | 输入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "资源 → 回合(W)", negTitle: "负数处理", negInfo: "输入的负数将对应到其绝对值的负数结果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合区间 = {start} ~ {end}", w2cFinalTotalLabel: "最终总计", g2wStep1Title: "资源 → 箱子数", g2wStep2Title: "箱子数 → 卡片数", g2wStep3Title: "卡片数 → 回合数", c2wSearchTitle: "二分查找法过程", c2wStep3Info: "“卡片 → 回合” 二分查找", formula: "公式", calculation: "计算", finalResult: "最终结果", searchStep: "第 {n} 次迭代", guess: "猜测回合数", check: "验算卡片数", adjustRange: "调整范围", resourcePerBox: "每箱资源", newRange: "新范围" }, range: { title: "区间计算结果", from: "从", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "时间", header2: "模式", header3: "输入", header4: "结果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "阶" }, pagination: { prev: "上页", next: "下页", pageInfo: "{current}/{total}页" }, language: "语言", settings: { title: "设置", language: "语言", theme: "主题", cursor: "光标样式" }, autoSelectLanguage: "自动检测", themeOptions: { system: "系统", light: "浅色", dark: "深色" }, cursorOptions: { custom: "自定义", native: "系统默认" }, reward: { title: "卡片奖励详情", selectRank: "选择段位:", boxes: "箱子数", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "传说", gold: "金币", diamonds: "钻石", expected: "(期望)", clickHint: "点击卡片数可查看奖励详情" }, longNum: { copy: "复制完整数字", choiceTitle: "选择操作", choiceShowFull: "显示完整数字", choiceShowReward: "奖励详情", fullValueTitle: "完整数值", fullNumberLabel: "完整数字" }, copied: "已复制", close: "关闭" },
+                "ja": { clear: "クリア", nav: { calculator: "換算", common: "一覧", chartSection: "グラフ", history: "履歴", back: "戻る" }, calculator: { title: "カード/ウェーブ数 換算", modeW2C: "ウェーブ ❯ カード", modeC2W: "カード ❯ ウェーブ", modeG2W: "リソース ❯ ウェーブ", inputLabel: "{modeLabel}入力：", inputLabelResource: "リソース数量入力:", gold: "ゴールド", diamond: "ダイヤ", calcBtn: "換算", copyItem: "この項目をコピー", processItem: "過程を見る", resultInteractionHint: "- カード数をクリックして報酬詳細を表示。<br>- ある結果を別の結果にドラッグして区間を計算します。", invalidInput: "有効な整数を入力", copyText: "コピー", copyAll: "すべてコピー", multiCopy: "複数選択コピー", copySelected: "選択項目をコピー", placeholder: "入力...", maxValues: "最大{max}個", negativeInfo: "負の数計算対応", modeSelectionHint: "換算モードを選択して開始", resultPlaceholder: "計算結果はここに表示", addInput: "入力欄追加", calculationHint: "- <kbd>Enter</kbd>キーか空白の場所をクリックして計算開始。<br>- <kbd>,</kbd> または <kbd>+</kbd> で入力欄追加（最大8個）。", fillEmpty: "空の欄を先に記入してください", removeDuplicates: "重複する値を削除してください", addInputCommaHint: "または <kbd>,</kbd> で入力欄追加", clearAll: "全てクリア"}, common: { title: "常用換算表", w2c: "ウェーブ → カード", c2w: "カード → ウェーブ" }, chart: { title: "カード vs ウェーブ", chartTypeLabel: "グラフ種類:", optionLine: "線グラフ", optionBar: "棒グラフ", xAxis: "ウェーブ数", yAxis: "カード数", waveSuffix: "W", clickPrompt: "グラフをクリックして値表示", zoomIn: "拡大", zoomOut: "縮小", resetZoom: "リセット" }, history: { title: "履歴", clearHistory: "履歴削除", noRecord: "記録なし" }, process: { title: "計算過程", stepTitle: "{modeTitle} | 入力: {input}", w2cTitle: "ウェーブ(W) → カード(C)", c2wTitle: "カード(C) → ウェーブ(W)", g2wTitle: "リソース → ウェーブ(W)", negTitle: "負の数の処理", negInfo: "負の入力は、その絶対値の負の結果に対応します。つまり f(-x) = -f(x) です。", w2cFormulaTitle: "計算原理", w2cSegmentTitle: "区間 W = {start} ～ {end}", w2cFinalTotalLabel: "最終合計", g2wStep1Title: "リソース → ボックス", g2wStep2Title: "ボックス → カード(C)", g2wStep3Title: "カード(C) → ウェーブ(W)", c2wSearchTitle: "二分探索の過程", c2wStep3Info: "このステップでは「カード→ウェーブ」と同じアルゴリズムを用いて最終的なウェーブ数を求めます。", formula: "数式", calculation: "計算", finalResult: "最終結果", searchStep: "{n}回目の反復", guess: "推測 W", check: "検証 C", adjustRange: "範囲調整", resourcePerBox: "ボックス毎のリソース", newRange: "新しい範囲" }, range: { title: "区間計算結果", from: "から", to: "まで", difference: "差分" }, tables: { w2c: { header1: "ウェーブ", header2: "カード" }, c2w: { header1: "カード", header2: "ウェーブ" }, history: { header1: "日時", header2: "モード", header3: "入力", header4: "結果" } }, units: { waves: "ウェーブ", cards: "カード", waveSingle: "ウェーブ", cardSingle: "カード", rank: "クラス" }, pagination: { prev: "前へ", next: "次へ", pageInfo: "{current}/{total}ページ" }, language: "言語", settings: { title: "設定", language: "言語", theme: "テーマ", cursor: "カーソル" }, autoSelectLanguage: "自動検出", themeOptions: { system: "システム", light: "ライト", dark: "ダーク" }, cursorOptions: { custom: "カスタム", native: "システム標準" }, reward: { title: "カード報酬詳細", selectRank: "クラス選択:", boxes: "箱の数", commonDice: "ノーマル", rareDice: "レア", heroDice: "エピック", legendaryDice: "伝説", gold: "ゴールド", diamonds: "ダイヤ", expected: "(期待値)", clickHint: "カード数をクリックして報酬詳細表示" }, longNum: { copy: "全数値コピー", choiceTitle: "アクション選択", choiceShowFull: "全数値表示", choiceShowReward: "報酬詳細", fullValueTitle: "全数値", fullNumberLabel: "全数値" }, copied: "コピー完了", close: "閉じる" },
+                "ko": { clear: "지우기", nav: { calculator: "변환", common: "표", chartSection: "차트", history: "기록", back: "뒤로" }, calculator: { title: "카드 / 웨이브 변환기", modeW2C: "웨이브 ❯ 카드", modeC2W: "카드 ❯ 웨이브", modeG2W: "자원 ❯ 웨이브", inputLabel: "{modeLabel} 입력:", inputLabelResource: "자원 수량 입력:", gold: "골드", diamond: "다이아몬드", calcBtn: "변환", copyItem: "항목 복사", processItem: "과정 보기", resultInteractionHint: "- 보상 세부 정보를 보려면 카드 번호를 클릭하세요。<br>- 결과를 다른 결과 위로 드래그하여 범위를 계산합니다。", invalidInput: "유효한 정수 입력", copyText: "복사", copyAll: "모두 복사", multiCopy: "다중 선택 복사", copySelected: "선택 항목 복사", placeholder: "입력...", maxValues: "최대 {max}개", negativeInfo: "음수 계산 지원", modeSelectionHint: "변환 모드를 선택하여 시작", resultPlaceholder: "계산 결과가 여기에 표시됩니다", addInput: "입력 추가", calculationHint: "- <kbd>Enter</kbd>를 누르거나 빈 공간을 클릭하여 계산 시작.<br>- <kbd>,</kbd> 또는 <kbd>+</kbd>를 눌러 입력 필드 추가 (최대 8개).", fillEmpty: "먼저 빈 칸을 채워주세요", removeDuplicates: "중복된 값을 제거해주세요", addInputCommaHint: "또는 <kbd>,</kbd> 로 입력 추가", clearAll: "모두 지우기"}, common: { title: "자주 쓰는 변환표", w2c: "웨이브 → 카드", c2w: "카드 → 웨이브" }, chart: { title: "카드 vs 웨이브", chartTypeLabel: "차트 종류:", optionLine: "선", optionBar: "막대", xAxis: "웨이브", yAxis: "카드", waveSuffix: "W", clickPrompt: "차트 클릭하여 값 확인", zoomIn: "확대", zoomOut: "축소", resetZoom: "확대/축소 초기화" }, history: { title: "기록", clearHistory: "기록 삭제", noRecord: "기록 없음" }, process: { title: "계산 과정", stepTitle: "{modeTitle} | 입력: {input}", w2cTitle: "웨이브(W) → 카드(C)", c2wTitle: "카드(C) → 웨이브(W)", g2wTitle: "자원 → 웨이브(W)", negTitle: "음수 처리", negInfo: "음수 입력은 그 절대값의 음수 결과에 해당합니다. 즉, f(-x) = -f(x) 입니다.", w2cFormulaTitle: "계산 원리", w2cSegmentTitle: "구간 W = {start} ~ {end}", w2cFinalTotalLabel: "최종 합계", g2wStep1Title: "자원 → 상자", g2wStep2Title: "상자 → 카드(C)", g2wStep3Title: "카드(C) → 웨이브(W)", c2wSearchTitle: "이진 탐색 과정", c2wStep3Info: "'카드 → 웨이브'와 동일한 알고리즘을 사용하여 최종 웨이브를 찾습니다.", formula: "공식", calculation: "계산", finalResult: "최종 결과", searchStep: "{n}번째 반복", guess: "추측 W", check: "결과 C", adjustRange: "범위 조정", resourcePerBox: "상자당 자원", newRange: "새 범위" }, range: { title: "범위 계산 결과", from: "부터", to: "까지", difference: "차이" }, tables: { w2c: { header1: "웨이브", header2: "카드" }, c2w: { header1: "카드", header2: "웨이브" }, history: { header1: "시간", header2: "모드", header3: "입력", header4: "결과" } }, units: { waves: "웨이브", cards: "카드", waveSingle: "웨이브", cardSingle: "카드", rank: "클래스" }, pagination: { prev: "이전", next: "다음", pageInfo: "{current}/{total} 페이지" }, language: "언어", settings: { title: "설정", language: "언어", theme: "테마", cursor: "커서 스타일" }, autoSelectLanguage: "자동 감지", themeOptions: { system: "시스템", light: "라이트", dark: "다크" }, cursorOptions: { custom: "사용자 지정", native: "시스템 기본값" }, reward: { title: "카드 보상 상세", selectRank: "클래스 선택:", boxes: "상자 수", commonDice: "일반", rareDice: "희귀", heroDice: "영웅", legendaryDice: "전설", gold: "골드", diamonds: "다이아", expected: "(예상)", clickHint: "자세한 보상 정보를 보려면 카드 번호를 클릭하세요." }, longNum: { copy: "전체 숫자 복사", choiceTitle: "작업 선택", choiceShowFull: "전체 숫자 보기", choiceShowReward: "보상 세부 정보", fullValueTitle: "전체 값", fullNumberLabel: "전체 숫자" }, copied: "복사됨", close: "닫기" }
             };
 
             const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -1144,9 +1219,11 @@
             let isComposing = false;
             let activeSubView = null;
             let myChart = null;
+            let originalChartData = [];
             let lastCalculatedInputString = null;
             let t = translations[currentLang];
             let currentCardsForModal = 0n;
+            let isMultiCopyMode = false;
 
             const body = document.body;
             const dustCanvas = document.getElementById('dustCanvas');
@@ -1176,6 +1253,7 @@
             const clearAllInputsBtn = document.getElementById('clearAllInputsBtn');
             const calculationHint = document.getElementById('calculationHint');
             const resultsContainer = document.getElementById('resultsContainer');
+            const multiCopyBtn = document.getElementById('multiCopyBtn');
             const resultOutput = document.getElementById('resultOutput');
             const resultInteractionHint = document.getElementById('resultInteractionHint');
             const bottomNavBar = document.getElementById('bottomNavBar');
@@ -1222,6 +1300,7 @@
             let activeTooltipTarget = null;
             let cursorLastClientX = 0;
             let cursorLastClientY = 0;
+            let chartUpdateTimeout = null;
 
             function saveLS(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error("LS Save Error:", key, e); } }
             function loadLS(key, defaultValue) { try { const val = localStorage.getItem(key); return val !== null ? JSON.parse(val) : defaultValue; } catch (e) { console.error("LS Load Error:", key, e); return defaultValue; } }
@@ -1253,7 +1332,6 @@
                         }
                     }
                 } catch(e) {
-                    // Handle cases like "123-" which are invalid for BigInt
                 }
             }
             
@@ -1310,50 +1388,27 @@
 
             function wavesToCards(waveInput) {
                 const T = BigInt(waveInput);
-                if (T <= 0n) return 0n;
+                if (T <= 0n) return T === 0n ? 0n : -wavesToCards(-T);
 
                 let cards = 0n;
-                // 1-45
-                if (T <= 45n) {
-                    const cycle = [1n, 1n, 2n, 1n, 3n];
-                    const numCycles = (T - 1n) / 5n;
-                    cards += numCycles * 8n;
-                    const remainder = (T - 1n) % 5n;
-                    for (let i = 0; i < remainder; i++) {
-                        cards += cycle[i];
-                    }
-                    cards += cycle[Number(remainder)];
-                    return cards;
-                }
-                cards = 72n; // Cards at wave 45
-                
-                // 46-111
-                if (T <= 111n) {
-                    const wavesInThisRange = T - 45n;
-                    const cycle = [2n, 6n];
-                    const numCycles = (wavesInThisRange - 1n) / 2n;
-                    cards += numCycles * 8n;
-                    const remainder = (wavesInThisRange - 1n) % 2n;
-                    for (let i = 0; i < remainder + 1n; i++) {
-                        cards += cycle[i];
-                    }
-                    return cards;
-                }
-                cards = 336n; // Cards at wave 111
-
                 const ranges = [
+                    { start: 1n, end: 45n, cycle: [1n, 1n, 2n, 1n, 3n] },
+                    { start: 46n, end: 111n, cycle: [2n, 6n] },
                     { start: 112n, end: 500n, cycle: [4n, 12n] },
                     { start: 501n, end: 1000n, cycle: [6n, 18n] },
                     { start: 1001n, end: 1500n, cycle: [8n, 24n] },
                     { start: 1501n, end: Infinity, cycle: [10n, 30n] }
                 ];
 
-                let lastWave = 111n;
+                let lastWave = 0n;
 
                 for (const range of ranges) {
                     if (T > lastWave) {
                         const wavesInRange = (T > range.end ? range.end : T) - lastWave;
-                        if (wavesInRange <= 0n) continue;
+                        if (wavesInRange <= 0n) {
+                            lastWave = range.end;
+                            continue;
+                        };
                         
                         const cycleSum = range.cycle.reduce((a, b) => a + b, 0n);
                         const cycleLen = BigInt(range.cycle.length);
@@ -1378,7 +1433,7 @@
                     if (X <= 0n) {
                         if (X === 0n) return { wave: 0n, steps: [] };
                         const positiveResult = cardsToWaves(-X);
-                        return typeof positiveResult.wave === 'bigint' ? { wave: -positiveResult.wave, steps: [] } : { wave: 0n, steps: [] };
+                        return typeof positiveResult.wave === 'bigint' ? { wave: -positiveResult.wave, steps: positiveResult.steps } : { wave: 0n, steps: [] };
                     }
                     let low = 1n;
                     let high = 2n;
@@ -1408,18 +1463,18 @@
                         if (mid === low && low < high) {
                             const cardsAtHigh = wavesToCards(high);
                             if(cardsAtHigh >= X) result = high; else result = high + 1n;
-                            searchSteps.push({step: stepCount, guess: high, cards: cardsAtHigh, low, high});
+                            searchSteps.push({step: stepCount, guess: high, result: cardsAtHigh, low, high, isFinal: true});
                             break;
                         }
                         if (mid === 0n){
                             const cardsAtOne = wavesToCards(1n);
                             result = (cardsAtOne >= X) ? 1n : 2n;
-                            searchSteps.push({step: stepCount, guess: 1n, cards: cardsAtOne, low, high});
+                            searchSteps.push({step: stepCount, guess: 1n, result: cardsAtOne, low, high, isFinal: true});
                             break;
                         }
                         
                         const cardsAtMid = wavesToCards(mid);
-                        searchSteps.push({step: stepCount, guess: mid, cards: cardsAtMid, low, high});
+                        searchSteps.push({step: stepCount, guess: mid, result: cardsAtMid, low, high, isFinal: false});
 
                         if (cardsAtMid >= X) {
                             result = mid;
@@ -1432,6 +1487,10 @@
                     if (result < CONFIG.chart.safetyLimit && wavesToCards(result) < X) {
                         result += 1n;
                     }
+                    
+                    const finalStep = searchSteps[searchSteps.length - 1];
+                    if(finalStep) finalStep.isFinal = true;
+
                     return { wave: result, steps: searchSteps };
                 } catch (e) {
                     console.error("cardsToWaves Error:", cardInput, e);
@@ -1544,7 +1603,9 @@
                     updateOtherUIText();
                     renderHistoryPanel();
                     if (activeSubView === 'commonPanel') populateTablesForPanel();
-                    if (resultsContainer.classList.contains('visible-true')) updateResultTableContent();
+                    if (resultsContainer.classList.contains('visible-true')) {
+                        updateResultTableContent();
+                    }
                 } catch (e) { console.error("Error updating UI text:", e); }
             }
 
@@ -1579,10 +1640,9 @@
             function updateCalculatorText() {
                 updateInputLabel();
                 if (calculateBtn) calculateBtn.textContent = t.calculator.calcBtn;
+                if (multiCopyBtn) multiCopyBtn.querySelector('span').textContent = isMultiCopyMode ? t.calculator.copySelected : t.calculator.multiCopy;
                 if (calculationHint) {
-                    const mainHint = t.calculator.calculationHint;
-                    const commaHint = t.calculator.addInputCommaHint || '';
-                    calculationHint.innerHTML = (mode === 'w2c' || mode === 'c2w') ? `${mainHint} ${commaHint}` : mainHint;
+                    calculationHint.innerHTML = t.calculator.calculationHint || '';
                 }
                 if (addInputBtn) addInputBtn.title = t.calculator.addInput;
                 if (clearAllInputsBtn) clearAllInputsBtn.title = t.calculator.clearAll;
@@ -1590,11 +1650,7 @@
                 if (resultPlaceholder) resultPlaceholder.textContent = t.calculator.resultPlaceholder;
                 
                 if (resultInteractionHint) {
-                    let hintText = isTouchDevice ? t.calculator.resultInteractionHint.mobile : t.calculator.resultInteractionHint.desktop;
-                    if (!isTouchDevice && mode !== 'g2w') {
-                        hintText += `<br>${t.calculator.dragDropHint}`;
-                    }
-                    resultInteractionHint.innerHTML = hintText;
+                    resultInteractionHint.innerHTML = t.calculator.resultInteractionHint;
                 }
 
                 inputContainer.querySelectorAll('.calc-input').forEach(input => {
@@ -1698,7 +1754,7 @@
                         const tds = row.querySelectorAll('td');
                         if (tds.length < 2) return;
                         
-                        const actionsCell = tds.length > 2 ? tds[2] : null;
+                        const actionsCell = row.querySelector('.result-actions-cell');
 
                         if (actionsCell) {
                             const actionsDiv = actionsCell.querySelector('.result-item-actions') || document.createElement('div');
@@ -1750,15 +1806,25 @@
             }
             
             function setViewportHeight() {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                if (window.visualViewport) {
+                    document.documentElement.style.setProperty('--viewport-height', `${window.visualViewport.height}px`);
+                } else {
+                    document.documentElement.style.setProperty('--viewport-height', '100vh');
+                }
             }
 
             window.initializeApp = function() {
-                console.log(`Initializing App (${APP_VERSION})...`);
+                if(typeof window.initializeAppCalled !== 'undefined') return;
+                window.initializeAppCalled = true;
+
                 try {
                     setViewportHeight();
-                    window.addEventListener('resize', debounce(setViewportHeight, 100));
+                    if (window.visualViewport) {
+                        window.visualViewport.addEventListener('resize', debounce(setViewportHeight, 50));
+                    } else {
+                        window.addEventListener('resize', debounce(setViewportHeight, 100));
+                    }
+
 
                     if (isTouchDevice) body.classList.add('is-touch-device');
                     else body.classList.remove('is-touch-device');
@@ -1800,7 +1866,6 @@
                     initDustBackground();
                     createTooltips();
                     
-                    console.log("App Initialization complete.");
                 } catch (error) {
                     console.error("Initialization Failed:", error);
                     document.body.innerHTML = "App initialization error. Please refresh or contact support.";
@@ -1810,7 +1875,8 @@
             function switchMode(newMode) {
                 if (newMode === mode && calculatorView.classList.contains('visible')) return;
                 
-                setInputState(true); // Reset layout to input-focused on mode switch
+                setInputState(true); 
+                exitMultiCopyMode();
                 const fromInitialSelection = !calculatorView.classList.contains('visible');
                 mode = newMode;
                 saveLS(LS_KEYS.mode, mode);
@@ -1828,7 +1894,8 @@
                     gsap.set(inputContainer, { display: 'none' });
                     gsap.set(resourceInputContainer, { display: 'flex' });
                     gsap.set(addInputBtn, { display: 'none' });
-                    gsap.set(calculationHint, { display: 'none' });
+                    calculationHint.innerHTML = t.calculator.calculationHint.split('<br>')[0];
+                    
                     resourceRankSelect.classList.toggle('visible', resourceGoldRadio.checked);
                     
                     const resourceElements = [resourceInputContainer.querySelector('.resource-toggle'), resourceInputContainer.querySelector('#resourceInputWrapper'), resourceRankSelect];
@@ -1842,11 +1909,8 @@
                     gsap.set(inputContainer, { display: 'flex' });
                     gsap.set(resourceInputContainer, { display: 'none' });
                     gsap.set(addInputBtn, { display: 'inline-flex' });
-                    gsap.set(calculationHint, { display: 'block' });
+                    calculationHint.innerHTML = t.calculator.calculationHint;
                 }
-
-                const fadeDuration = CONFIG.animation.durationNormal * animSpeedMultiplier;
-                const staggerDuration = 0.05 * animSpeedMultiplier;
 
                 if (fromInitialSelection) {
                     const animationDuration = 0.25;
@@ -1878,8 +1942,8 @@
                             ease: 'power1.out',
                             onComplete: () => {
                                 let firstInput = (mode === 'g2w') ? resourceInput : inputContainer.querySelector('.calc-input');
-                                if (firstInput && !prefersReducedMotion && !isTouchDevice) {
-                                    setTimeout(() => firstInput.focus({ preventScroll: true }), 50);
+                                if (firstInput && !isTouchDevice) {
+                                    setTimeout(() => firstInput.focus({ preventScroll: true }), 150);
                                 }
                             }
                         });
@@ -1894,69 +1958,30 @@
                         });
                 } else { 
                     if (mode !== 'g2w') createInputBoxes(1);
-                    clearResults(true); // Force clear on mode switch
+                    clearResults(true); 
                 }
             }
-
+            
             function setInputState(isFocused) {
                 body.classList.remove('input-focused', 'results-focused');
 
                 if (isFocused) {
                     body.classList.add('input-focused');
-
-                    gsap.to(inputContainerWrapper, {
-                        opacity: 1,
-                        maxWidth: '750px', 
-                        marginRight: '0px',
-                        marginLeft: '0px',
-                        duration: 0.4,
-                        ease: 'power2.out'
-                    });
-
-                    gsap.to(resultsContainer, {
-                        opacity: 0,
-                        duration: 0.2,
-                        ease: 'power1.in',
-                        onComplete: () => {
-                            if (body.classList.contains('input-focused')) {
-                               resultsContainer.style.display = 'none';
-                            }
+                    if (window.innerWidth <= 1024) {
+                        if(resultsContainer.classList.contains('visible-true')) {
+                             gsap.to(resultsContainer, { y: '100%', autoAlpha: 0, duration: 0.4, ease: 'power2.in' });
                         }
-                    });
-
-                } else { // isFocused is false, meaning results-focused
+                        gsap.to(inputContainerWrapper, { y: '0%', autoAlpha: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
+                    }
+                } else { 
                     body.classList.add('results-focused');
-
-                    resultsContainer.style.display = 'flex';
-
-                    gsap.to(inputContainerWrapper, {
-                        opacity: 0.7,
-                        maxWidth: '320px',
-                        marginRight: 'auto',
-                        marginLeft: '0px', 
-                        duration: 0.4,
-                        ease: 'power2.out'
-                    });
-
-                    gsap.fromTo(resultsContainer, { opacity: 0 }, {
-                        opacity: 1,
-                        duration: 0.3,
-                        delay: 0.1, 
-                        ease: 'power1.out'
-                    });
-                }
-
-                if (window.innerWidth <= 1024) { // Only apply this logic for mobile/tablet
-                    if (isFocused) {
-                        inputContainerWrapper.classList.remove('input-area-minimized');
-                    } else if(resultsContainer.classList.contains('visible-true')) {
-                        if (window.innerWidth <= 900) {
-                            inputContainerWrapper.classList.add('input-area-minimized');
-                        }
+                    if (window.innerWidth <= 1024) {
+                        gsap.to(inputContainerWrapper, { y: '-20px', autoAlpha: 0.6, scale: 0.98, duration: 0.4, ease: 'power2.out' });
+                        gsap.to(resultsContainer, { y: '0%', autoAlpha: 1, duration: 0.4, ease: 'power2.out' });
                     }
                 }
             }
-            
+
             const flipState = {};
             function recordInputPositions() {
                 if (isTouchDevice || prefersReducedMotion) return;
@@ -1994,7 +2019,7 @@
                     labelText = t.calculator.inputLabelResource;
                 } else {
                     const modeLabelText = mode === 'w2c' ? t.units.waves : t.units.cards;
-                    labelText = t.calculator.inputLabel.replace("{modeLabel}", modeLabelText).replace("{max}", CONFIG.maxInputs);
+                    labelText = t.calculator.inputLabel.replace("{modeLabel}", modeLabelText);
                 }
                 inputLabel.textContent = labelText;
                 
@@ -2012,6 +2037,7 @@
                 const input = inputWrapper.querySelector('.calc-input');
                 if (!input) return;
                 const resize = () => {
+                    recordInputPositions();
                     const minWidth = 100;
                     const maxWidth = 400;
                     const rightPadding = 45; 
@@ -2020,9 +2046,10 @@
                         newWidth = maxWidth;
                     } else {
                         const charWidth = body.classList.contains('results-focused') ? 16 : 22;
-                        newWidth = Math.max(minWidth, Math.min(maxWidth, ((getRawValue(input).length + 2) * charWidth) + rightPadding));
+                        newWidth = Math.max(minWidth, Math.min(maxWidth, ((getRawValue(input).length + 3) * charWidth) + rightPadding));
                     }
                     inputWrapper.style.width = newWidth + 'px';
+                    requestAnimationFrame(playInputFlipAnimation);
                 };
                 input.addEventListener('input', resize);
                 resize(); 
@@ -2055,9 +2082,9 @@
                         duration: CONFIG.animation.durationNormal * animSpeedMultiplier,
                         stagger: 0.08 * animSpeedMultiplier, ease: CONFIG.animation.easeBounce,
                         onComplete: () => {
-                            if (wrappers.length === 1 && count === 1 && !prefersReducedMotion) {
+                             if (wrappers.length === 1 && count === 1 && !isTouchDevice) {
                                 const firstInput = wrappers[0].querySelector('.calc-input');
-                                if (firstInput) setTimeout(() => firstInput.focus({ preventScroll: true }), 0);
+                                if (firstInput) setTimeout(() => firstInput.focus({ preventScroll: true }), 150);
                             }
                         }
                     }
@@ -2112,6 +2139,10 @@
                  const newIndex = inputContainer.children.length;
                  const newWrapper = createInputFieldElement(newIndex);
                  inputContainer.appendChild(newWrapper);
+                 const newInp = newWrapper.querySelector('.calc-input');
+                 if (newInp) {
+                    setTimeout(() => newInp.focus({ preventScroll: true }), 0);
+                 }
                  
                  attachResizeListener(newWrapper);
                  
@@ -2123,13 +2154,7 @@
                      { 
                          opacity: 1, scale: 1,
                          duration: CONFIG.animation.durationNormal * animSpeedMultiplier,
-                         ease: CONFIG.animation.easeBounce,
-                         onComplete: () => {
-                             const newInp = newWrapper.querySelector('.calc-input');
-                             if (newInp) {
-                                setTimeout(() => newInp.focus({ preventScroll: true }), 0);
-                             }
-                         }
+                         ease: CONFIG.animation.easeBounce
                      }
                  );
                  return true;
@@ -2151,7 +2176,7 @@
                      e.preventDefault();
                      input.blur();
                      handleCalculationTrigger();
-                 } else if (e.key === ',' && mode !== 'g2w') {
+                 } else if ((e.key === ',' || e.key === '+') && mode !== 'g2w') {
                      e.preventDefault();
                      addInputFieldAndFocus();
                  }
@@ -2277,6 +2302,7 @@
             }
 
             function performCalculation() {
+                if (isMultiCopyMode) return false;
                 if (mode === 'g2w') {
                     return performResourceCalculation();
                 }
@@ -2316,7 +2342,7 @@
                         try {
                             if (mode === "w2c") {
                                 const resultBigInt = wavesToCards(inputObj.value);
-                                return { originalIndex: inputObj.originalIndex, input: inputObj.value, result: resultBigInt.toString() };
+                                return { originalIndex: inputObj.originalIndex, input: inputObj.value, result: resultBigInt.toString(), steps: [] };
                             } else {
                                 const { wave, steps } = cardsToWaves(inputObj.value);
                                 return { originalIndex: inputObj.originalIndex, input: inputObj.value, result: wave.toString(), steps: steps };
@@ -2354,7 +2380,13 @@
             
             function displayResults(resultsData) { 
                 resultsContainer.classList.add('visible-true');
-                setInputState(false);
+                multiCopyBtn.style.display = 'inline-flex';
+                if (window.innerWidth <= 1024) {
+                    setInputState(false);
+                } else {
+                    setInputState(false);
+                }
+                exitMultiCopyMode();
                 
                 const tableBody = resultOutput.querySelector('tbody') || resultOutput.appendChild(document.createElement('table')).appendChild(document.createElement('tbody'));
                 tableBody.innerHTML = '';
@@ -2374,10 +2406,13 @@
                         tr.dataset.inputType = item.inputType;
                         tr.dataset.inputRank = item.inputRank;
                         tr.dataset.outputCards = item.cards;
+                        tr.dataset.steps = JSON.stringify(item, replacer);
                         
                         tr.innerHTML = `
-                            <td class="result-input-cell" style="width: 50%;">${inputHTML}</td>
-                            <td class="result-output-cell" style="width: 50%;">${outputHTML}</td>
+                            <td class="result-input-cell" style="width: 40%;">${inputHTML}</td>
+                            <td class="result-arrow-cell" style="width: 5%;">→</td>
+                            <td class="result-output-cell" style="width: 40%;">${outputHTML}</td>
+                            <td class="result-actions-cell" style="width: 15%;"></td>
                         `;
                     } else {
                         const isCardOutput = mode === "w2c";
@@ -2394,6 +2429,7 @@
 
                         tr.innerHTML = `
                             <td class="result-input-cell">${inputHTML}</td>
+                            <td class="result-arrow-cell">→</td>
                             <td class="result-output-cell">${outputHTML}</td>
                             <td class="result-actions-cell"></td>
                         `;
@@ -2418,22 +2454,20 @@
                  if (!body.classList.contains('results-focused') && !force) return;
                  
                  setInputState(true);
+                 multiCopyBtn.style.display = 'none';
+                 exitMultiCopyMode();
                  
                  if (force) {
                      resultsContainer.classList.remove('visible-true');
                      resultOutput.innerHTML = `<div style="text-align: center; padding: 2rem 0; color: var(--text-muted-color);" data-i18n="calculator.resultPlaceholder">${t?.calculator?.resultPlaceholder || 'Results...'}</div>`;
                  } else {
-                    gsap.to(resultsContainer, {
-                        duration: CONFIG.animation.durationShort * animSpeedMultiplier,
-                        opacity: 0,
-                        y: 20 * animSpeedMultiplier,
-                        ease: "power1.in",
-                        onComplete: () => {
-                             resultsContainer.classList.remove('visible-true');
+                     setTimeout(() => {
+                         if (!resultsContainer.classList.contains('visible-true')) {
                              resultOutput.innerHTML = `<div style="text-align: center; padding: 2rem 0; color: var(--text-muted-color);" data-i18n="calculator.resultPlaceholder">${t?.calculator?.resultPlaceholder || 'Results...'}</div>`;
-                        }
-                    });
+                         }
+                     }, 500); 
                  }
+                 resultsContainer.classList.remove('visible-true');
 
                 if(resultInteractionHint) updateCalculatorText();
                 inputContainer.querySelectorAll('.calc-input.error').forEach(input => input.classList.remove('error'));
@@ -2442,39 +2476,118 @@
                 lastCalculatedInputString = null;
             }
 
-            function updateProcessDetails(inputStr, steps = []) {
+            function updateProcessDetails(inputStr, steps = [], extraData = null) {
                 if (!processDetailsContent) return;
-                const isResourceMode = (mode === 'g2w');
-                if (!isResourceMode && !/^-?\d+$/.test(inputStr)) return;
-                if (isResourceMode && !/^\d+$/.test(inputStr)) return;
-
-                const inputBig = BigInt(inputStr); const isNegative = inputBig < 0n; const absInputStr = isNegative ? inputStr.substring(1) : inputStr; const absInputBig = isNegative ? -inputBig : inputBig;
-                const modeTitle = mode === "w2c" ? t.process.w2cTitle : (mode === "c2w" ? t.process.c2wTitle : t.process.g2wTitle);
-                let html = `<h3>${t.process.stepTitle.replace('{modeTitle}', modeTitle).replace('{input}', formatBigIntWithCommas(inputStr))}</h3>`;
-                if(isNegative) { html += `<div class="process-subtitle">${t.process.negTitle}</div><p style="text-align:center; padding: 0 1rem;">${mode === "w2c" ? t.process.negW2C : t.process.negC2W}</p><hr>`; }
-                
-                if (absInputBig === 0n) { html += `<dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">0</dd></dl>`; }
-                else if (mode === "w2c") {
-                    const T = absInputBig;
-                    let cards = wavesToCards(T);
-                    html += `<div class="process-subtitle">${t.process.w2cTitle}</div>`;
-                    html += `<dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">${formatBigIntWithCommas(cards)}</dd></dl>`;
-                } else {
-                    html += `<div class="process-subtitle">${t.process.c2wDescTitle}</div><p style="text-align:center; margin: 0; padding: 0 1rem;">${t.process.c2wDesc}</p><hr>`;
-                    if (steps && steps.length > 0) {
-                        const stepsToShow = steps.length > 5 ? [...steps.slice(0, 2), {step: '...'}, ...steps.slice(-2)] : steps;
-                        stepsToShow.forEach(s => {
-                            if(s.step === '...') { html += `<p style="text-align:center; letter-spacing: 0.2em; color: var(--text-muted-color)">...</p>`; return; }
-                            const comparison = s.cards >= absInputBig ? t.process.c2wSearchComparison_high : t.process.c2wSearchComparison_low;
-                            html += `<div class="process-subtitle">${t.process.c2wSearchStep.replace('{step}', s.step)}</div>`;
-                            html += `<dl><dt>${t.process.c2wSearchGuess.replace('{guess}', formatBigIntWithCommas(s.guess))}</dt><dd>${t.process.c2wSearchResult.replace('{cards}', formatBigIntWithCommas(s.cards))}</dd></dl>`;
-                            html += `<p style="font-size: 0.9em; text-align: center; color: var(--text-muted-color);">${t.process.c2wSearchAdjust.replace('{comparison}', comparison).replace('{low}', formatBigIntWithCommas(s.low)).replace('{high}', formatBigIntWithCommas(s.high))}</p>`;
-                        });
+                let html = '';
+                try {
+                    const isResourceMode = (mode === 'g2w');
+                    if (!isResourceMode && !/^-?\d+$/.test(inputStr)) return;
+                    if (isResourceMode && !/^\d+$/.test(inputStr)) return;
+            
+                    const inputBig = BigInt(inputStr);
+                    const isNegative = inputBig < 0n;
+                    const absInputBig = isNegative ? -inputBig : inputBig;
+            
+                    const modeTitle = mode === "w2c" ? t.process.w2cTitle : (mode === "c2w" ? t.process.c2wTitle : t.process.g2wTitle);
+                    html = `<h3>${t.process.stepTitle.replace('{modeTitle}', modeTitle).replace('{input}', formatBigIntWithCommas(inputStr))}</h3>`;
+            
+                    if (isNegative) {
+                        html += `<div class="process-subtitle">${t.process.negTitle}</div><p>${t.process.negInfo}</p><hr>`;
                     }
-                    const finalWave = cardsToWaves(absInputBig).wave;
-                    html += `<hr><dl><dt>${t.process.w2cFinalTotalLabel}</dt><dd class="highlight">${formatBigIntWithCommas(finalWave)} ${t.units.waves}</dd></dl>`;
+            
+                    if (absInputBig === 0n) {
+                        html += `<dl><dt>${t.process.finalResult}</dt><dd class="highlight">0</dd></dl>`;
+                    } else if (mode === "w2c") {
+                        const W_target = absInputBig;
+                        html += `<div class="process-subtitle">${t.process.w2cFormulaTitle}</div>`;
+                        html += `$$ C(W) = \\sum_{w=1}^{W} c(w) $$`;
+                        
+                        const ranges = [
+                            { start: 1n, end: 45n, cycle: [1n, 1n, 2n, 1n, 3n] },
+                            { start: 46n, end: 111n, cycle: [2n, 6n] },
+                            { start: 112n, end: 500n, cycle: [4n, 12n] },
+                            { start: 501n, end: 1000n, cycle: [6n, 18n] },
+                            { start: 1001n, end: 1500n, cycle: [8n, 24n] },
+                            { start: 1501n, end: Infinity, cycle: [10n, 30n] }
+                        ];
+
+                        let totalCards = 0n;
+                        let lastWave = 0n;
+                        let sumParts = [];
+
+                        for (const range of ranges) {
+                            if (W_target <= lastWave) break;
+                            const currentRangeEnd = W_target < range.end ? W_target : range.end;
+                            
+                            const cardsInRange = wavesToCards(currentRangeEnd) - wavesToCards(lastWave);
+
+                            html += `<div class="process-subtitle">${t.process.w2cSegmentTitle.replace('{start}', lastWave + 1n).replace('{end}', currentRangeEnd)}</div>`;
+                            if (range.cycle.length === 5) { 
+                                html += `<p>$$ c(w) \\text{ cycle: } [1, 1, 2, 1, 3] $$</p>`;
+                            } else {
+                                html += `<p>$$ c(w) = \\begin{cases} ${range.cycle[0]} & \\text{if } w \\text{ is odd} \\\\ ${range.cycle[1]} & \\text{if } w \\text{ is even} \\end{cases} $$</p>`;
+                            }
+                            html += `<p>$$ C_{${lastWave+1n} \\rightarrow ${currentRangeEnd}} = \\sum_{w=${lastWave+1n}}^{${currentRangeEnd}} c(w) = ${formatBigIntWithCommas(cardsInRange)} $$</p>`;
+
+                            totalCards += cardsInRange;
+                            sumParts.push(formatBigIntWithCommas(cardsInRange));
+                            lastWave = currentRangeEnd;
+                        }
+
+                        html += `<hr><div class="process-subtitle">${t.process.w2cFinalTotalLabel}</div>`;
+                        html += `<p>$$ C(${W_target}) = ${sumParts.join(' + ')} = \\color{var(--primary-color)}{${formatBigIntWithCommas(totalCards)}} $$</p>`;
+                    
+                    } else if (mode === 'g2w') {
+                         const { inputType, inputRank, cards, result } = JSON.parse(extraData);
+                         const rankData = REWARDS[inputRank] || REWARDS[20];
+                         const resourcePerBox = BigInt(inputType === 'gold' ? rankData.g : rankData.d);
+
+                         html += `<div class="process-subtitle">${t.process.g2wStep1Title}</div>`;
+                         html += `<p>${t.process.formula}: $$ \\text{${t.reward.boxes}} = \\lceil \\frac{\\text{${t.calculator[inputType]}}}{\\text{${t.process.resourcePerBox}}} \\rceil $$</p>`;
+                         html += `<p>${t.process.calculation}: $$ \\lceil \\frac{${formatBigIntWithCommas(inputBig)}}{${formatBigIntWithCommas(resourcePerBox)}} \\rceil = ${formatBigIntWithCommas(BigInt(cards) / CONFIG.cardsPerBox)} $$</p>`;
+                         
+                         html += `<div class="process-subtitle">${t.process.g2wStep2Title}</div>`;
+                         html += `<p>${t.process.formula}: $$ C = \\text{${t.reward.boxes}} \\times ${CONFIG.cardsPerBox} $$</p>`;
+                         html += `<p>${t.process.calculation}: $$ ${formatBigIntWithCommas(BigInt(cards) / CONFIG.cardsPerBox)} \\times ${CONFIG.cardsPerBox} = ${formatBigIntWithCommas(cards)} $$</p>`;
+
+                         html += `<div class="process-subtitle">${t.process.g2wStep3Title}</div>`;
+                         html += `<p>${t.process.c2wStep3Info}</p>`;
+                         html += `<p>${t.process.finalResult}: $$ W(${formatBigIntWithCommas(cards)}) = \\color{var(--primary-color)}{${formatBigIntWithCommas(result)}} $$</p>`;
+
+                    } else { // C2W
+                        html += `<div class="process-subtitle">${t.process.c2wSearchTitle}</div>`;
+                        if (steps && steps.length > 0) {
+                            steps.forEach(s => {
+                                s.result = BigInt(s.result); s.low = BigInt(s.low); s.high = BigInt(s.high); s.guess = BigInt(s.guess);
+                                const comparisonSymbol = s.result >= absInputBig ? '\\ge' : '<';
+                                const resultColor = s.isFinal ? 'var(--primary-color)' : 'var(--text-color)';
+                                const newRangeText = s.result >= absInputBig
+                                    ? `[${formatBigIntWithCommas(s.low)}, ${formatBigIntWithCommas(s.guess - 1n)}]`
+                                    : `[${formatBigIntWithCommas(s.guess + 1n)}, ${formatBigIntWithCommas(s.high)}]`;
+                                
+                                html += `<div style="border-left: 3px solid ${resultColor}; padding-left: 1rem; margin-bottom: 1.5rem;">`;
+                                html += `<b>${t.process.searchStep.replace('{n}', s.step)}:</b>`;
+                                html += `<dl><dt>${t.process.guess}</dt><dd>$$ W_{guess} = ${formatBigIntWithCommas(s.guess)} $$</dd>`;
+                                html += `<dt>${t.process.check}</dt><dd>$$ C(W_{guess}) = ${formatBigIntWithCommas(s.result)} $$</dd>`;
+                                html += `<dt>${t.process.adjustRange}</dt><dd>$$ ${formatBigIntWithCommas(s.result)} ${comparisonSymbol} C_{target} \\rightarrow \\text{${t.process.newRange}: } ${newRangeText} $$</dd></dl>`;
+                                html += `</div>`;
+                            });
+                        }
+                        const { wave: finalWave } = cardsToWaves(absInputBig);
+                        html += `<hr><dl><dt>${t.process.finalResult}</dt><dd class="highlight">${formatBigIntWithCommas(finalWave)} ${t.units.waveSingle}</dd></dl>`;
+                    }
+                } catch (err) {
+                    html = `<h3>Error</h3><p>An error occurred while generating the process details.</p>`;
+                    console.error("Error in updateProcessDetails", err);
                 }
+                
                 processDetailsContent.innerHTML = html;
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                     window.MathJax.typesetPromise([processDetailsContent]).catch(function (err) {
+                        console.error('MathJax Typeset Error: ' + err.message);
+                        processDetailsContent.innerHTML += `<p style="color:var(--error-color)">Math formula rendering failed.</p>`;
+                    });
+                }
             }
 
             function attachSubViewListeners() {
@@ -2491,10 +2604,26 @@
                     });
                 });
                 subViewPanels.forEach(panel => {
-                    panel.addEventListener('click', (e) => {
-                        if ((e.target === panel || e.target.classList.contains('module-wrapper')) && !e.target.closest('.module')) {
-                            if (panel.classList.contains('visible')) hideSubView(panel.id);
+                    let mouseDownOnBackdrop = false;
+                    panel.addEventListener('mousedown', e => {
+                        if (!e.target.closest('.module')) {
+                             const target = e.target;
+                             mouseDownOnBackdrop = (target === panel || target.classList.contains('module-wrapper'));
+                        } else {
+                            mouseDownOnBackdrop = false;
                         }
+                    });
+                    panel.addEventListener('mouseup', e => {
+                        if (mouseDownOnBackdrop) {
+                            if (!e.target.closest('.module')) {
+                                const target = e.target;
+                                const mouseUpOnBackdrop = (target === panel || target.classList.contains('module-wrapper'));
+                                if (mouseUpOnBackdrop && panel.classList.contains('visible')) {
+                                    hideSubView(panel.id);
+                                }
+                            }
+                        }
+                        mouseDownOnBackdrop = false;
                     });
                 });
             }
@@ -2606,47 +2735,51 @@
                 }
                 return niceFraction * powerOf10;
             }
-
-            function syncTickSpacing(chart) {
-                if (!chart || !chart.scales.x || !chart.scales.y || !chart.chartArea) return;
-                const xAxis = chart.scales.x;
-                const yAxis = chart.scales.y;
-
-                const yTicks = yAxis.getTicks();
-                if (yTicks.length < 2) return;
-
-                const yTickPixelDiff = Math.abs(yAxis.getPixelForTick(1) - yAxis.getPixelForTick(0));
-                if (yTickPixelDiff <= 0) return;
-
-                const yTickDataDiff = yTicks[1].value - yTicks[0].value;
-                const yPixelsPerUnit = yTickPixelDiff / yTickDataDiff;
-
-                const xPixelsPerUnit = yPixelsPerUnit;
+            
+            function adaptChartDataToView(chart) {
+                if (!chart || !originalChartData || originalChartData.length === 0) return;
+                const { min: xMin, max: xMax } = chart.scales.x;
                 
-                const requiredXRangeInData = chart.chartArea.width / xPixelsPerUnit;
+                const startIndex = originalChartData.findIndex(p => p.x >= xMin);
+                let endIndex = originalChartData.findIndex(p => p.x > xMax);
+                if (endIndex === -1) endIndex = originalChartData.length;
+
+                let adaptedData = originalChartData.slice(
+                    Math.max(0, startIndex - 1), 
+                    Math.min(originalChartData.length, endIndex + 1)
+                );
                 
-                const currentCenter = (xAxis.min + xAxis.max) / 2;
-                let newMin = currentCenter - requiredXRangeInData / 2;
-                let newMax = currentCenter + requiredXRangeInData / 2;
-                
-                xAxis.min = Math.ceil(newMin);
-                xAxis.max = Math.ceil(newMax);
+                if (adaptedData.length > 0 && adaptedData[0].x > xMin) {
+                    adaptedData.unshift({ x: xMin, y: Number(wavesToCards(BigInt(Math.floor(xMin)))) });
+                }
+
+                if (adaptedData.length > 0 && adaptedData[adaptedData.length-1].x < xMax) {
+                     adaptedData.push({ x: xMax, y: Number(wavesToCards(BigInt(Math.ceil(xMax)))) });
+                }
+
+                chart.data.datasets[0].data = adaptedData;
             }
             
+            function handleChartUpdate({ chart }) {
+                if (!chart) return;
+                
+                adaptChartDataToView(chart);
+                updateYAxisRange(chart); 
+                updateChartSlidersState(chart); 
+                
+                chart.update('none');
+            }
+
             function updateYAxisRange(chart) {
                 if (!chart) return;
                 const { min: xMin, max: xMax } = chart.scales.x;
-                const data = chart.data.datasets[0].data;
-                const yValuesInRange = data.filter(p => p.x >= xMin && p.x <= xMax).map(p => p.y);
-                
-                if (yValuesInRange.length === 0) {
-                    const yMax = Number(wavesToCards(BigInt(Math.floor(xMax))));
-                    chart.options.scales.y.max = yMax > 0 ? Math.ceil(yMax * CONFIG.chart.yAxisMargin) : CONFIG.chart.yAxisInitialMax;
+
+                if (xMin > 1) { 
+                    chart.options.scales.y.min = Number(wavesToCards(BigInt(Math.floor(xMin))));
                 } else {
-                    const yMax = Math.max(...yValuesInRange);
-                    chart.options.scales.y.max = Math.ceil(yMax * CONFIG.chart.yAxisMargin);
+                    chart.options.scales.y.min = 0;
                 }
-                chart.options.scales.y.min = 0;
+                chart.options.scales.y.max = Number(wavesToCards(BigInt(Math.ceil(xMax))));
             }
 
             function updateChartSlidersState(chart) {
@@ -2688,8 +2821,9 @@
                     if (p <= maxWaves) dataPoints.add(p);
                 });
 
-                for (let p = 0; p <= Math.min(maxWaves, 200); p += 1) { dataPoints.add(p); }
-                for (let p = 200; p <= maxWaves; p += 5) { dataPoints.add(p); }
+                for (let p = 0; p <= maxWaves; p += 1) {
+                     dataPoints.add(p);
+                }
                 
                 const sortedPoints = Array.from(dataPoints).sort((a,b) => a-b);
                 const finalData = [];
@@ -2709,7 +2843,7 @@
                 
                 try {
                     const maxWaves = CONFIG.chart.maxWaves;
-                    const dataPoints = generateChartData(maxWaves);
+                    originalChartData = generateChartData(maxWaves);
                     
                     if (myChart) { myChart.destroy(); myChart = null; }
                     const isMobile = window.innerWidth <= 480;
@@ -2729,10 +2863,10 @@
                         type: 'line', 
                         data: { datasets: [{ 
                             label: t.chart.yAxis, 
-                            data: dataPoints, 
+                            data: [], 
                             borderColor: primaryColor, 
                             pointRadius: 0, 
-                            pointHoverRadius: isMobile ? 5 : 7, 
+                            pointHoverRadius: 0,
                             pointHoverBackgroundColor: primaryActiveColor, 
                             pointHoverBorderColor: primaryActiveColor, 
                             fill: false, 
@@ -2743,7 +2877,7 @@
                         options: { 
                             responsive: true, 
                             maintainAspectRatio: false, 
-                            animation: prefersReducedMotion ? false : { duration: CONFIG.animation.durationNormal * animSpeedMultiplier, easing: 'easeOutQuart' }, 
+                            animation: prefersReducedMotion ? false : { duration: 0 }, 
                             interaction: { mode: 'x', intersect: false }, 
                             plugins: { 
                                 tooltip: { enabled: false }, 
@@ -2751,11 +2885,11 @@
                                 annotation: { annotations: annotationsConfig }, 
                                 datalabels: { display: false }, 
                                 zoom: { 
-                                    pan: { enabled: true, mode: 'x', onPanComplete: ({chart}) => { updateYAxisRange(chart); updateChartSlidersState(chart); } }, 
-                                    zoom: { wheel: { enabled: false }, pinch: { enabled: true }, onZoomComplete: ({chart}) => { updateYAxisRange(chart); updateChartSlidersState(chart); } } 
+                                    pan: { enabled: true, mode: 'x', onPan: handleChartUpdate },
+                                    zoom: { pinch: { enabled: true }, onZoom: handleChartUpdate } 
                                 }
                             },
-                                                        scales: { 
+                            scales: { 
                                 x: { 
                                     type: "linear", 
                                     title: { display: true, text: t.chart.xAxis, font: { size: isMobile ? 11 : 13 }, color: axisColor }, 
@@ -2764,7 +2898,7 @@
                                     ticks: { 
                                         color: axisColor,
                                         autoSkip: true,
-                                        maxTicksLimit: 10,
+                                        maxTicksLimit: 15,
                                         callback: function(value) {
                                             return formatBigIntWithCommas(BigInt(Math.round(value)));
                                         }
@@ -2780,41 +2914,19 @@
                                     ticks: { 
                                         color: axisColor, 
                                         autoSkip: true,
-                                        maxTicksLimit: 8,
+                                        maxTicksLimit: 12,
                                         callback: function(value) {
                                             return formatBigIntWithCommas(BigInt(Math.round(value)));
                                         }
                                     }, 
                                     grid: { display: true, color: gridColor, borderDash: [3, 3] } 
                                 } 
-                            },
-                            afterUpdate: (chart) => {
-                                const yAxis = chart.scales.y;
-                                const xAxis = chart.scales.x;
-                                if (!yAxis || !xAxis || yAxis.ticks.length < 2) return;
-
-                                const yTickPixelDiff = Math.abs(yAxis.getPixelForTick(1) - yAxis.getPixelForTick(0));
-                                if (yTickPixelDiff <= 0) return;
-                                
-                                const yTickDataDiff = yAxis.ticks[1].value - yAxis.ticks[0].value;
-                                const yPixelsPerUnit = yTickPixelDiff / yTickDataDiff;
-
-                                const requiredXRangeInData = chart.chartArea.width / yPixelsPerUnit;
-                                const currentXRange = xAxis.max - xAxis.min;
-
-                                if (Math.abs(currentXRange - requiredXRangeInData) / currentXRange > 0.01) {
-                                    const currentCenter = (xAxis.min + xAxis.max) / 2;
-                                    xAxis.min = Math.ceil(currentCenter - requiredXRangeInData / 2);
-                                    xAxis.max = Math.ceil(currentCenter + requiredXRangeInData / 2);
-                                    
-                                    setTimeout(() => chart.update('none'), 0);
-                                }
                             }
                         }
                     });
                     attachChartControlListeners();
                     setupChartHover();
-                    updateChartSlidersState(myChart);
+                    handleChartUpdate({ chart: myChart });
                 } catch (e) {
                     const container = chartPanelCanvas?.parentElement;
                     if (container) container.innerHTML = `<p style='color: var(--error-color); text-align: center; padding: 2rem;'>Chart error: ${e.message}.</p>`;
@@ -2945,11 +3057,15 @@
                 }
                 
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === ',' && calculatorView.classList.contains('visible') && !e.target.matches('input, textarea, select')) {
+                    if ((e.key === ',' || e.key === '+') && calculatorView.classList.contains('visible') && !e.target.matches('input, textarea, select')) {
                         e.preventDefault();
                         if(mode !== 'g2w') addInputFieldAndFocus();
                     }
                     if (e.key === 'Escape') { 
+                         if (isMultiCopyMode) {
+                            exitMultiCopyMode();
+                            return;
+                         }
                          const visibleModal = document.querySelector('.modal-overlay.visible');
                          if (visibleModal) hideModal(visibleModal);
                          else if (activeSubView) hideSubView(activeSubView); 
@@ -2974,6 +3090,67 @@
                     });
                 }
             }
+            
+            function enterMultiCopyMode() {
+                isMultiCopyMode = true;
+                resultsContainer.classList.add('multi-copy-active');
+                multiCopyBtn.classList.add('glow-active');
+                multiCopyBtn.querySelector('span').textContent = t.calculator.copySelected;
+                
+                resultOutput.querySelectorAll('tr').forEach(row => {
+                    row.classList.add('selected');
+                });
+                resultOutput.addEventListener('click', handleMultiCopyItemClick);
+            }
+
+            function exitMultiCopyMode() {
+                if (!isMultiCopyMode) return;
+                isMultiCopyMode = false;
+                resultsContainer.classList.remove('multi-copy-active');
+                multiCopyBtn.classList.remove('glow-active');
+                multiCopyBtn.querySelector('span').textContent = t.calculator.multiCopy;
+                resultOutput.querySelectorAll('tr.selected').forEach(row => row.classList.remove('selected'));
+                resultOutput.removeEventListener('click', handleMultiCopyItemClick);
+            }
+
+            function handleMultiCopyItemClick(e) {
+                if (!isMultiCopyMode) return;
+                const row = e.target.closest('tr');
+                if (row) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    row.classList.toggle('selected');
+                }
+            }
+
+            function performMultiCopy() {
+                const selectedRows = resultOutput.querySelectorAll('tr.selected');
+                if (selectedRows.length === 0) {
+                    showNotification("No items selected to copy.");
+                    return;
+                }
+
+                let textToCopy = '';
+                selectedRows.forEach(row => {
+                    const inputVal = row.dataset.inputValue;
+                    const outputVal = row.dataset.outputValue;
+                    if(mode === 'g2w') {
+                       const type = row.dataset.inputType === 'gold' ? t.calculator.gold : t.calculator.diamond;
+                       const rank = row.dataset.inputRank;
+                       const cards = row.dataset.outputCards;
+                       const rankText = row.dataset.inputType === 'gold' ? ` (${t.units.rank} ${rank})` : '';
+                       textToCopy += `${formatBigIntWithCommas(inputVal)} ${type}${rankText} → ${formatBigIntWithCommas(outputVal)} ${t.units.waveSingle} (${formatBigIntWithCommas(cards)} ${t.units.cardSingle})\n`;
+                    } else {
+                       const inputUnit = mode === 'c2w' ? t.units.cards : t.units.waves;
+                       const outputUnit = mode === 'w2c' ? t.units.cards : t.units.waves;
+                       textToCopy += `${formatBigIntWithCommas(inputVal)} ${inputUnit} → ${formatBigIntWithCommas(outputVal)} ${outputUnit}\n`;
+                    }
+                });
+                navigator.clipboard.writeText(textToCopy.trim()).then(() => showNotification(t?.copied || 'Copied')).catch(err => console.error('Failed to copy selected results:', err));
+                
+                exitMultiCopyMode();
+            }
+
 
         function attachCalculatorListeners() {
             btnW2C_main.addEventListener('click', () => switchMode('w2c'));
@@ -2996,6 +3173,15 @@
                     clearResults();
                 });
             }
+            if(multiCopyBtn) {
+                multiCopyBtn.addEventListener('click', () => {
+                    if (isMultiCopyMode) {
+                        performMultiCopy();
+                    } else {
+                        enterMultiCopyMode();
+                    }
+                });
+            }
             
             inputContainer.addEventListener('input', handleInputEvent); 
             inputContainer.addEventListener('keydown', handleKeyDownEvent); 
@@ -3004,11 +3190,18 @@
             inputContainer.addEventListener('compositionstart', () => { isComposing = true; });
             inputContainer.addEventListener('compositionend', (e) => { isComposing = false; handleInputEvent(e); });
             
-            inputContainer.addEventListener('focusin', () => {
+            inputContainerWrapper.addEventListener('click', (e) => {
+                if (e.target.closest('button, input, .calc-input')) return;
                 setInputState(true);
             });
-            resourceInputContainer.addEventListener('focusin', () => {
-                setInputState(true);
+
+            resultsContainer.addEventListener('click', (e) => {
+                if (e.target.closest('button, .card-container, .long-number')) {
+                    return;
+                }
+                if (!isMultiCopyMode) {
+                   if(window.innerWidth > 1024) { setInputState(false); }
+                }
             });
 
             resourceInput.addEventListener('input', handleInputEvent);
@@ -3026,28 +3219,17 @@
                 if (resultsContainer.classList.contains('visible-true')) handleCalculationTrigger();
             });
             
-            inputContainerWrapper.addEventListener('click', (e) => {
-                if (e.target.closest('button, input')) return;
-                setInputState(true);
-            });
-
-            resultsContainer.addEventListener('click', (e) => {
-                if (e.target.closest('button, .card-container, .long-number')) {
-                    return;
-                }
-                setInputState(false);
-            });
-
-            resultOutput.addEventListener('dragstart', handleDragStart);
-            resultOutput.addEventListener('dragover', handleDragOver);
-            resultOutput.addEventListener('dragleave', handleDragLeave);
-            resultOutput.addEventListener('drop', handleDrop);
             calculatorFlexContainer.addEventListener('click', (e) => {
                  if(e.target === calculatorFlexContainer || e.target === calculatorContentWrapper) {
                      e.stopPropagation();
                      handleCalculationTrigger();
                  }
             });
+
+            resultOutput.addEventListener('dragstart', handleDragStart);
+            resultOutput.addEventListener('dragover', handleDragOver);
+            resultOutput.addEventListener('dragleave', handleDragLeave);
+            resultOutput.addEventListener('drop', handleDrop);
         }
 
             function handleDragStart(e) {
@@ -3206,14 +3388,15 @@
 
             function showProcessModal(inputStr, steps = [], sourceElement = null) {
                 showModal(processDetailsModalOverlay, () => {
-                    updateProcessDetails(inputStr, steps);
+                    const extraData = sourceElement?.closest('tr')?.dataset?.steps;
+                    updateProcessDetails(inputStr, steps, extraData);
                 });
             }
 
             function showRangeResultModal(fromInput, toInput, inputDiff, outputDiff, calcMode) {
                 showModal(rangeResultModalOverlay, () => {
                     const isCardInput = calcMode === 'c2w';
-                    const inputUnit = isCardInput ? t.units.cardSingle : t.units.waves;
+                    const inputUnit = isCardInput ? t.units.cards : t.units.waves;
                     const outputUnit = isCardInput ? t.units.waves : t.units.cards;
                     
                     const inputDiffHTML = isCardInput
@@ -3227,16 +3410,16 @@
                     let html = `
                         <dl>
                             <dt>${t.range.from}</dt>
-                            <dd>${formatBigIntWithCommas(fromInput)} ${inputUnit}</dd>
+                            <dd>${formatBigIntWithCommas(fromInput)} ${isCardInput ? t.units.cardSingle : t.units.waveSingle}</dd>
                             <dt>${t.range.to}</dt>
-                            <dd>${formatBigIntWithCommas(toInput)} ${inputUnit}</dd>
+                            <dd>${formatBigIntWithCommas(toInput)} ${isCardInput ? t.units.cardSingle : t.units.waveSingle}</dd>
                         </dl>
                         <hr>
                         <dl>
                             <dt>${inputUnit} ${t.range.difference}</dt>
-                            <dd class="highlight">${isCardInput ? createCardSpan(inputDiff.toString(), t.units.cardSingle, true) : `${formatBigIntWithCommas(inputDiff)} ${t.units.waveSingle}`}</dd>
+                            <dd class="highlight">${inputDiffHTML}</dd>
                             <dt>${outputUnit} ${t.range.difference}</dt>
-                            <dd class="highlight">${isCardInput ? `${formatBigIntWithCommas(outputDiff)} ${t.units.waveSingle}` : createCardSpan(outputDiff.toString(), t.units.cardSingle, true)}</dd>
+                            <dd class="highlight">${outputDiffHTML}</dd>
                         </dl>
                     `;
                     rangeResultContent.innerHTML = html;
@@ -3351,7 +3534,7 @@
             }
 
             function handleResultMouseOver(e) {
-                if (isTouchDevice) return;
+                if (isTouchDevice || isMultiCopyMode) return;
                 const cardSpan = e.target.closest('.card-container[data-reward-clickable="true"]');
                 const longNumSpan = e.target.closest('.long-number');
 
@@ -3371,7 +3554,7 @@
                 }
             }
             function handleResultMouseOut(e) {
-                if (isTouchDevice) return;
+                if (isTouchDevice || isMultiCopyMode) return;
                 if (activeTooltipTarget) {
                     const related = e.relatedTarget;
                     const isLeavingTarget = !activeTooltipTarget.contains(related);
@@ -3382,6 +3565,7 @@
                 }
             }
             function handleResultClick(e) {
+                if (isMultiCopyMode) return;
                 const cardContainer = e.target.closest('.card-container[data-reward-clickable="true"]');
                 const longNumSpan = e.target.closest('.long-number');
                 const sourceElement = cardContainer || longNumSpan;
@@ -3450,24 +3634,32 @@
             function attachChartControlListeners() {
                 if (!myChart) return;
                 const zoomSlider = document.getElementById('chartZoomSlider');
-                const panContainer = document.getElementById('chart-pan-container');
                 const panThumb = document.getElementById('pan-thumb');
                 const track = document.getElementById('pan-track');
+                const maxZoom = CONFIG.chart.maxWaves / CONFIG.chart.minZoomRange;
+                zoomSlider.max = maxZoom;
                 
                 chartPanelCanvas.addEventListener('wheel', (event) => {
                     if (!myChart) return;
                     event.preventDefault();
                     
                     const zoomFactor = event.deltaY < 0 ? 0.9 : 1.1;
-                    const currentXMax = myChart.options.scales.x.max;
-                    let newXMax = Math.max(10, currentXMax * zoomFactor);
+                    const { min: currentXMin, max: currentXMax } = myChart.options.scales.x;
+                    let newRange = (currentXMax - currentXMin) * zoomFactor;
+
+                    if (newRange < CONFIG.chart.minZoomRange) {
+                        newRange = CONFIG.chart.minZoomRange;
+                    }
+                    if (newRange > CONFIG.chart.maxWaves) {
+                        newRange = CONFIG.chart.maxWaves;
+                    }
                     
                     myChart.options.scales.x.min = 0;
-                    myChart.options.scales.x.max = Math.min(Math.ceil(newXMax), CONFIG.chart.maxWaves);
+                    myChart.options.scales.x.max = newRange;
+                    myChart.options.scales.y.min = 0;
+                    myChart.options.scales.y.max = Number(wavesToCards(BigInt(Math.ceil(newRange))));
                     
-                    updateYAxisRange(myChart);
-                    myChart.update('none');
-                    updateChartSlidersState(myChart);
+                    handleChartUpdate({chart: myChart});
                 }, { passive: false });
 
 
@@ -3475,30 +3667,35 @@
                     if (!myChart) return;
                     const zoomLevel = parseFloat(zoomSlider.value);
                     const newXRange = CONFIG.chart.maxWaves / zoomLevel;
-                    const currentXMin = myChart.scales.x.min;
                     
-                    myChart.options.scales.x.max = Math.ceil(currentXMin + newXRange);
-
-                    updateYAxisRange(myChart);
-                    myChart.update('none');
-                    updateChartSlidersState(myChart);
+                    myChart.options.scales.x.min = 0;
+                    myChart.options.scales.x.max = Math.max(CONFIG.chart.minZoomRange, newXRange);
+                    
+                    handleChartUpdate({chart: myChart});
                 };
                 
                 let isDragging = false;
                 let dragStartX = 0;
                 let initialThumbX = 0;
 
-                panThumb.addEventListener('mousedown', (e) => {
+                const startDrag = (e) => {
                     isDragging = true;
-                    dragStartX = e.clientX;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    dragStartX = clientX;
                     initialThumbX = panThumb.getBoundingClientRect().left - track.getBoundingClientRect().left;
                     panThumb.style.cursor = 'grabbing';
                     body.style.cursor = 'grabbing';
-                });
+                    document.addEventListener('mousemove', moveDrag);
+                    document.addEventListener('mouseup', endDrag);
+                    document.addEventListener('touchmove', moveDrag, { passive: false });
+                    document.addEventListener('touchend', endDrag);
+                    e.preventDefault();
+                };
 
-                document.addEventListener('mousemove', (e) => {
+                const moveDrag = (e) => {
                     if (!isDragging || !myChart) return;
-                    const dx = e.clientX - dragStartX;
+                    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                    const dx = clientX - dragStartX;
                     const trackWidth = track.clientWidth;
                     const thumbWidth = panThumb.offsetWidth;
                     const newThumbX = Math.max(0, Math.min(trackWidth - thumbWidth, initialThumbX + dx));
@@ -3510,21 +3707,28 @@
                     
                     const newXMin = panRatio * maxMin;
 
-                    myChart.options.scales.x.min = Math.ceil(newXMin);
-                    myChart.options.scales.x.max = Math.ceil(newXMin + visibleRange);
+                    myChart.options.scales.x.min = Math.max(0, newXMin);
+                    myChart.options.scales.x.max = Math.min(CONFIG.chart.maxWaves, newXMin + visibleRange);
                     
-                    updateYAxisRange(myChart);
-                    myChart.update('none');
-                    updateChartSlidersState(myChart);
-                });
+                    handleChartUpdate({chart: myChart});
+                    e.preventDefault();
+                };
 
-                document.addEventListener('mouseup', () => {
+                const endDrag = () => {
                     if (isDragging) {
                         isDragging = false;
                         panThumb.style.cursor = 'grab';
                         body.style.cursor = '';
+                        document.removeEventListener('mousemove', moveDrag);
+                        document.removeEventListener('mouseup', endDrag);
+                        document.removeEventListener('touchmove', moveDrag);
+                        document.removeEventListener('touchend', endDrag);
                     }
-                });
+                };
+
+                panThumb.addEventListener('mousedown', startDrag);
+                panThumb.addEventListener('touchstart', startDrag, { passive: false });
+
             }
 
             function updatePanRuler(chart) {
@@ -3610,7 +3814,7 @@
                         const cardValueBigInt = wavesToCards(BigInt(waveForCalc));
                         let cardValueNumForPlot = Number(cardValueBigInt);
                         cardValueNumForPlot = Math.max(myChart.scales.y.min ?? 0, Math.min(cardValueNumForPlot, myChart.scales.y.max ?? CONFIG.chart.yAxisInitialMax));
-                        updateCrosshairAnnotations(waveValueRaw, cardValueNumForPlot, cardValueBigInt, xPixel, yPixel, rect);
+                        updateCrosshairAnnotations(waveForCalc, cardValueNumForPlot, cardValueBigInt, xPixel, yPixel, rect);
                     } else {
                         updateCrosshairAnnotations(null, null, null);
                     }
@@ -3669,8 +3873,14 @@
                     if (annotations['crosshairX']?.display) { annotations['crosshairX'].display = false; changed = true; }
                     if (annotations['crosshairLabel']?.display) { annotations['crosshairLabel'].display = false; changed = true; }
                 }
-                if (changed && myChart.ctx && myChart.canvas.offsetParent) {
-                    try { myChart.update('none'); } catch (e) { }
+                
+                if (changed) {
+                    clearTimeout(chartUpdateTimeout);
+                    chartUpdateTimeout = setTimeout(() => {
+                         if (myChart && myChart.ctx && myChart.canvas.offsetParent) {
+                            try { myChart.update('none'); } catch (e) {}
+                         }
+                    }, 16); 
                 }
             }
 
@@ -3842,26 +4052,25 @@
                 let targetProps = {}; let ease = EASE_BOUNCE; let duration = TRANSITION_DURATION;
 
                 if (newState === "textSelect") {
-                    cursorIsSelectingText = true; gsap.to(cursorInner, { autoAlpha: 0, duration: duration * 0.5 });
+                    cursorIsSelectingText = true;
+                    targetProps = { width: CURSOR_DEFAULT_SIZE, height: cursorTargetHeight, scaleX: CURSOR_INPUT_WIDTH / CURSOR_DEFAULT_SIZE, scaleY: 1, borderRadius: "1px" };
                 } else {
-                    cursorIsSelectingText = false; gsap.set(selectionIndicator, { autoAlpha: 0 });
+                    cursorIsSelectingText = false;
                     switch (newState) {
                         case "link": case "button": targetProps = { width: CURSOR_BUTTON_SIZE, height: CURSOR_BUTTON_SIZE, scale: CURSOR_BUTTON_SCALE, borderRadius: "50%", opacity: 1, filter: "blur(0px)", transform: "none" }; break;
                         case "chartPanning": targetProps = { width: CURSOR_BUTTON_SIZE, height: CURSOR_BUTTON_SIZE, scale: CURSOR_BUTTON_SCALE * 0.9, borderRadius: "50%", opacity: 1, filter: "blur(0px)", transform: "none" }; ease = EASE_STANDARD; break;
-                        case "input": case "text": targetProps = { width: CURSOR_DEFAULT_SIZE, height: CURSOR_DEFAULT_SIZE, scaleX: CURSOR_INPUT_WIDTH / CURSOR_DEFAULT_SIZE, scaleY: cursorTargetHeight / CURSOR_DEFAULT_SIZE, borderRadius: "1px", opacity: 1, filter: "blur(0px)", transform: "none" }; ease = EASE_STANDARD; break;
+                        case "input": case "text": targetProps = { width: CURSOR_INPUT_WIDTH, height: cursorTargetHeight, scale: 1, borderRadius: "1px", opacity: 1, filter: "blur(0px)", transform: "none" }; ease = EASE_STANDARD; break;
                         case "disabled": targetProps = { width: CURSOR_DEFAULT_SIZE, height: CURSOR_DEFAULT_SIZE, scale: CURSOR_DISABLED_SCALE, borderRadius: "50%", opacity: 0.8, filter: "blur(0.5px)", transform: "none" }; ease = "back.out(1)"; break;
                         default: targetProps = { width: CURSOR_DEFAULT_SIZE, height: CURSOR_DEFAULT_SIZE, scale: 1, borderRadius: "50%", opacity: 1, filter: "blur(0px)", transform: "none" }; cursorStartIdleTimer(); break;
                     }
-                    targetProps.backgroundColor = (newState === "disabled") ? "var(--disabled-cursor-bg)" : "white"; targetProps.boxShadow = defaultShadowThemed();
-                    gsap.to(cursorInner, { ...targetProps, autoAlpha: 1, duration: duration, ease: ease, overwrite: true });
                 }
+                targetProps.backgroundColor = (newState === "disabled") ? "var(--disabled-cursor-bg)" : "white"; targetProps.boxShadow = defaultShadowThemed();
+                gsap.to(cursorInner, { ...targetProps, autoAlpha: 1, duration: duration, ease: ease, overwrite: true });
             }
             
             function cursorShowCursor(){if(!cursorIsVisible && !body.classList.contains('native-cursor')){gsap.to(cursor,{autoAlpha:1, duration:ANIM_DURATION_NORMAL}); cursorIsVisible=true;}}
             function cursorShowSelectionBox(){if(body.classList.contains('native-cursor')) return; const borderColor = 'var(--selection-border)'; const bgColor = 'var(--selection-bg)'; gsap.to(selectionBox,{autoAlpha:1, borderColor:borderColor, backgroundColor: bgColor, duration:ANIM_DURATION_FAST});}
             function cursorHideSelectionBox(){if(body.classList.contains('native-cursor')) return; const borderColor = getCurrentColorWithAlpha("--primary-color", 0.15); gsap.to(selectionBox,{autoAlpha:0, borderColor:borderColor, backgroundColor: 'transparent', duration:ANIM_DURATION_FAST});}
-            function cursorShowSelectionIndicator(){if(body.classList.contains('native-cursor')) return; gsap.fromTo(selectionIndicator,{scale:0.5, autoAlpha:0},{scale:1, autoAlpha:1, duration:ANIM_DURATION_NORMAL * 1.2, ease:EASE_BOUNCE});}
-            function cursorHideSelectionIndicator(){if(body.classList.contains('native-cursor')) return; if(gsap.getProperty(selectionIndicator,"visibility") === "visible"){gsap.to(selectionIndicator,{scale:0.5, autoAlpha:0, duration:ANIM_DURATION_FAST, ease:EASE_IN});}}
             function cursorStartIdleTimer(){clearTimeout(cursorIdleTimer);cursorKillBreathing();if(cursorState==="default"&&!cursorIsSelectingText && !prefersReducedMotion && !body.classList.contains('native-cursor')){cursorIdleTimer=setTimeout(cursorStartBreathing,IDLE_TIME);}}
             function cursorStartBreathing(){if(cursorState==="default"&&!cursorIsSelectingText&&!cursorBreathingTween&&!cursorRecoverTween && !prefersReducedMotion && !body.classList.contains('native-cursor')){cursorBreathingTween=gsap.to(cursorInner,{scale:BREATHING_SCALE,duration:BREATHING_DURATION,ease:"sine.inOut",yoyo:true,repeat:-1});}}
             function cursorKillBreathing(){clearTimeout(cursorIdleTimer);if(cursorBreathingTween){cursorBreathingTween.kill();cursorBreathingTween=null;if(!body.classList.contains('native-cursor')){gsap.to(cursorInner,{scale:1,duration:ANIM_DURATION_FAST,overwrite:true});}}}
@@ -3871,8 +4080,8 @@
             gsap.set(selectionIndicator,{xPercent:-50,yPercent:-50,scale:1,autoAlpha:0});
             cursorStartIdleTimer();
 
-            document.addEventListener("mousemove", e => { if (body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); cursorShowCursor(); const clientX = e.clientX; const clientY = e.clientY; if (cursorRafMoveId) cancelAnimationFrame(cursorRafMoveId); cursorRafMoveId = requestAnimationFrame(() => { gsap.set(cursor, { x: clientX, y: clientY }); gsap.to(selectionIndicator, { x: clientX, y: clientY, duration: CURSOR_MOVE_DURATION * 2, ease: EASE_STANDARD }); let dx = clientX - cursorLastClientX; let dy = clientY - cursorLastClientY; cursorLastClientX = clientX; cursorLastClientY = clientY; 
-                if (cursorState === 'text') {
+            document.addEventListener("mousemove", e => { if (body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); cursorShowCursor(); const clientX = e.clientX; const clientY = e.clientY; if(cursorRafMoveId) return; cursorRafMoveId = requestAnimationFrame(() => { gsap.set(cursor, { x: clientX, y: clientY }); let dx = clientX - cursorLastClientX; let dy = clientY - cursorLastClientY; cursorLastClientX = clientX; cursorLastClientY = clientY; 
+                if (cursorState === 'text' || cursorState === 'textSelect') {
                     const el = document.elementFromPoint(clientX, clientY);
                     if(el) {
                         const newHeight = Math.max(16, parseFloat(window.getComputedStyle(el).fontSize) * 1.4);
@@ -3882,9 +4091,11 @@
                         }
                     }
                 }
-                if (cursorState === "default" && !cursorIsSelectingText && !prefersReducedMotion) { let speed = Math.min(Math.sqrt(dx * dx + dy * dy), 120); if (cursorRecoverTween) { cursorRecoverTween.kill(); cursorRecoverTween = null; } cursorKillBreathing(); const shadowOpacity = getVarOpacity("--cursor-shadow-opacity", 0.5); const shadowColor = getCurrentColorWithAlpha("white", shadowOpacity * 0.8); let shadowOffsetX = Math.max(-SHADOW_MAX_OFFSET, Math.min(SHADOW_MAX_OFFSET, -dx * SHADOW_SPEED_OFFSET_FACTOR)); let shadowOffsetY = Math.max(-SHADOW_MAX_OFFSET, Math.min(SHADOW_MAX_OFFSET, -dy * SHADOW_SPEED_OFFSET_FACTOR)); let shadowBlur = SHADOW_BASE_BLUR + Math.min(SHADOW_MAX_BLUR_ADD, speed * SHADOW_SPEED_BLUR_FACTOR); let dynamicShadow = `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor}`; if (speed > 1) { cursorCurrentAngle = Math.atan2(dy, dx) * 180 / Math.PI; let scaleX = Math.min(MAX_STRETCH, 1 + speed * DEFORM_STRETCH_FACTOR); let scaleY = Math.max(MIN_SQUISH, 1 - speed * DEFORM_SQUISH_FACTOR); let transformString = `rotate(${cursorCurrentAngle}deg) scaleX(${scaleX}) scaleY(${scaleY}) rotate(${-cursorCurrentAngle}deg)`; gsap.to(cursorInner, { transform: transformString, boxShadow: dynamicShadow, duration: DEFORM_ANIM_DURATION, ease: EASE_STANDARD, overwrite: false }); } else { if (!cursorRecoverTween) { cursorRecoverTween = gsap.to(cursorInner, { transform: "none", boxShadow: defaultShadowThemed(), duration: DEFORM_RECOVER_DURATION, ease: EASE_ELASTIC_RECOVER, overwrite: false, onComplete: () => { cursorRecoverTween = null; cursorStartIdleTimer(); } }); } } } }); }, { passive: true });
-            body.addEventListener("mouseout", e => { if (body.classList.contains('native-cursor')) return; if (!e.relatedTarget || !body.contains(e.relatedTarget)) { if (cursorRafMoveId) { cancelAnimationFrame(cursorRafMoveId); cursorRafMoveId = null; } if (cursorState === "default" && !cursorIsSelectingText && !prefersReducedMotion && !cursorRecoverTween) { cursorKillBreathing(); cursorRecoverTween = gsap.to(cursorInner, { transform: "none", boxShadow: defaultShadowThemed(), duration: DEFORM_RECOVER_DURATION, ease: EASE_ELASTIC_RECOVER, onComplete: () => { cursorRecoverTween = null; } }); } gsap.to(cursor, {autoAlpha: 0, duration: ANIM_DURATION_NORMAL}); cursorIsVisible = false; gsap.set(selectionIndicator, { autoAlpha: 0 }); } });
-            window.addEventListener("focus", () => { if ((cursorLastClientX > 0 || cursorLastClientY > 0) && !body.classList.contains('native-cursor')) { gsap.set(cursor, { x: cursorLastClientX, y: cursorLastClientY, autoAlpha: 1 }); cursorIsVisible = true; if (gsap.getProperty(selectionBox, "opacity") > 0) { gsap.set(selectionIndicator, { x: cursorLastClientX, y: cursorLastClientY }); cursorShowSelectionIndicator(); } } });
+                if (cursorState === "default" && !cursorIsSelectingText && !prefersReducedMotion) { let speed = Math.min(Math.sqrt(dx * dx + dy * dy), 120); if (cursorRecoverTween) { cursorRecoverTween.kill(); cursorRecoverTween = null; } cursorKillBreathing(); const shadowOpacity = getVarOpacity("--cursor-shadow-opacity", 0.5); const shadowColor = getCurrentColorWithAlpha("white", shadowOpacity * 0.8); let shadowOffsetX = Math.max(-SHADOW_MAX_OFFSET, Math.min(SHADOW_MAX_OFFSET, -dx * SHADOW_SPEED_OFFSET_FACTOR)); let shadowOffsetY = Math.max(-SHADOW_MAX_OFFSET, Math.min(SHADOW_MAX_OFFSET, -dy * SHADOW_SPEED_OFFSET_FACTOR)); let shadowBlur = SHADOW_BASE_BLUR + Math.min(SHADOW_MAX_BLUR_ADD, speed * SHADOW_SPEED_BLUR_FACTOR); let dynamicShadow = `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px ${shadowColor}`; if (speed > 1) { cursorCurrentAngle = Math.atan2(dy, dx) * 180 / Math.PI; let scaleX = Math.min(MAX_STRETCH, 1 + speed * DEFORM_STRETCH_FACTOR); let scaleY = Math.max(MIN_SQUISH, 1 - speed * DEFORM_SQUISH_FACTOR); let transformString = `rotate(${cursorCurrentAngle}deg) scaleX(${scaleX}) scaleY(${scaleY}) rotate(${-cursorCurrentAngle}deg)`; gsap.to(cursorInner, { transform: transformString, boxShadow: dynamicShadow, duration: DEFORM_ANIM_DURATION, ease: EASE_STANDARD, overwrite: false }); } else { if (!cursorRecoverTween) { cursorRecoverTween = gsap.to(cursorInner, { transform: "none", boxShadow: defaultShadowThemed(), duration: DEFORM_RECOVER_DURATION, ease: EASE_ELASTIC_RECOVER, overwrite: false, onComplete: () => { cursorRecoverTween = null; cursorStartIdleTimer(); } }); } } }
+                cursorRafMoveId = null;
+            }); }, { passive: true });
+            body.addEventListener("mouseout", e => { if (body.classList.contains('native-cursor')) return; if (!e.relatedTarget || !body.contains(e.relatedTarget)) { if (cursorRafMoveId) { cancelAnimationFrame(cursorRafMoveId); cursorRafMoveId = null; } if (cursorState === "default" && !cursorIsSelectingText && !prefersReducedMotion && !cursorRecoverTween) { cursorKillBreathing(); cursorRecoverTween = gsap.to(cursorInner, { transform: "none", boxShadow: defaultShadowThemed(), duration: DEFORM_RECOVER_DURATION, ease: EASE_ELASTIC_RECOVER, onComplete: () => { cursorRecoverTween = null; } }); } gsap.to(cursor, {autoAlpha: 0, duration: ANIM_DURATION_NORMAL}); cursorIsVisible = false; } });
+            window.addEventListener("focus", () => { if ((cursorLastClientX > 0 || cursorLastClientY > 0) && !body.classList.contains('native-cursor')) { gsap.set(cursor, { x: cursorLastClientX, y: cursorLastClientY, autoAlpha: 1 }); cursorIsVisible = true; } });
             window.addEventListener("blur", () => { cursorKillBreathing(); });
             document.addEventListener("mousedown", e => { if (body.classList.contains('native-cursor')) return; if (cursorState === "disabled" || e.button === 2) return; cursorKillBreathing(); isPanningChart = e.target.closest('#chartPanelCanvas') !== null; if (isPanningChart) { setCursorState('chartPanning'); } cursorJustStartedSelection = true; setTimeout(() => { cursorJustStartedSelection = false; }, 150); if (!prefersReducedMotion) {
                     if (cursorState === 'text' || cursorState === 'input') {
@@ -3906,7 +4117,7 @@
                             repeat: 1,
                             overwrite: cursorState === 'default' ? false : 'auto'
                         });} let clickEffect = document.createElement("div"); clickEffect.classList.add("click-effect"); document.body.appendChild(clickEffect); gsap.set(clickEffect, { x: e.clientX, y: e.clientY }); gsap.to(clickEffect, { width: 70, height: 70, opacity: 0, duration: 0.55 * animSpeedMultiplier, ease: EASE_STANDARD, onComplete: () => clickEffect.remove() }); } });
-            document.addEventListener("mouseup", e => { if (body.classList.contains('native-cursor')) return; if (isPanningChart) { isPanningChart = false; const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY); if (elementUnderCursor && elementUnderCursor.closest('#chartPanelCanvas')) { setCursorState('button'); } else { cursorRestoreCursorStateAfterSelection(); } } if (!cursorJustStartedSelection) { const target = e.target; const isTextElement = target.closest("p, span, h1, h2, h3, h4, h5, h6, li, dt, dd, code, pre, label, input, textarea, .long-number, #resultOutput td:first-child span, #resultOutput td:nth-child(3) span:not(.reward-symbol)"); if (!isTextElement && gsap.getProperty(selectionBox, "opacity") > 0) { window.getSelection().removeAllRanges(); cursorHideSelectionBox(); gsap.set(selectionIndicator, {autoAlpha: 0}); cursorRestoreCursorStateAfterSelection(); } } else { setTimeout(cursorUpdateSelectionBoxVisibility, 50); } cursorStartIdleTimer(); });
+            document.addEventListener("mouseup", e => { if (body.classList.contains('native-cursor')) return; if (isPanningChart) { isPanningChart = false; const elementUnderCursor = document.elementFromPoint(e.clientX, e.clientY); if (elementUnderCursor && elementUnderCursor.closest('#chartPanelCanvas')) { setCursorState('button'); } else { cursorRestoreCursorStateAfterSelection(); } } if (!cursorJustStartedSelection) { const target = e.target; const isTextElement = target.closest("p, span, h1, h2, h3, h4, h5, h6, li, dt, dd, code, pre, label, input, textarea, .long-number, #resultOutput td:first-child span, #resultOutput td:nth-child(3) span:not(.reward-symbol)"); if (!isTextElement && gsap.getProperty(selectionBox, "opacity") > 0) { window.getSelection().removeAllRanges(); cursorHideSelectionBox(); cursorRestoreCursorStateAfterSelection(); } } else { setTimeout(cursorUpdateSelectionBoxVisibility, 50); } cursorStartIdleTimer(); });
             body.addEventListener("mouseover", e => { if (body.classList.contains('native-cursor')) { setCursorState('default'); return; } if (isPanningChart) return; if ((cursorIsSelectingText && !cursorJustStartedSelection)) return; 
                 const target = e.target; let newState = "default"; cursorTargetHeight = 25;
                 const isDisabled = target.closest("[disabled]");
@@ -3925,8 +4136,12 @@
             });
             document.querySelectorAll("input:not([type='checkbox']), textarea, select").forEach(element => { element.addEventListener("focus", () => { if(body.classList.contains('native-cursor')) return; cursorKillBreathing(); setCursorState(element.hasAttribute("disabled") ? "disabled" : "input"); }); element.addEventListener("blur", (e) => { if(body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); setTimeout(() => { const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); if (!elementUnderCursor || elementUnderCursor !== element || cursorIsSelectingText) { if (!cursorIsSelectingText) { if (elementUnderCursor) { elementUnderCursor.dispatchEvent(new MouseEvent("mouseover", { view: window, bubbles: true, cancelable: true })); } else { setCursorState("default"); } } } else { if (!element.hasAttribute("disabled")) { setCursorState("text"); } } }, 10); }); });
             document.addEventListener("selectionchange", () => { if (body.classList.contains('native-cursor')) return; cursorKillBreathing(); if (cursorRafSelectId) cancelAnimationFrame(cursorRafSelectId); cursorRafSelectId = requestAnimationFrame(cursorUpdateSelectionBoxVisibility); });
-            function cursorUpdateSelectionBoxVisibility() { if (body.classList.contains('native-cursor')) { cursorHideSelectionBox(); cursorHideSelectionIndicator(); return; }; const selection = window.getSelection(); let hasVisibleSelection = false; if (selection && selection.type === "Range" && selection.rangeCount > 0) { const range = selection.getRangeAt(0); if (!range.collapsed && selection.toString().trim().length > 0) { const rects = range.getClientRects(); if (rects.length > 0) { hasVisibleSelection = true; let bounds = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }; for (const rect of rects) { bounds.left = Math.min(bounds.left, rect.left); bounds.top = Math.min(bounds.top, rect.top); bounds.right = Math.max(bounds.right, rect.right); bounds.bottom = Math.max(bounds.bottom, rect.bottom); } let left = bounds.left; let top = bounds.top; let width = bounds.right - left; let height = bounds.bottom - top; cursorShowSelectionBox(); gsap.to(selectionBox, { left: left - SELECTION_BOX_PADDING_X, top: top - SELECTION_BOX_PADDING_Y, width: width + (2 * SELECTION_BOX_PADDING_X), height: height + (2 * SELECTION_BOX_PADDING_Y), duration: ANIM_DURATION_FAST, ease: EASE_STANDARD, onStart: () => { if (cursorState !== "textSelect") setCursorState("textSelect"); cursorShowSelectionIndicator(); }, overwrite: true }); } } } if (!hasVisibleSelection) { cursorHideSelectionBox(); gsap.set(selectionIndicator, { autoAlpha: 0 }); if (cursorIsSelectingText) { cursorRestoreCursorStateAfterSelection(); } } }
-            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; gsap.set(selectionIndicator, { autoAlpha: 0 }); const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])'); const isChartCanvas = elementUnderCursor.closest("#chartPanelCanvas, #chartZoomSlider"); const isResultOutputCell = elementUnderCursor.closest(".result-output-cell"); const isGeneralTextContent = target.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3"); if (isDisabled) newState = "disabled"; else if (isChartCanvas) newState = "button"; else if (isInteractiveButton || isLink || isSelect || isCheckboxLabel || isResultOutputCell) newState = "button"; else if (isCardContainer || isLongNumber) newState = "button"; else if (isTextInputElement) { newState = (document.activeElement === isTextInputElement) ? "input" : "text"; cursorTargetHeight = Math.max(18, parseFloat(window.getComputedStyle(isTextInputElement).fontSize) * 1.5); } else if (isGeneralTextContent) { newState = "text"; cursorTargetHeight = Math.max(16, parseFloat(window.getComputedStyle(isGeneralTextContent).fontSize) * 1.4); } } setCursorState(newState); }
+            function cursorUpdateSelectionBoxVisibility() { if (body.classList.contains('native-cursor')) { cursorHideSelectionBox(); return; }; const selection = window.getSelection(); let hasVisibleSelection = false; if (selection && selection.type === "Range" && selection.rangeCount > 0) { const range = selection.getRangeAt(0); if (!range.collapsed && selection.toString().trim().length > 0) { const rects = range.getClientRects(); if (rects.length > 0) { hasVisibleSelection = true; let bounds = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }; for (const rect of rects) { bounds.left = Math.min(bounds.left, rect.left); bounds.top = Math.min(bounds.top, rect.top); bounds.right = Math.max(bounds.right, rect.right); bounds.bottom = Math.max(bounds.bottom, rect.bottom); } let left = bounds.left; let top = bounds.top; let width = bounds.right - left; let height = bounds.bottom - top; cursorShowSelectionBox(); gsap.to(selectionBox, { left: left - SELECTION_BOX_PADDING_X, top: top - SELECTION_BOX_PADDING_Y, width: width + (2 * SELECTION_BOX_PADDING_X), height: height + (2 * SELECTION_BOX_PADDING_Y), duration: ANIM_DURATION_FAST, ease: EASE_STANDARD, onStart: () => { if (cursorState !== "textSelect") setCursorState("textSelect"); }, overwrite: true }); } } } if (!hasVisibleSelection) { cursorHideSelectionBox(); if (cursorIsSelectingText) { cursorRestoreCursorStateAfterSelection(); } } }
+            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])');
+                const isChartCanvas = elementUnderCursor.closest("#chartPanelCanvas, #chartZoomSlider");
+                const isResultOutputCell = elementUnderCursor.closest(".result-output-cell");
+                const isGeneralTextContent = elementUnderCursor.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3");
+                if (isDisabled) newState = "disabled"; else if (isChartCanvas) newState = "button"; else if (isInteractiveButton || isLink || isSelect || isCheckboxLabel || isResultOutputCell) newState = "button"; else if (isCardContainer || isLongNumber) newState = "button"; else if (isTextInputElement) { newState = (document.activeElement === isTextInputElement) ? "input" : "text"; cursorTargetHeight = Math.max(18, parseFloat(window.getComputedStyle(isTextInputElement).fontSize) * 1.5); } else if (isGeneralTextContent) { newState = "text"; cursorTargetHeight = Math.max(16, parseFloat(window.getComputedStyle(isGeneralTextContent).fontSize) * 1.4); } } setCursorState(newState); }
             const themeObserver=new MutationObserver(mutations=>{ if (body.classList.contains('native-cursor')) return; for(let mutation of mutations){ if(mutation.type==="attributes"&&mutation.attributeName==="class"){ if(cursorState==="default"){ const currentShadow = defaultShadowThemed(); if(cursorRecoverTween) { gsap.to(cursorRecoverTween.targets()[0],{boxShadow:currentShadow, overwrite:true}); } else if (!cursorBreathingTween) { gsap.set(cursorInner,{boxShadow:currentShadow}); } } if (gsap.getProperty(selectionBox, "opacity") > 0) { const borderColor = getComputedStyle(document.body).getPropertyValue('--selection-border').trim(); const bgColor = getComputedStyle(document.body).getPropertyValue('--selection-bg').trim(); gsap.to(selectionBox, {borderColor: borderColor, backgroundColor: bgColor, duration: 0.2 * animSpeedMultiplier }); } } } });
             themeObserver.observe(document.body,{attributes:true});
             const cursorSettingObserver = new MutationObserver(mutations => { for (let mutation of mutations) { if (mutation.type === "attributes" && mutation.attributeName === "class") { if (body.classList.contains('native-cursor')) { gsap.set([cursor, selectionBox, selectionIndicator], { autoAlpha: 0 }); cursorKillBreathing(); if(cursorRecoverTween) cursorRecoverTween.kill(); gsap.set(cursorInner, { transform: "none" }); cursorIsVisible = false; } else { if (cursorLastClientX > 0 || cursorLastClientY > 0) { cursorShowCursor(); const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); if(elementUnderCursor) { elementUnderCursor.dispatchEvent(new MouseEvent("mouseover", { bubbles: true, cancelable: true })); } else { setCursorState('default'); } } } } } });
