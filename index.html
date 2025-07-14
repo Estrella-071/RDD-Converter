@@ -165,10 +165,10 @@
         #appContainer { position: relative; width: 100%; height: 100%; display: none; flex-direction: column; opacity: 0; visibility: hidden; overflow: hidden; z-index: 1; }
         @media (prefers-reduced-motion: no-preference) { #appContainer { transition: opacity 0.4s ease; } } 
         body.app-loaded #appContainer { opacity: 1; visibility: visible; }
-        #topBar { position: absolute; top: 2rem; right: 2rem; display: flex; gap: 0.85rem; z-index: 1100; opacity: 0; transform: translateY(-25px); pointer-events: none; }
-        #topBar.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        #topBar { position: absolute; top: 2rem; left: 50%; display: flex; gap: 0.85rem; z-index: 1100; opacity: 0; transform: translateX(-50%) translateY(-25px); pointer-events: none; }
+        #topBar.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
         @media (prefers-reduced-motion: no-preference) { #topBar.visible { transition: opacity 0.4s ease 0.1s, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.1s; } }
-        #topBar .mode-toggle { padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 0.8rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); box-shadow: 0 4px 10px var(--shadow-faint), var(--glass-inset-shadow); color: var(--text-color); cursor: pointer; font-weight: 600; }
+        #topBar .mode-toggle { padding: 0.6rem 1.3rem; font-size: 0.95rem; border-radius: 0.8rem; background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border); box-shadow: 0 4px 10px var(--shadow-faint), var(--glass-inset-shadow); color: var(--text-color); cursor: pointer; font-weight: 600; white-space: nowrap;}
         @media (prefers-reduced-motion: no-preference) { #topBar .mode-toggle { transition: all var(--transition-duration) var(--transition-timing); } }
         #topBar .mode-toggle.active { background: var(--primary-color); color: hsl(0, 0%, 98%); box-shadow: 0 5px 15px hsla(var(--hue-primary), var(--sat-primary), 40%, 0.65); transform: scale(1.08) translateY(-2px); }
         #topBar .mode-toggle:hover:not(.active) { transform: scale(1.06) translateY(-1px); background: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.15); box-shadow: 0 6px 12px var(--shadow-medium); }
@@ -190,8 +190,8 @@
         #calculatorContentWrapper { position: relative; display: flex; justify-content: center; align-items: center; gap: 3rem; width: 100%; max-width: 1300px; padding: 1rem; }
 
         #inputContainerWrapper, #resultsContainer {
-            transition: opacity 0.5s var(--transition-timing), transform 0.5s var(--transition-timing), z-index 0s linear 0.5s;
-            will-change: opacity, transform;
+            transition: opacity 0.5s var(--transition-timing), transform 0.5s var(--transition-timing), z-index 0s linear 0.5s, min-height 0.3s ease;
+            will-change: opacity, transform, min-height;
             position: absolute;
         }
         
@@ -224,7 +224,9 @@
 
         #inputContainerWrapper { 
             display: flex; flex-direction: column; 
-            align-items: center; width: 100%;
+            align-items: center; 
+            justify-content: center; /* This is the new property */
+            width: 100%;
             max-width: 600px;
             overflow: visible; 
             padding: 1.5rem;
@@ -344,7 +346,19 @@
         #resultsContainer.glass { backdrop-filter: blur(20px) saturate(190%); box-shadow: 0 14px 45px var(--shadow-strong), var(--glass-inset-shadow); border-radius: 2rem; }
         #resultOutput { max-height: calc(80vh - 150px); overflow-y: auto; padding-right: 0.8rem; scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; }
         #resultOutput::-webkit-scrollbar { width: 7px; } #resultOutput::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 3.5px; } #resultOutput::-webkit-scrollbar-track { background: transparent; }
-        #resultOutput table { width: 100%; border-collapse: separate; border-spacing: 0 0.8rem; table-layout: auto; }
+        #resultOutput div[data-i18n="calculator.resultPlaceholder"] {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-color);
+            text-align: center;
+            width: 100%;
+            padding: 0.5rem 0;
+            height: 58px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #resultOutput table { width: 100%; border-collapse: separate; border-spacing: 0 0.5rem; table-layout: auto; }
         #resultOutput td { padding: 0.8rem 0.6rem; border-bottom: 1px solid var(--table-border); text-align: left; vertical-align: middle; word-break: break-word; font-size: 1.1rem; position:relative; }
         .result-item-actions {
             display: flex;
@@ -412,8 +426,8 @@
             color: var(--primary-color); font-family: 'Montserrat', sans-serif;
         }
         .details-modal-like dl {
-            display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 1.8rem;
-            margin-bottom: 0.5rem; font-size: clamp(0.95rem, 2vw, 1rem); align-items: center;
+            display: grid; grid-template-columns: auto 1fr; gap: 0.8rem 1.8rem;
+            margin-bottom: 0.8rem; font-size: clamp(0.95rem, 2vw, 1rem); align-items: center;
         }
         .details-modal-like dl:last-child { margin-bottom: 0; }
         .details-modal-like dt {
@@ -428,12 +442,12 @@
         .details-modal-like hr {
             border: none; height: 1px;
             background-image: linear-gradient(to right, transparent, var(--table-border), transparent);
-            margin: 1rem 0; opacity: 0.6;
+            margin: 1.2rem 0; opacity: 0.7;
         }
         .details-modal-like .process-subtitle {
-             font-size: 1.05em; color: var(--text-color); margin-top: 1rem; margin-bottom: 0.8rem;
+             font-size: 1.05em; color: var(--text-color); margin-top: 1.2rem; margin-bottom: 1rem;
              font-weight: 600; font-family: 'Montserrat', sans-serif; text-align: center;
-             padding-bottom: 0.8rem; border-bottom: 1px dashed var(--table-border);
+             padding-bottom: 1rem; border-bottom: 1px dashed var(--table-border);
         }
         .details-modal-like code {
             font-family: monospace;
@@ -447,24 +461,78 @@
             text-align: left;
             padding: 0.5rem 0;
             overflow-x: auto;
-            margin: 1rem 0;
+            margin: 1.2rem 0;
         }
+        #processDetailsContent dd { word-break: break-all; }
         #processDetailsContent p {
             font-size: 1em;
             text-align: left;
-            margin: 1rem 0;
+            margin: 1.2rem 0;
             line-height: 1.6;
         }
 
-        #bottomNavBar { position: absolute; bottom: 1.5rem; left: 50%; display: flex; gap: 2rem; padding: 0.9rem 1.6rem; z-index: 1000; opacity: 0; transform: translate(-50%, 35px); }
-        @media (prefers-reduced-motion: no-preference) { #bottomNavBar { transition: opacity 0.4s ease 0.3s, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) 0.3s; } }
-        #bottomNavBar.glass { border-radius: 2.2rem; box-shadow: 0 -7px 30px hsla(0, 0%, 0%, 0.35), var(--glass-inset-shadow); border-color: rgba(120, 130, 160, 0.65); backdrop-filter: blur(12px); }
-        .nav-item { width: 125px; height: 85px; border-radius: 1.3rem; overflow: hidden; position: relative; cursor: pointer; box-shadow: 0 6px 18px var(--shadow-medium), var(--glass-inset-shadow); }
-        @media (prefers-reduced-motion: no-preference) { .nav-item { transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), box-shadow 0.25s var(--transition-timing); } } 
-        .nav-item.glow-on-hover:hover { transform: translateY(-7px) scale(1.03); }
-        .nav-item:active { transform: scale(0.95); }
-        .nav-item.glass { backdrop-filter: blur(12px); border: none; background: rgba(70, 75, 95, 0.75); }
-        .nav-item span { position: absolute; bottom: 0.9rem; left: 0; width: 100%; text-align: center; font-size: 1rem; font-weight: 700; color: hsl(var(--hue-text), 20%, 95%); text-shadow: 0 1px 6px rgba(0,0,0,0.95); z-index: 2; pointer-events: none; }
+        #sideNavBar {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            padding: 1.2rem 0;
+            padding-left: 2rem;
+            z-index: 1050;
+            opacity: 0;
+            transform: translateY(-50%) translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+        }
+        #sideNavBar.visible {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+        #sideNavBar.glass {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            width: auto;
+            height: auto;
+            padding: 1rem 1.8rem 1rem 1.5rem;
+            border-radius: 2.5rem 0 0 2.5rem;
+            cursor: pointer;
+            position: relative;
+            background: transparent;
+            color: var(--text-color);
+            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s var(--transition-timing);
+        }
+        .nav-item.glow-on-hover:hover:not(.active) {
+            transform: translateX(-12px);
+            background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25);
+            padding-right: 5rem;
+            margin-right: -3.2rem;
+        }
+        .nav-item.active {
+            background-color: var(--primary-color);
+            color: hsl(0, 0%, 98%);
+            animation: soft-glow 5.0s infinite alternate;
+            transform: translateX(-8px) scale(1.03);
+            padding-right: 5rem;
+            margin-right: -3.2rem;
+        }
+        .nav-item span {
+            font-size: 1rem;
+            font-weight: 700;
+            text-shadow: none;
+            margin-left: 0.8rem;
+        }
+        .nav-item .item-icon svg {
+            width: 1.4em;
+            height: 1.4em;
+            fill: currentColor;
+        }
         .sub-view-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 1010; visibility: hidden; opacity: 0; padding: 2rem 2rem 4rem 2rem; padding-top: 6rem; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary-color) transparent; background-image: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); display: flex; flex-direction: column; }
         @media (prefers-reduced-motion: no-preference) { .sub-view-panel { transition: opacity 0.3s ease, visibility 0s linear 0.3s; } .sub-view-panel.visible { transition: opacity 0.3s ease, visibility 0s linear 0s; } }
         .sub-view-panel.visible { visibility: visible; opacity: 1; }
@@ -648,65 +716,6 @@
 
         .selection-box { position: fixed; border: 1.5px solid var(--selection-border); background-color: var(--selection-bg); border-radius: 6px; pointer-events: none; z-index: 99998; opacity: 0; visibility: hidden; will-change: top, left, width, height, opacity, visibility, border-color, background-color; box-sizing: border-box; box-shadow: 0 1px 4px hsla(0, 0%, 0%, 0.15); }
         
-        #navWheel {
-            position: fixed;
-            right: 0px; 
-            top: 50%;
-            transform: translate(100%, -50%);
-            z-index: 1050;
-            pointer-events: none;
-            opacity: 0;
-            visibility: hidden;
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease, visibility 0s linear 0.3s;
-        }
-        #navWheel.visible {
-            opacity: 1;
-            visibility: visible;
-            pointer-events: auto;
-            transform: translate(calc(100% - 25px), -50%);
-            transition-delay: 0s;
-        }
-        #navWheel.is-open {
-            transform: translate(0, -50%);
-        }
-        #navWheel .wheel-body {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 1.2rem;
-            padding: 1.2rem 0;
-            padding-left: 2rem;
-            pointer-events: auto;
-        }
-        #navWheel .wheel-item {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1.8rem 0.8rem 1.2rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-right: 0;
-            border-radius: 2.5rem 0 0 2.5rem;
-            color: var(--text-color);
-            cursor: pointer;
-            box-shadow: -6px 6px 20px hsla(0, 0%, 0%, 0.25);
-            backdrop-filter: blur(14px) saturate(160%);
-            transform: translateX(0);
-            transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s var(--transition-timing);
-            width: 180px;
-        }
-        
-        #navWheel .wheel-item:hover {
-            background-color: hsla(var(--hue-primary), var(--sat-primary), 65%, 0.25);
-            color: var(--primary-color);
-            transform: translateX(-10px);
-        }
-        #navWheel .wheel-item.active {
-            background-color: var(--primary-color);
-            color: hsl(0, 0%, 98%);
-            box-shadow: -5px 8px 25px hsla(var(--hue-primary), var(--sat-primary), 40%, 0.55);
-            transform: translateX(-5px) scale(1.03);
-        }
-
         .click-effect { position: fixed; width: 20px; height: 20px; border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); opacity: 0; z-index: 99997; will-change: width, height, opacity; background-color: rgba(255, 255, 255, 0.4); }
         @media (prefers-reduced-motion: no-preference) { .click-effect { transition: background-color 0.2s ease; } }
         .selection-cursor-indicator { position: fixed; width: 4px; height: 4px; background-color: white; border-radius: 50%; top: 0; left: 0; pointer-events: none; z-index: 100000; opacity: 0; visibility: hidden; will-change: transform, opacity, scale; scale: 1; box-shadow: 0 0 5px 1px white; }
@@ -738,12 +747,33 @@
                 transform: none !important;
                 opacity: 1 !important;
                 max-width: 100% !important;
-                transition: transform 0.4s var(--transition-timing), opacity 0.4s var(--transition-timing);
+                transition: transform 0.4s var(--transition-timing), opacity 0.4s var(--transition-timing), padding 0.4s ease, max-height 0.4s ease;
             }
             body.results-focused #inputContainerWrapper {
                 cursor: pointer;
                 opacity: 0.6 !important;
-                transform: translateY(-20px) scale(0.98) !important;
+                transform: translateY(0) scale(1) !important;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            body.results-focused #inputContainer,
+            body.results-focused #resourceInputContainer,
+            body.results-focused #inputActions,
+            body.results-focused #calculationHint {
+                max-height: 0;
+                opacity: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.4s ease, padding 0.4s ease;
+                margin-top: 0;
+                margin-bottom: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            body.input-focused #inputContainer,
+            body.input-focused #resourceInputContainer,
+            body.input-focused #inputActions,
+            body.input-focused #calculationHint {
+                transition: max-height 0.4s ease 0.1s, opacity 0.5s ease 0.2s, margin 0.4s ease 0.1s, padding 0.4s ease 0.1s;
             }
             body.input-focused #resultsContainer.visible-true {
                 opacity: 0 !important;
@@ -754,7 +784,7 @@
          }
          @media (max-width: 900px) {
              #resultsContainer.visible-true { max-height: none; }
-             #bottomNavBar { bottom: 1rem; gap: 1.2rem; padding: 0.7rem 1.2rem; }
+             #sideNavBar { display: none; } /* Hide side nav on smaller screens, can be replaced by a menu button if needed */
              .sub-view-panel { padding-top: 5.8rem; padding-left: 1rem; padding-right: 1rem; }
              .sub-view-panel .module-wrapper { padding: 0.5rem 0; }
              .sub-view-panel .module { padding: 1.5rem; width: 100%; max-width: 95%; } 
@@ -765,14 +795,14 @@
              .input-wrapper:focus-within { transform: translateY(-4px) scale(1.03) !important; }
          }
          @media (max-width: 768px) {
-            #navWheel { display: none !important; }
+            #sideNavBar { display: none !important; }
          }
          @media (max-width: 480px) { 
              #mainView { padding: 0.5rem; padding-top: 5rem; }
              #calculatorFlexContainer { padding: 0.2rem; padding-top: 5rem; }
              #calculatorContentWrapper { gap: 1.2rem; padding: 0.2rem; max-width: 100%; }
              body.results-focused #inputContainerWrapper {
-                transform: translateY(-30px) scale(0.95) !important;
+                transform: translateY(0) scale(1) !important;
              }
              .mode-select-btn { padding: 1.1rem 1.5rem; min-width: auto; font-size: clamp(0.9rem, 3.5vw, 1rem); flex-grow: 1; }
              #modeSelectionButtonsWrapper { gap: 1rem; width: 95%;}
@@ -796,9 +826,6 @@
              .result-item-btn svg { width: 0.85em; height: 0.85em;}
              #resultsFooter { margin-top: 1rem; padding-top: 1rem; }
              #resultInteractionHint { font-size: 0.8rem; }
-             #bottomNavBar { gap: 1rem; padding: 0.6rem 1rem; border-radius: 1.8rem; }
-             .nav-item { width: 75px; height: 55px; border-radius: 1rem; }
-             .nav-item span { font-size: 0.8rem; bottom: 0.5rem; }
              .sub-view-panel { padding: 0.5rem; padding-top: 5rem; }
              .sub-view-panel .module-wrapper { padding: 0.2rem 0;}
              .sub-view-panel .module { width: 100%; padding: 1rem; border-radius: 1rem; }
@@ -817,7 +844,7 @@
              .details-modal-like dt, .details-modal-like dd { font-size: 0.95rem;}
              #landingContent { width: 90%; padding: 2rem 1.5rem; }
              #chartPanel .chart-container { height: 65vh; min-height: 350px; padding: 0.5rem; }
-             #topBar { top: 1.5rem; right: 1rem; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100% - 4rem); }
+             #topBar { top: 1.5rem; right: auto; left: 50%; transform: translateX(-50%) translateY(-25px); gap: 0.5rem; flex-wrap: wrap; justify-content: center; max-width: calc(100% - 8rem); }
              #topBar .mode-toggle { padding: 0.6rem 1rem; font-size: 0.9rem; }
              #settingsToggleGlobal { top: 1.5rem; left: 1rem; width: 40px; height: 40px; font-size: 1.2rem; }
              #settingsToggleGlobal:hover { width: 105px; }
@@ -948,33 +975,25 @@
             </div>
         </div>
 
-        <div id="bottomNavBar" class="glass">
-            <div class="nav-item glass glow-on-hover" data-target="common"><span></span></div>
-            <div class="nav-item glass glow-on-hover" data-target="chart"><span></span></div>
-            <div class="nav-item glass glow-on-hover" data-target="history"><span></span></div>
+        <div id="sideNavBar" class="glass">
+            <div class="nav-item active glow-on-hover" data-target="calculator">
+                <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M19.73 12.67a.996.996 0 0 0-.03-1.34l-1.7-1.7a.996.996 0 0 0-1.41 0L16 10.29V6.5c0-.28-.22-.5-.5-.5h-2c-.28 0-.5.22-.5.5v3.79l-.64-.64a.996.996 0 0 0-1.41 0l-1.7 1.7c-.39.39-.39 1.02 0 1.41l.03.03 1.7 1.7c.39.39 1.02.39 1.41 0L12 13.71v4.79c0 .28.22.5.5.5h2c.28 0 .5-.22.5-.5v-4.79l.64.64c.39.39 1.02.39 1.41 0l1.7-1.7c.39-.38.39-1.02 0-1.41l-.03-.03zm-3.02.62L15 15.04v3.46h-1v-3.46l-1.71-1.71-1.29 1.29-1.04-1.04 1.29-1.29L9.54 14H6.08V9.96h3.46L11.29 8.25l1.04 1.04-1.29 1.29 1.71 1.71h3.46v1.04h-3.46l1.71 1.71zM4.27 11.33c.39-.39.39-1.02 0-1.41l-1.7-1.7a.996.996 0 0 0-1.41 0L.51 8.86a.996.996 0 0 0 0 1.41l.03.03 1.7 1.7c.39.39 1.02.39 1.41 0l.62-.62v4.79c0 .28.22.5.5.5h2c.28 0 .5-.22.5-.5v-4.79l.64.64c.39.39 1.02.39 1.41 0l.29-.29L8 12l-1.29 1.29-1.04-1.04 1.29-1.29L5.25 9.25H1.79v1.04h3.46L4.27 11.33z"></path></svg></div>
+                <span class="item-label"></span>
+            </div>
+            <div class="nav-item glow-on-hover" data-target="common">
+                <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z"></path></svg></div>
+                <span class="item-label"></span>
+            </div>
+            <div class="nav-item glow-on-hover" data-target="chart">
+                <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"></path></svg></div>
+                <span class="item-label"></span>
+            </div>
+            <div class="nav-item glow-on-hover" data-target="history">
+                <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"></path></svg></div>
+                <span class="item-label"></span>
+            </div>
         </div>
         
-        <div id="navWheel">
-             <div class="wheel-body">
-                 <div class="wheel-item" data-target="calculator">
-                     <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M19.73 12.67a.996.996 0 0 0-.03-1.34l-1.7-1.7a.996.996 0 0 0-1.41 0L16 10.29V6.5c0-.28-.22-.5-.5-.5h-2c-.28 0-.5.22-.5.5v3.79l-.64-.64a.996.996 0 0 0-1.41 0l-1.7 1.7c-.39.39-.39 1.02 0 1.41l.03.03 1.7 1.7c.39.39 1.02.39 1.41 0L12 13.71v4.79c0 .28.22.5.5.5h2c.28 0 .5-.22.5-.5v-4.79l.64.64c.39.39 1.02.39 1.41 0l1.7-1.7c.39-.38.39-1.02 0-1.41l-.03-.03zm-3.02.62L15 15.04v3.46h-1v-3.46l-1.71-1.71-1.29 1.29-1.04-1.04 1.29-1.29L9.54 14H6.08V9.96h3.46L11.29 8.25l1.04 1.04-1.29 1.29 1.71 1.71h3.46v1.04h-3.46l1.71 1.71zM4.27 11.33c.39-.39.39-1.02 0-1.41l-1.7-1.7a.996.996 0 0 0-1.41 0L.51 8.86a.996.996 0 0 0 0 1.41l.03.03 1.7 1.7c.39.39 1.02.39 1.41 0l.62-.62v4.79c0 .28.22.5.5.5h2c.28 0 .5-.22.5-.5v-4.79l.64.64c.39.39 1.02.39 1.41 0l.29-.29L8 12l-1.29 1.29-1.04-1.04 1.29-1.29L5.25 9.25H1.79v1.04h3.46L4.27 11.33z"></path></svg></div>
-                     <span class="item-label"></span>
-                 </div>
-                 <div class="wheel-item" data-target="common">
-                      <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M10 20h4V4h-4v16zm-6 0h4v-8H4v8zM16 9v11h4V9h-4z"></path></svg></div>
-                     <span class="item-label"></span>
-                 </div>
-                 <div class="wheel-item" data-target="chart">
-                      <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"></path></svg></div>
-                     <span class="item-label"></span>
-                 </div>
-                 <div class="wheel-item" data-target="history">
-                      <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.25 2.52.77-1.28-3.52-2.09V8H12z"></path></svg></div>
-                     <span class="item-label"></span>
-                 </div>
-             </div>
-         </div>
-
         <div id="commonPanel" class="sub-view-panel">
              <button class="back-button glow-on-hover">
                   <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
@@ -1156,7 +1175,7 @@
             landingPage.removeEventListener("click", dismissLanding); 
             landingPage.removeEventListener("mousemove", handleMouseMove);
             landingThemeToggle.style.display = 'none'; localStorage.setItem("converter_language_v10", JSON.stringify(landingLang)); localStorage.setItem("converter_theme_v10", JSON.stringify(currentTheme)); 
-            gsap.to(landingPage, { autoAlpha: 0, duration: 0.25 * animSpeedMultiplier, ease: "power2.in", onComplete: () => { landingPage.style.display="none"; mainContent.style.display="flex"; body.classList.add("app-loaded"); if (typeof window.initializeApp === "function") { window.initializeApp(); } else { console.error("initializeApp function not found!"); document.body.innerHTML = "Error: App initialization failed."; } }}); } 
+            gsap.to(landingPage, { autoAlpha: 0, duration: 0.25 * animSpeedMultiplier, ease: "power2.in", onComplete: () => { landingPage.style.display="none"; mainContent.style.display="flex"; body.classList.add("app-loaded"); if (typeof window.initializeApp === "function") { window.initializeApp(); } else { document.body.innerHTML = "Error: App initialization failed."; } }}); } 
             landingPage.addEventListener("click", dismissLanding);
         })();
     });
@@ -1179,14 +1198,12 @@
                             Chart.register(ChartZoom);
                         }
                     } catch (e) {
-                        console.error("Error registering Chart.js plugins:", e);
                     }
                 } else {
-                    console.error("Chart object not found. Cannot register plugins.");
                 }
             }
 
-            const APP_VERSION = "1.4.3"; 
+            const APP_VERSION = "1.5.0"; 
             const LS_KEYS = { language: "converter_language_v10", theme: "converter_theme_v10", cursor: "converter_cursor_v10", lastRank: "converter_lastRank_v10", history: "converter_history_v10", mode: "converter_mode_v10"};
             const CONFIG = {
                 chart: { maxWaves: 1600, safetyLimit: 10n**18n, plotLimit: Number.MAX_SAFE_INTEGER, yAxisInitialMax: 20000, minZoomRange: 16 },
@@ -1198,11 +1215,11 @@
             const REWARDS = { 1:{c:14,r:4,h:2,l:0.01,g:320,d:3}, 2:{c:20,r:5,h:2,l:0.01,g:432,d:3}, 3:{c:25,r:6,h:3,l:0.01,g:544,d:3}, 4:{c:28,r:8,h:4,l:0.01,g:640,d:3}, 5:{c:33,r:9,h:4,l:0.01,g:736,d:3}, 6:{c:37,r:10,h:5,l:0.01,g:832,d:3}, 7:{c:42,r:11,h:5,l:0.01,g:925,d:3}, 8:{c:46,r:12,h:6,l:0.01,g:1024,d:3}, 9:{c:49,r:14,h:7,l:0.01,g:1120,d:3}, 10:{c:54,r:15,h:7,l:0.01,g:1312,d:3}, 11:{c:63,r:17,h:8,l:0.01,g:1408,d:3}, 12:{c:67,r:18,h:9,l:0.01,g:1504,d:3}, 13:{c:71,r:19,h:9,l:0.01,g:1594,d:3}, 14:{c:77,r:20,h:10,l:0.01,g:1687,d:3}, 15:{c:82,r:21,h:10,l:0.01,g:1775,d:3}, 16:{c:87,r:22,h:11,l:0.01,g:1866,d:3}, 17:{c:92,r:23,h:11,l:0.01,g:1951,d:3}, 18:{c:99,r:24,h:12,l:0.01,g:2044,d:3}, 19:{c:105,r:25,h:12,l:0.01,g:2133,d:3}, 20:{c:111,r:26,h:13,l:0.01,g:2222,d:3} };
 
             const translations = {
-                "zh-TW": { clear: "清除", nav: { calculator: "換算器", common: "常用表", chartSection: "關係圖", history: "紀錄", back: "返回" }, calculator: { title: "卡片/回合數 換算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "資源 ❯ 回合", inputLabel: "輸入{modeLabel}:", inputLabelResource: "輸入資源數量:", gold: "金幣", diamond: "鑽石", calcBtn: "換算", copyItem: "複製此項", processItem: "查看過程", resultInteractionHint: "- 點擊卡片數查看卡片寶箱掉落換算。<br>- 拖動一個結果到另一個上以計算區間。", invalidInput: "請輸入有效整數", copyText: "複製", copyAll: "複製全部", multiCopy: "多選複製", copySelected: "複製選取", placeholder: "點此輸入", maxValues: "最多 {max} 個數值", negativeInfo: "支援負數計算", modeSelectionHint: "選擇換算模式開始計算", resultPlaceholder: "計算結果將顯示在此處", addInput: "新增欄位", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白處開始換算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增輸入框，上限8個。", fillEmpty: "請先填寫空白欄位", removeDuplicates: "存在重複的數值", addInputCommaHint: "或按 <kbd>,</kbd> 新增欄位", clearAll: "清除全部"}, common: { title: "常用換算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡數 - 回合數關係圖", chartTypeLabel: "圖表類型:", optionLine: "折線圖", optionBar: "柱狀圖", xAxis: "回合數", yAxis: "卡片數", waveSuffix: "回合", clickPrompt: "點擊圖表查看數值", zoomIn: "放大", zoomOut: "縮小", resetZoom: "重設縮放" }, history: { title: "歷史紀錄", clearHistory: "清除紀錄", noRecord: "無紀錄" }, process: { title: "換算過程", stepTitle: "{modeTitle} | 輸入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "資源 → 回合(W)", negTitle: "負數處理", negInfo: "輸入的負數將對應到其絕對值的負數結果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合區間 = {start} ~ {end}", w2cFinalTotalLabel: "最終總計", g2wStep1Title: "資源 → 箱子數", g2wStep2Title: "箱子數 → 卡片數", g2wStep3Title: "卡片數 → 回合數", c2wSearchTitle: "二分搜尋法過程", c2wStep3Info: "『卡片 → 回合』二分搜尋", formula: "公式", calculation: "計算", finalResult: "最終結果", searchStep: "第 {n} 次猜測", guess: "猜測回合數", check: "驗算卡片數", adjustRange: "調整範圍", resourcePerBox: "每箱資源", newRange: "新範圍" }, range: { title: "區間計算結果", from: "從", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "時間", header2: "模式", header3: "輸入", header4: "結果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "階" }, pagination: { prev: "上一頁", next: "下一頁", pageInfo: "{current}/{total}頁" }, language: "語言", settings: { title: "設定", language: "語言", theme: "主題", cursor: "游標樣式" }, autoSelectLanguage: "自動偵測", themeOptions: { system: "系統", light: "淺色", dark: "深色"}, cursorOptions: { custom: "自訂", native: "系統預設"}, reward: { title: "卡片獎勵詳情", selectRank: "選擇段位:", boxes: "箱子數", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "傳說", gold: "金幣", diamonds: "鑽石", expected: "(期望)", clickHint: "點擊卡片數可查看獎勵詳情" }, longNum: { copy: "複製完整數字", choiceTitle: "選擇操作", choiceShowFull: "顯示完整數字", choiceShowReward: "獎勵詳情", fullValueTitle: "完整數值", fullNumberLabel: "完整數字" }, copied: "已複製", close: "關閉"},
-                "en": { clear: "Clear", nav: { calculator: "Converter", common: "Tables", chartSection: "Chart", history: "History", back: "Back" }, calculator: { title: "Card / Wave Converter", modeW2C: "Waves ❯ Cards", modeC2W: "Cards ❯ Waves", modeG2W: "Resource ❯ Waves", inputLabel: "Enter {modeLabel}:", inputLabelResource: "Enter Resource Amount:", gold: "Gold", diamond: "Diamond", calcBtn: "Calculate", copyItem: "Copy Item", processItem: "View Process", resultInteractionHint: "- Click card numbers for reward details.<br>- Drag a result onto another to calculate the range.", invalidInput: "Enter valid integers", copyText: "Copy", copyAll: "Copy All", multiCopy: "Multi-copy", copySelected: "Copy Selected", placeholder: "Enter number...", maxValues: "Max {max} values", negativeInfo: "Negative number calculation supported", modeSelectionHint: "Select a conversion mode to begin calculation", resultPlaceholder: "Calculation results will appear here", addInput: "Add Input", calculationHint: "- Press <kbd>Enter</kbd> or click empty space to calculate.<br>- Press <kbd>,</kbd> or <kbd>+</kbd> to add an input field (max 8).", fillEmpty: "Please fill empty fields first", removeDuplicates: "Please remove duplicate values", addInputCommaHint: "or press <kbd>,</kbd> to add input", clearAll: "Clear All"}, common: { title: "Common Conversions", w2c: "Waves → Cards", c2w: "Cards → Waves" }, chart: { title: "Cards vs. Waves", chartTypeLabel: "Chart Type:", optionLine: "Line", optionBar: "Bar", xAxis: "Waves", yAxis: "Cards", waveSuffix: "W", clickPrompt: "Click chart for values", zoomIn: "Zoom In", zoomOut: "Zoom Out", resetZoom: "Reset Zoom" }, history: { title: "History", clearHistory: "Clear History", noRecord: "No records" }, process: { title: "Calculation Process", stepTitle: "{modeTitle} | Input: {input}", w2cTitle: "Waves(W) → Cards(C)", c2wTitle: "Cards(C) → Waves(W)", g2wTitle: "Resource → Waves(W)", negTitle: "Negative Handling", negInfo: "A negative input corresponds to the negative result of its absolute value, i.e., f(-x) = -f(x).", w2cFormulaTitle: "Formula Principle", w2cSegmentTitle: "Wave Segment W = {start} to {end}", w2cFinalTotalLabel: "Final Total", g2wStep1Title: "Step 1: Resource → Boxes", g2wStep2Title: "Step 2: Boxes → Cards (C)", g2wStep3Title: "Step 3: Cards (C) → Waves (W)", c2wSearchTitle: "Binary Search Process", c2wStep3Info: "This step uses the same algorithm as 'Cards → Waves' to find the final wave number.", formula: "Formula", calculation: "Calculation", finalResult: "Final Result", searchStep: "Iteration {n}", guess: "Guess W", check: "Resulting C", adjustRange: "Adjust Range", resourcePerBox: "Resource per Box", newRange: "New Range" }, range: { title: "Range Calculation", from: "From", to: "To", difference: "Difference" }, tables: { w2c: { header1: "Waves", header2: "Cards" }, c2w: { header1: "Cards", header2: "Waves" }, history: { header1: "Time", header2: "Mode", header3: "Input", header4: "Result" } }, units: { waves: "Waves", cards: "Cards", waveSingle: "Wave", cardSingle: "Card", rank: "Rank" }, pagination: { prev: "Prev", next: "Next", pageInfo: "Page {current}/{total}" }, language: "Language", settings: { title: "Settings", language: "Language", theme: "Theme", cursor: "Cursor Style" }, autoSelectLanguage: "Auto-Detect", themeOptions: { system: "System", light: "Light", dark: "Dark"}, cursorOptions: { custom: "Custom", native: "System Default"}, reward: { title: "Card Reward Details", selectRank: "Select Rank:", boxes: "Boxes", commonDice: "Common", rareDice: "Rare", heroDice: "Hero", legendaryDice: "Legendary", gold: "Gold", diamonds: "Diamonds", expected: "(Exp.)", clickHint: "Click card number for details" }, longNum: { copy: "Copy Full Number", choiceTitle: "Select Action", choiceShowFull: "Show Full Number", choiceShowReward: "Reward Details", fullValueTitle: "Full Value", fullNumberLabel: "Full Number" }, copied: "Copied", close: "Close" },
-                "zh-CN": { clear: "清除", nav: { calculator: "换算", common: "常用表", chartSection: "关系图", history: "历史", back: "返回" }, calculator: { title: "卡片/回合数 换算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "资源 ❯ 回合", inputLabel: "输入{modeLabel}:", inputLabelResource: "输入资源数量:", gold: "金币", diamond: "钻石", calcBtn: "换算", copyItem: "复制此项", processItem: "查看过程", resultInteractionHint: "- 点击卡片数查看卡片宝箱掉落换算。<br>- 拖动一个结果到另一个上以计算区间。", invalidInput: "请输入有效整数", copyText: "复制", copyAll: "复制全部", multiCopy: "多选复制", copySelected: "复制选取", placeholder: "点此输入", maxValues: "最多 {max} 个数值", negativeInfo: "支持负数计算", modeSelectionHint: "选择换算模式开始计算", resultPlaceholder: "计算结果将显示在此处", addInput: "新增字段", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白处开始换算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增输入框，上限8个。", fillEmpty: "请先填写空白字段", removeDuplicates: "存在重复的数值", addInputCommaHint: "或按 <kbd>,</kbd> 新增字段", clearAll: "清除全部"}, common: { title: "常用换算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡数 - 回合数关系图", chartTypeLabel: "图表类型:", optionLine: "折线图", optionBar: "柱状图", xAxis: "回合数", yAxis: "卡片数", waveSuffix: "回合", clickPrompt: "点击图表查看数值", zoomIn: "放大", zoomOut: "缩小", resetZoom: "重置缩放" }, history: { title: "历史记录", clearHistory: "清除历史", noRecord: "无记录" }, process: { title: "换算过程", stepTitle: "{modeTitle} | 输入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "资源 → 回合(W)", negTitle: "负数处理", negInfo: "输入的负数将对应到其绝对值的负数结果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合区间 = {start} ~ {end}", w2cFinalTotalLabel: "最终总计", g2wStep1Title: "资源 → 箱子数", g2wStep2Title: "箱子数 → 卡片数", g2wStep3Title: "卡片数 → 回合数", c2wSearchTitle: "二分查找法过程", c2wStep3Info: "“卡片 → 回合” 二分查找", formula: "公式", calculation: "计算", finalResult: "最终结果", searchStep: "第 {n} 次迭代", guess: "猜测回合数", check: "验算卡片数", adjustRange: "调整范围", resourcePerBox: "每箱资源", newRange: "新范围" }, range: { title: "区间计算结果", from: "从", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "时间", header2: "模式", header3: "输入", header4: "结果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "阶" }, pagination: { prev: "上页", next: "下页", pageInfo: "{current}/{total}页" }, language: "语言", settings: { title: "设置", language: "语言", theme: "主题", cursor: "光标样式" }, autoSelectLanguage: "自动检测", themeOptions: { system: "系统", light: "浅色", dark: "深色" }, cursorOptions: { custom: "自定义", native: "系统默认" }, reward: { title: "卡片奖励详情", selectRank: "选择段位:", boxes: "箱子数", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "传说", gold: "金币", diamonds: "钻石", expected: "(期望)", clickHint: "点击卡片数可查看奖励详情" }, longNum: { copy: "复制完整数字", choiceTitle: "选择操作", choiceShowFull: "显示完整数字", choiceShowReward: "奖励详情", fullValueTitle: "完整数值", fullNumberLabel: "完整数字" }, copied: "已复制", close: "关闭" },
-                "ja": { clear: "クリア", nav: { calculator: "換算", common: "一覧", chartSection: "グラフ", history: "履歴", back: "戻る" }, calculator: { title: "カード/ウェーブ数 換算", modeW2C: "ウェーブ ❯ カード", modeC2W: "カード ❯ ウェーブ", modeG2W: "リソース ❯ ウェーブ", inputLabel: "{modeLabel}入力：", inputLabelResource: "リソース数量入力:", gold: "ゴールド", diamond: "ダイヤ", calcBtn: "換算", copyItem: "この項目をコピー", processItem: "過程を見る", resultInteractionHint: "- カード数をクリックして報酬詳細を表示。<br>- ある結果を別の結果にドラッグして区間を計算します。", invalidInput: "有効な整数を入力", copyText: "コピー", copyAll: "すべてコピー", multiCopy: "複数選択コピー", copySelected: "選択項目をコピー", placeholder: "入力...", maxValues: "最大{max}個", negativeInfo: "負の数計算対応", modeSelectionHint: "換算モードを選択して開始", resultPlaceholder: "計算結果はここに表示", addInput: "入力欄追加", calculationHint: "- <kbd>Enter</kbd>キーか空白の場所をクリックして計算開始。<br>- <kbd>,</kbd> または <kbd>+</kbd> で入力欄追加（最大8個）。", fillEmpty: "空の欄を先に記入してください", removeDuplicates: "重複する値を削除してください", addInputCommaHint: "または <kbd>,</kbd> で入力欄追加", clearAll: "全てクリア"}, common: { title: "常用換算表", w2c: "ウェーブ → カード", c2w: "カード → ウェーブ" }, chart: { title: "カード vs ウェーブ", chartTypeLabel: "グラフ種類:", optionLine: "線グラフ", optionBar: "棒グラフ", xAxis: "ウェーブ数", yAxis: "カード数", waveSuffix: "W", clickPrompt: "グラフをクリックして値表示", zoomIn: "拡大", zoomOut: "縮小", resetZoom: "リセット" }, history: { title: "履歴", clearHistory: "履歴削除", noRecord: "記録なし" }, process: { title: "計算過程", stepTitle: "{modeTitle} | 入力: {input}", w2cTitle: "ウェーブ(W) → カード(C)", c2wTitle: "カード(C) → ウェーブ(W)", g2wTitle: "リソース → ウェーブ(W)", negTitle: "負の数の処理", negInfo: "負の入力は、その絶対値の負の結果に対応します。つまり f(-x) = -f(x) です。", w2cFormulaTitle: "計算原理", w2cSegmentTitle: "区間 W = {start} ～ {end}", w2cFinalTotalLabel: "最終合計", g2wStep1Title: "リソース → ボックス", g2wStep2Title: "ボックス → カード(C)", g2wStep3Title: "カード(C) → ウェーブ(W)", c2wSearchTitle: "二分探索の過程", c2wStep3Info: "このステップでは「カード→ウェーブ」と同じアルゴリズムを用いて最終的なウェーブ数を求めます。", formula: "数式", calculation: "計算", finalResult: "最終結果", searchStep: "{n}回目の反復", guess: "推測 W", check: "検証 C", adjustRange: "範囲調整", resourcePerBox: "ボックス毎のリソース", newRange: "新しい範囲" }, range: { title: "区間計算結果", from: "から", to: "まで", difference: "差分" }, tables: { w2c: { header1: "ウェーブ", header2: "カード" }, c2w: { header1: "カード", header2: "ウェーブ" }, history: { header1: "日時", header2: "モード", header3: "入力", header4: "結果" } }, units: { waves: "ウェーブ", cards: "カード", waveSingle: "ウェーブ", cardSingle: "カード", rank: "クラス" }, pagination: { prev: "前へ", next: "次へ", pageInfo: "{current}/{total}ページ" }, language: "言語", settings: { title: "設定", language: "言語", theme: "テーマ", cursor: "カーソル" }, autoSelectLanguage: "自動検出", themeOptions: { system: "システム", light: "ライト", dark: "ダーク" }, cursorOptions: { custom: "カスタム", native: "システム標準" }, reward: { title: "カード報酬詳細", selectRank: "クラス選択:", boxes: "箱の数", commonDice: "ノーマル", rareDice: "レア", heroDice: "エピック", legendaryDice: "伝説", gold: "ゴールド", diamonds: "ダイヤ", expected: "(期待値)", clickHint: "カード数をクリックして報酬詳細表示" }, longNum: { copy: "全数値コピー", choiceTitle: "アクション選択", choiceShowFull: "全数値表示", choiceShowReward: "報酬詳細", fullValueTitle: "全数値", fullNumberLabel: "全数値" }, copied: "コピー完了", close: "閉じる" },
-                "ko": { clear: "지우기", nav: { calculator: "변환", common: "표", chartSection: "차트", history: "기록", back: "뒤로" }, calculator: { title: "카드 / 웨이브 변환기", modeW2C: "웨이브 ❯ 카드", modeC2W: "카드 ❯ 웨이브", modeG2W: "자원 ❯ 웨이브", inputLabel: "{modeLabel} 입력:", inputLabelResource: "자원 수량 입력:", gold: "골드", diamond: "다이아몬드", calcBtn: "변환", copyItem: "항목 복사", processItem: "과정 보기", resultInteractionHint: "- 보상 세부 정보를 보려면 카드 번호를 클릭하세요。<br>- 결과를 다른 결과 위로 드래그하여 범위를 계산합니다。", invalidInput: "유효한 정수 입력", copyText: "복사", copyAll: "모두 복사", multiCopy: "다중 선택 복사", copySelected: "선택 항목 복사", placeholder: "입력...", maxValues: "최대 {max}개", negativeInfo: "음수 계산 지원", modeSelectionHint: "변환 모드를 선택하여 시작", resultPlaceholder: "계산 결과가 여기에 표시됩니다", addInput: "입력 추가", calculationHint: "- <kbd>Enter</kbd>를 누르거나 빈 공간을 클릭하여 계산 시작.<br>- <kbd>,</kbd> 또는 <kbd>+</kbd>를 눌러 입력 필드 추가 (최대 8개).", fillEmpty: "먼저 빈 칸을 채워주세요", removeDuplicates: "중복된 값을 제거해주세요", addInputCommaHint: "또는 <kbd>,</kbd> 로 입력 추가", clearAll: "모두 지우기"}, common: { title: "자주 쓰는 변환표", w2c: "웨이브 → 카드", c2w: "카드 → 웨이브" }, chart: { title: "카드 vs 웨이브", chartTypeLabel: "차트 종류:", optionLine: "선", optionBar: "막대", xAxis: "웨이브", yAxis: "카드", waveSuffix: "W", clickPrompt: "차트 클릭하여 값 확인", zoomIn: "확대", zoomOut: "축소", resetZoom: "확대/축소 초기화" }, history: { title: "기록", clearHistory: "기록 삭제", noRecord: "기록 없음" }, process: { title: "계산 과정", stepTitle: "{modeTitle} | 입력: {input}", w2cTitle: "웨이브(W) → 카드(C)", c2wTitle: "카드(C) → 웨이브(W)", g2wTitle: "자원 → 웨이브(W)", negTitle: "음수 처리", negInfo: "음수 입력은 그 절대값의 음수 결과에 해당합니다. 즉, f(-x) = -f(x) 입니다.", w2cFormulaTitle: "계산 원리", w2cSegmentTitle: "구간 W = {start} ~ {end}", w2cFinalTotalLabel: "최종 합계", g2wStep1Title: "자원 → 상자", g2wStep2Title: "상자 → 카드(C)", g2wStep3Title: "카드(C) → 웨이브(W)", c2wSearchTitle: "이진 탐색 과정", c2wStep3Info: "'카드 → 웨이브'와 동일한 알고리즘을 사용하여 최종 웨이브를 찾습니다.", formula: "공식", calculation: "계산", finalResult: "최종 결과", searchStep: "{n}번째 반복", guess: "추측 W", check: "결과 C", adjustRange: "범위 조정", resourcePerBox: "상자당 자원", newRange: "새 범위" }, range: { title: "범위 계산 결과", from: "부터", to: "까지", difference: "차이" }, tables: { w2c: { header1: "웨이브", header2: "카드" }, c2w: { header1: "카드", header2: "웨이브" }, history: { header1: "시간", header2: "모드", header3: "입력", header4: "결과" } }, units: { waves: "웨이브", cards: "카드", waveSingle: "웨이브", cardSingle: "카드", rank: "클래스" }, pagination: { prev: "이전", next: "다음", pageInfo: "{current}/{total} 페이지" }, language: "언어", settings: { title: "설정", language: "언어", theme: "테마", cursor: "커서 스타일" }, autoSelectLanguage: "자동 감지", themeOptions: { system: "시스템", light: "라이트", dark: "다크" }, cursorOptions: { custom: "사용자 지정", native: "시스템 기본값" }, reward: { title: "카드 보상 상세", selectRank: "클래스 선택:", boxes: "상자 수", commonDice: "일반", rareDice: "희귀", heroDice: "영웅", legendaryDice: "전설", gold: "골드", diamonds: "다이아", expected: "(예상)", clickHint: "자세한 보상 정보를 보려면 카드 번호를 클릭하세요." }, longNum: { copy: "전체 숫자 복사", choiceTitle: "작업 선택", choiceShowFull: "전체 숫자 보기", choiceShowReward: "보상 세부 정보", fullValueTitle: "전체 값", fullNumberLabel: "전체 숫자" }, copied: "복사됨", close: "닫기" }
+                "zh-TW": { clear: "清除", nav: { calculator: "換算器", common: "常用表", chartSection: "關係圖", history: "紀錄", back: "返回" }, calculator: { title: "卡片/回合數 換算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "資源 ❯ 回合", inputLabel: "輸入{modeLabel}數:", inputLabelResource: "輸入資源數量:", gold: "金幣", diamond: "鑽石", calcBtn: "換算", copyItem: "複製此項", processItem: "查看過程", resultInteractionHint: "- 點擊卡片數查看卡片寶箱掉落換算。<br>- 拖動一個結果到另一個上以計算區間。", invalidInput: "請輸入有效整數", copyText: "複製", copyAll: "複製全部", multiCopy: "多選複製", copySelected: "複製選取", placeholder: "點此輸入", maxValues: "最多 {max} 個數值", negativeInfo: "支援負數計算", modeSelectionHint: "選擇換算模式開始計算", resultPlaceholder: "換算結果:", addInput: "新增欄位", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白處開始換算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增輸入框，上限8個。", fillEmpty: "請先填寫空白欄位", removeDuplicates: "存在重複的數值", addInputCommaHint: "或按 <kbd>,</kbd> 新增欄位", clearAll: "清除全部"}, common: { title: "常用換算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡數 - 回合數關係圖", chartTypeLabel: "圖表類型:", optionLine: "折線圖", optionBar: "柱狀圖", xAxis: "回合數", yAxis: "卡片數", waveSuffix: "回合", clickPrompt: "點擊圖表查看數值", zoomIn: "放大", zoomOut: "縮小", resetZoom: "重設縮放" }, history: { title: "歷史紀錄", clearHistory: "清除紀錄", noRecord: "無紀錄" }, process: { title: "換算過程", stepTitle: "{modeTitle} | 輸入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "資源 → 回合(W)", negTitle: "負數處理", negInfo: "輸入的負數將對應到其絕對值的負數結果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合區間 = {start} ~ {end}", w2cFinalTotalLabel: "最終總計", g2wStep1Title: "資源 → 箱子數", g2wStep2Title: "箱子數 → 卡片數", g2wStep3Title: "卡片數 → 回合數", c2wSearchTitle: "二分搜尋法過程", c2wStep3Info: "『卡片 → 回合』二分搜尋", formula: "公式", calculation: "計算", finalResult: "最終結果", searchStep: "第 {n} 次猜測", guess: "猜測回合數", check: "驗算卡片數", adjustRange: "調整範圍", resourcePerBox: "每箱資源", newRange: "新範圍" }, range: { title: "區間計算結果", from: "從", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "時間", header2: "模式", header3: "輸入", header4: "結果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "階" }, pagination: { prev: "上一頁", next: "下一頁", pageInfo: "{current}/{total}頁" }, language: "語言", settings: { title: "設定", language: "語言", theme: "主題", cursor: "游標樣式" }, autoSelectLanguage: "自動偵測", themeOptions: { system: "系統", light: "淺色", dark: "深色"}, cursorOptions: { custom: "自訂", native: "系統預設"}, reward: { title: "卡片獎勵詳情", selectRank: "選擇段位:", boxes: "箱子數", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "傳說", gold: "金幣", diamonds: "鑽石", expected: "(期望)", clickHint: "點擊卡片數可查看獎勵詳情" }, longNum: { copy: "複製完整數字", choiceTitle: "選擇操作", choiceShowFull: "顯示完整數字", choiceShowReward: "獎勵詳情", fullValueTitle: "完整數值", fullNumberLabel: "完整數字" }, copied: "已複製", close: "關閉"},
+                "en": { clear: "Clear", nav: { calculator: "Converter", common: "Tables", chartSection: "Chart", history: "History", back: "Back" }, calculator: { title: "Card / Wave Converter", modeW2C: "Waves ❯ Cards", modeC2W: "Cards ❯ Waves", modeG2W: "Resource ❯ Waves", inputLabel: "Enter {modeLabel}:", inputLabelResource: "Enter Resource Amount:", gold: "Gold", diamond: "Diamond", calcBtn: "Calculate", copyItem: "Copy Item", processItem: "View Process", resultInteractionHint: "- Click card numbers for reward details.<br>- Drag a result onto another to calculate the range.", invalidInput: "Enter valid integers", copyText: "Copy", copyAll: "Copy All", multiCopy: "Multi-copy", copySelected: "Copy Selected", placeholder: "Enter number...", maxValues: "Max {max} values", negativeInfo: "Negative number calculation supported", modeSelectionHint: "Select a conversion mode to begin calculation", resultPlaceholder: "Result:", addInput: "Add Input", calculationHint: "- Press <kbd>Enter</kbd> or click empty space to calculate.<br>- Press <kbd>,</kbd> or <kbd>+</kbd> to add an input field (max 8).", fillEmpty: "Please fill empty fields first", removeDuplicates: "Please remove duplicate values", addInputCommaHint: "or press <kbd>,</kbd> to add input", clearAll: "Clear All"}, common: { title: "Common Conversions", w2c: "Waves → Cards", c2w: "Cards → Waves" }, chart: { title: "Cards vs. Waves", chartTypeLabel: "Chart Type:", optionLine: "Line", optionBar: "Bar", xAxis: "Waves", yAxis: "Cards", waveSuffix: "W", clickPrompt: "Click chart for values", zoomIn: "Zoom In", zoomOut: "Zoom Out", resetZoom: "Reset Zoom" }, history: { title: "History", clearHistory: "Clear History", noRecord: "No records" }, process: { title: "Calculation Process", stepTitle: "{modeTitle} | Input: {input}", w2cTitle: "Waves(W) → Cards(C)", c2wTitle: "Cards(C) → Waves(W)", g2wTitle: "Resource → Waves(W)", negTitle: "Negative Handling", negInfo: "A negative input corresponds to the negative result of its absolute value, i.e., f(-x) = -f(x).", w2cFormulaTitle: "Formula Principle", w2cSegmentTitle: "Wave Segment W = {start} to {end}", w2cFinalTotalLabel: "Final Total", g2wStep1Title: "Step 1: Resource → Boxes", g2wStep2Title: "Step 2: Boxes → Cards (C)", g2wStep3Title: "Step 3: Cards (C) → Waves (W)", c2wSearchTitle: "Binary Search Process", c2wStep3Info: "This step uses the same algorithm as 'Cards → Waves' to find the final wave number.", formula: "Formula", calculation: "Calculation", finalResult: "Final Result", searchStep: "Iteration {n}", guess: "Guess W", check: "Resulting C", adjustRange: "Adjust Range", resourcePerBox: "Resource per Box", newRange: "New Range" }, range: { title: "Range Calculation", from: "From", to: "To", difference: "Difference" }, tables: { w2c: { header1: "Waves", header2: "Cards" }, c2w: { header1: "Cards", header2: "Waves" }, history: { header1: "Time", header2: "Mode", header3: "Input", header4: "Result" } }, units: { waves: "Waves", cards: "Cards", waveSingle: "Wave", cardSingle: "Card", rank: "Rank" }, pagination: { prev: "Prev", next: "Next", pageInfo: "Page {current}/{total}" }, language: "Language", settings: { title: "Settings", language: "Language", theme: "Theme", cursor: "Cursor Style" }, autoSelectLanguage: "Auto-Detect", themeOptions: { system: "System", light: "Light", dark: "Dark"}, cursorOptions: { custom: "Custom", native: "System Default"}, reward: { title: "Card Reward Details", selectRank: "Select Rank:", boxes: "Boxes", commonDice: "Common", rareDice: "Rare", heroDice: "Hero", legendaryDice: "Legendary", gold: "Gold", diamonds: "Diamonds", expected: "(Exp.)", clickHint: "Click card number for details" }, longNum: { copy: "Copy Full Number", choiceTitle: "Select Action", choiceShowFull: "Show Full Number", choiceShowReward: "Reward Details", fullValueTitle: "Full Value", fullNumberLabel: "Full Number" }, copied: "Copied", close: "Close" },
+                "zh-CN": { clear: "清除", nav: { calculator: "换算", common: "常用表", chartSection: "关系图", history: "历史", back: "返回" }, calculator: { title: "卡片/回合数 换算器", modeW2C: "回合 ❯ 卡片", modeC2W: "卡片 ❯ 回合", modeG2W: "资源 ❯ 回合", inputLabel: "输入{modeLabel}数:", inputLabelResource: "输入资源数量:", gold: "金币", diamond: "钻石", calcBtn: "换算", copyItem: "复制此项", processItem: "查看过程", resultInteractionHint: "- 点击卡片数查看卡片宝箱掉落换算。<br>- 拖动一个结果到另一个上以计算区间。", invalidInput: "请输入有效整数", copyText: "复制", copyAll: "复制全部", multiCopy: "多选复制", copySelected: "复制选取", placeholder: "点此输入", maxValues: "最多 {max} 个数值", negativeInfo: "支持负数计算", modeSelectionHint: "选择换算模式开始计算", resultPlaceholder: "换算结果:", addInput: "新增字段", calculationHint: "- 按下<kbd>Enter</kbd>或任意空白处开始换算。<br>- 按下 <kbd>,</kbd> 或 <kbd>+</kbd> 可新增输入框，上限8个。", fillEmpty: "请先填写空白字段", removeDuplicates: "存在重复的数值", addInputCommaHint: "或按 <kbd>,</kbd> 新增字段", clearAll: "清除全部"}, common: { title: "常用换算表", w2c: "回合 → 卡片", c2w: "卡片 → 回合" }, chart: { title: "卡数 - 回合数关系图", chartTypeLabel: "图表类型:", optionLine: "折线图", optionBar: "柱状图", xAxis: "回合数", yAxis: "卡片数", waveSuffix: "回合", clickPrompt: "点击图表查看数值", zoomIn: "放大", zoomOut: "缩小", resetZoom: "重置缩放" }, history: { title: "历史记录", clearHistory: "清除历史", noRecord: "无记录" }, process: { title: "换算过程", stepTitle: "{modeTitle} | 输入: {input}", w2cTitle: "回合(W) → 卡片(C)", c2wTitle: "卡片(C) → 回合(W)", g2wTitle: "资源 → 回合(W)", negTitle: "负数处理", negInfo: "输入的负数将对应到其绝对值的负数结果，即 f(-x) = -f(x)。", w2cFormulaTitle: "公式", w2cSegmentTitle: "回合区间 = {start} ~ {end}", w2cFinalTotalLabel: "最终总计", g2wStep1Title: "资源 → 箱子数", g2wStep2Title: "箱子数 → 卡片数", g2wStep3Title: "卡片数 → 回合数", c2wSearchTitle: "二分查找法过程", c2wStep3Info: "“卡片 → 回合” 二分查找", formula: "公式", calculation: "计算", finalResult: "最终结果", searchStep: "第 {n} 次迭代", guess: "猜测回合数", check: "验算卡片数", adjustRange: "调整范围", resourcePerBox: "每箱资源", newRange: "新范围" }, range: { title: "区间计算结果", from: "从", to: "到", difference: "差值" }, tables: { w2c: { header1: "回合", header2: "卡片" }, c2w: { header1: "卡片", header2: "回合" }, history: { header1: "时间", header2: "模式", header3: "输入", header4: "结果" } }, units: { waves: "回合", cards: "卡片", waveSingle: "回合", cardSingle: "卡", rank: "阶" }, pagination: { prev: "上页", next: "下页", pageInfo: "{current}/{total}页" }, language: "语言", settings: { title: "设置", language: "语言", theme: "主题", cursor: "光标样式" }, autoSelectLanguage: "自动检测", themeOptions: { system: "系统", light: "浅色", dark: "深色" }, cursorOptions: { custom: "自定义", native: "系统默认" }, reward: { title: "卡片奖励详情", selectRank: "选择段位:", boxes: "箱子数", commonDice: "普通", rareDice: "稀有", heroDice: "英雄", legendaryDice: "传说", gold: "金币", diamonds: "钻石", expected: "(期望)", clickHint: "点击卡片数可查看奖励详情" }, longNum: { copy: "复制完整数字", choiceTitle: "选择操作", choiceShowFull: "显示完整数字", choiceShowReward: "奖励详情", fullValueTitle: "完整数值", fullNumberLabel: "完整数字" }, copied: "已复制", close: "关闭" },
+                "ja": { clear: "クリア", nav: { calculator: "換算", common: "一覧", chartSection: "グラフ", history: "履歴", back: "戻る" }, calculator: { title: "カード/ウェーブ数 換算", modeW2C: "ウェーブ ❯ カード", modeC2W: "カード ❯ ウェーブ", modeG2W: "リソース ❯ ウェーブ", inputLabel: "{modeLabel}入力：", inputLabelResource: "リソース数量入力:", gold: "ゴールド", diamond: "ダイヤ", calcBtn: "換算", copyItem: "この項目をコピー", processItem: "過程を見る", resultInteractionHint: "- カード数をクリックして報酬詳細を表示。<br>- ある結果を別の結果にドラッグして区間を計算します。", invalidInput: "有効な整数を入力", copyText: "コピー", copyAll: "すべてコピー", multiCopy: "複数選択コピー", copySelected: "選択項目をコピー", placeholder: "入力...", maxValues: "最大{max}個", negativeInfo: "負の数計算対応", modeSelectionHint: "換算モードを選択して開始", resultPlaceholder: "換算結果:", addInput: "入力欄追加", calculationHint: "- <kbd>Enter</kbd>キーか空白の場所をクリックして計算開始。<br>- <kbd>,</kbd> または <kbd>+</kbd> で入力欄追加（最大8個）。", fillEmpty: "空の欄を先に記入してください", removeDuplicates: "重複する値を削除してください", addInputCommaHint: "または <kbd>,</kbd> で入力欄追加", clearAll: "全てクリア"}, common: { title: "常用換算表", w2c: "ウェーブ → カード", c2w: "カード → ウェーブ" }, chart: { title: "カード vs ウェーブ", chartTypeLabel: "グラフ種類:", optionLine: "線グラフ", optionBar: "棒グラフ", xAxis: "ウェーブ数", yAxis: "カード数", waveSuffix: "W", clickPrompt: "グラフをクリックして値表示", zoomIn: "拡大", zoomOut: "縮小", resetZoom: "リセット" }, history: { title: "履歴", clearHistory: "履歴削除", noRecord: "記録なし" }, process: { title: "計算過程", stepTitle: "{modeTitle} | 入力: {input}", w2cTitle: "ウェーブ(W) → カード(C)", c2wTitle: "カード(C) → ウェーブ(W)", g2wTitle: "リソース → ウェーブ(W)", negTitle: "負の数の処理", negInfo: "負の入力は、その絶対値の負の結果に対応します。つまり f(-x) = -f(x) です。", w2cFormulaTitle: "計算原理", w2cSegmentTitle: "区間 W = {start} ～ {end}", w2cFinalTotalLabel: "最終合計", g2wStep1Title: "リソース → ボックス", g2wStep2Title: "ボックス → カード(C)", g2wStep3Title: "カード(C) → ウェーブ(W)", c2wSearchTitle: "二分探索の過程", c2wStep3Info: "このステップでは「カード→ウェーブ」と同じアルゴリズムを用いて最終的なウェーブ数を求めます。", formula: "数式", calculation: "計算", finalResult: "最終結果", searchStep: "{n}回目の反復", guess: "推測 W", check: "検証 C", adjustRange: "範囲調整", resourcePerBox: "ボックス毎のリソース", newRange: "新しい範囲" }, range: { title: "区間計算結果", from: "から", to: "まで", difference: "差分" }, tables: { w2c: { header1: "ウェーブ", header2: "カード" }, c2w: { header1: "カード", header2: "ウェーブ" }, history: { header1: "日時", header2: "モード", header3: "入力", header4: "結果" } }, units: { waves: "ウェーブ", cards: "カード", waveSingle: "ウェーブ", cardSingle: "カード", rank: "クラス" }, pagination: { prev: "前へ", next: "次へ", pageInfo: "{current}/{total}ページ" }, language: "言語", settings: { title: "設定", language: "言語", theme: "テーマ", cursor: "カーソル" }, autoSelectLanguage: "自動検出", themeOptions: { system: "システム", light: "ライト", dark: "ダーク" }, cursorOptions: { custom: "カスタム", native: "システム標準" }, reward: { title: "カード報酬詳細", selectRank: "クラス選択:", boxes: "箱の数", commonDice: "ノーマル", rareDice: "レア", heroDice: "エピック", legendaryDice: "伝説", gold: "ゴールド", diamonds: "ダイヤ", expected: "(期待値)", clickHint: "カード数をクリックして報酬詳細表示" }, longNum: { copy: "全数値コピー", choiceTitle: "アクション選択", choiceShowFull: "全数値表示", choiceShowReward: "報酬詳細", fullValueTitle: "全数値", fullNumberLabel: "全数値" }, copied: "コピー完了", close: "閉じる" },
+                "ko": { clear: "지우기", nav: { calculator: "변환", common: "표", chartSection: "차트", history: "기록", back: "뒤로" }, calculator: { title: "카드 / 웨이브 변환기", modeW2C: "웨이브 ❯ 카드", modeC2W: "카드 ❯ 웨이브", modeG2W: "자원 ❯ 웨이브", inputLabel: "{modeLabel} 입력:", inputLabelResource: "자원 수량 입력:", gold: "골드", diamond: "다이아몬드", calcBtn: "변환", copyItem: "항목 복사", processItem: "과정 보기", resultInteractionHint: "- 보상 세부 정보를 보려면 카드 번호를 클릭하세요。<br>- 결과를 다른 결과 위로 드래그하여 범위를 계산합니다。", invalidInput: "유효한 정수 입력", copyText: "복사", copyAll: "모두 복사", multiCopy: "다중 선택 복사", copySelected: "선택 항목 복사", placeholder: "입력...", maxValues: "최대 {max}개", negativeInfo: "음수 계산 지원", modeSelectionHint: "변환 모드를 선택하여 시작", resultPlaceholder: "변환 결과:", addInput: "입력 추가", calculationHint: "- <kbd>Enter</kbd>를 누르거나 빈 공간을 클릭하여 계산 시작.<br>- <kbd>,</kbd> 또는 <kbd>+</kbd>를 눌러 입력 필드 추가 (최대 8개).", fillEmpty: "먼저 빈 칸을 채워주세요", removeDuplicates: "중복된 값을 제거해주세요", addInputCommaHint: "또는 <kbd>,</kbd> 로 입력 추가", clearAll: "모두 지우기"}, common: { title: "자주 쓰는 변환표", w2c: "웨이브 → 카드", c2w: "카드 → 웨이브" }, chart: { title: "카드 vs 웨이브", chartTypeLabel: "차트 종류:", optionLine: "선", optionBar: "막대", xAxis: "웨이브", yAxis: "카드", waveSuffix: "W", clickPrompt: "차트 클릭하여 값 확인", zoomIn: "확대", zoomOut: "축소", resetZoom: "확대/축소 초기화" }, history: { title: "기록", clearHistory: "기록 삭제", noRecord: "기록 없음" }, process: { title: "계산 과정", stepTitle: "{modeTitle} | 입력: {input}", w2cTitle: "웨이브(W) → 카드(C)", c2wTitle: "카드(C) → 웨이브(W)", g2wTitle: "자원 → 웨이브(W)", negTitle: "음수 처리", negInfo: "음수 입력은 그 절대값의 음수 결과에 해당합니다. 즉, f(-x) = -f(x) 입니다.", w2cFormulaTitle: "계산 원리", w2cSegmentTitle: "구간 W = {start} ~ {end}", w2cFinalTotalLabel: "최종 합계", g2wStep1Title: "자원 → 상자", g2wStep2Title: "상자 → 카드(C)", g2wStep3Title: "카드(C) → 웨이브(W)", c2wSearchTitle: "이진 탐색 과정", c2wStep3Info: "'카드 → 웨이브'와 동일한 알고리즘을 사용하여 최종 웨이브를 찾습니다.", formula: "공식", calculation: "계산", finalResult: "최종 결과", searchStep: "{n}번째 반복", guess: "추측 W", check: "결과 C", adjustRange: "범위 조정", resourcePerBox: "상자당 자원", newRange: "새 범위" }, range: { title: "범위 계산 결과", from: "부터", to: "까지", difference: "차이" }, tables: { w2c: { header1: "웨이브", header2: "카드" }, c2w: { header1: "카드", header2: "웨이브" }, history: { header1: "시간", header2: "모드", header3: "입력", header4: "결과" } }, units: { waves: "웨이브", cards: "카드", waveSingle: "웨이브", cardSingle: "카드", rank: "클래스" }, pagination: { prev: "이전", next: "다음", pageInfo: "{current}/{total} 페이지" }, language: "언어", settings: { title: "설정", language: "언어", theme: "테마", cursor: "커서 스타일" }, autoSelectLanguage: "자동 감지", themeOptions: { system: "시스템", light: "라이트", dark: "다크" }, cursorOptions: { custom: "사용자 지정", native: "시스템 기본값" }, reward: { title: "카드 보상 상세", selectRank: "클래스 선택:", boxes: "상자 수", commonDice: "일반", rareDice: "희귀", heroDice: "영웅", legendaryDice: "전설", gold: "골드", diamonds: "다이아", expected: "(예상)", clickHint: "자세한 보상 정보를 보려면 카드 번호를 클릭하세요." }, longNum: { copy: "전체 숫자 복사", choiceTitle: "작업 선택", choiceShowFull: "전체 숫자 보기", choiceShowReward: "보상 세부 정보", fullValueTitle: "전체 값", fullNumberLabel: "전체 숫자" }, copied: "복사됨", close: "닫기" }
             };
 
             const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
@@ -1256,9 +1273,8 @@
             const multiCopyBtn = document.getElementById('multiCopyBtn');
             const resultOutput = document.getElementById('resultOutput');
             const resultInteractionHint = document.getElementById('resultInteractionHint');
-            const bottomNavBar = document.getElementById('bottomNavBar');
+            const sideNavBar = document.getElementById('sideNavBar');
             const navItems = document.querySelectorAll('.nav-item');
-            const navWheel = document.getElementById('navWheel'); 
             const commonPanel = document.getElementById('commonPanel');
             const chartPanel = document.getElementById('chartPanel');
             const historyPanel = document.getElementById('historyPanel');
@@ -1302,8 +1318,8 @@
             let cursorLastClientY = 0;
             let chartUpdateTimeout = null;
 
-            function saveLS(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error("LS Save Error:", key, e); } }
-            function loadLS(key, defaultValue) { try { const val = localStorage.getItem(key); return val !== null ? JSON.parse(val) : defaultValue; } catch (e) { console.error("LS Load Error:", key, e); return defaultValue; } }
+            function saveLS(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { } }
+            function loadLS(key, defaultValue) { try { const val = localStorage.getItem(key); return val !== null ? JSON.parse(val) : defaultValue; } catch (e) { return defaultValue; } }
             
             function formatInputWithCommas(inputElement) {
                 if (!inputElement) return;
@@ -1365,7 +1381,6 @@
                     }
                     return formatBigIntWithCommas(numStr);
                 } catch (e) {
-                    console.warn("Error formatting long number string:", numStr, e);
                     return numStr || "";
                 }
             }
@@ -1493,7 +1508,6 @@
 
                     return { wave: result, steps: searchSteps };
                 } catch (e) {
-                    console.error("cardsToWaves Error:", cardInput, e);
                     return { wave: 0n, steps: [] };
                 }
             }
@@ -1519,7 +1533,6 @@
                     
                     return { wave, cards };
                 } catch (e) {
-                    console.error("resourceToWaves Error:", e);
                     return { wave: 0n, cards: 0n };
                 }
             }
@@ -1592,7 +1605,7 @@
             }
             
             function updateAllUItext() {
-                if (!t) { console.error("Translations not loaded:", currentLang); return; }
+                if (!t) { return; }
                 try {
                     updateCommonText();
                     updateCalculatorText();
@@ -1606,7 +1619,7 @@
                     if (resultsContainer.classList.contains('visible-true')) {
                         updateResultTableContent();
                     }
-                } catch (e) { console.error("Error updating UI text:", e); }
+                } catch (e) { }
             }
 
             function updateCommonText() {
@@ -1618,9 +1631,10 @@
                  btnC2W_top.textContent = t.calculator.modeC2W;
                  btnG2W_top.textContent = t.calculator.modeG2W;
                  
-                 document.querySelector('.nav-item[data-target="common"] span').textContent = t.nav.common; 
-                 document.querySelector('.nav-item[data-target="chart"] span').textContent = t.nav.chartSection; 
-                 document.querySelector('.nav-item[data-target="history"] span').textContent = t.nav.history; 
+                 sideNavBar.querySelector('.nav-item[data-target="calculator"] .item-label').textContent = t.nav.calculator;
+                 sideNavBar.querySelector('.nav-item[data-target="common"] .item-label').textContent = t.nav.common; 
+                 sideNavBar.querySelector('.nav-item[data-target="chart"] .item-label').textContent = t.nav.chartSection; 
+                 sideNavBar.querySelector('.nav-item[data-target="history"] .item-label').textContent = t.nav.history; 
                  
                  document.querySelector('#commonPanel h2').textContent = t.common.title;
                  document.querySelector('#commonPanel .table-box:nth-of-type(1) h3').textContent = t.common.w2c;
@@ -1630,11 +1644,6 @@
                  document.querySelector('#c2wTablePanel thead th:nth-child(1)').textContent = t.tables.c2w.header1;
                  document.querySelector('#c2wTablePanel thead th:nth-child(2)').textContent = t.tables.c2w.header2;
                  backButtons.forEach(btn => btn.setAttribute('aria-label', t.nav.back));
-                 
-                 navWheel.querySelector('.wheel-item[data-target="calculator"] .item-label').textContent = t.nav.calculator;
-                 navWheel.querySelector('.wheel-item[data-target="common"] .item-label').textContent = t.nav.common;
-                 navWheel.querySelector('.wheel-item[data-target="chart"] .item-label').textContent = t.nav.chartSection;
-                 navWheel.querySelector('.wheel-item[data-target="history"] .item-label').textContent = t.nav.history;
             }
 
             function updateCalculatorText() {
@@ -1774,7 +1783,6 @@
                     });
                     updateCalculatorText();
                 } catch (e) {
-                    console.error("Error updating result units/actions:", e);
                 }
             }
 
@@ -1855,19 +1863,17 @@
                     resultsContainer.classList.remove('visible-true');
 
                     gsap.to(modeSelectionView, { autoAlpha: 1, duration: CONFIG.animation.durationNormal * animSpeedMultiplier, delay: 0.1 * animSpeedMultiplier });
-                    gsap.fromTo(bottomNavBar, { autoAlpha: 0, y: 35 * animSpeedMultiplier }, { autoAlpha: 1, y: 0, duration: CONFIG.animation.durationLong * animSpeedMultiplier, ease: CONFIG.animation.easeBounce, delay: 0.2 * animSpeedMultiplier, onStart: () => bottomNavBar.classList.add('glass') });
+                    gsap.fromTo(sideNavBar, { autoAlpha: 0, x: '50%' }, { autoAlpha: 1, x: 0, duration: CONFIG.animation.durationLong * animSpeedMultiplier, ease: CONFIG.animation.easeBounce, delay: 0.2 * animSpeedMultiplier, onStart: () => sideNavBar.classList.add('visible') });
                     gsap.fromTo(settingsToggleGlobal, { autoAlpha: 0, y: -25 * animSpeedMultiplier }, { autoAlpha: 1, y: 0, duration: CONFIG.animation.durationLong * animSpeedMultiplier, ease: CONFIG.animation.easeBounce, delay: 0.3 * animSpeedMultiplier, onStart: () => settingsToggleGlobal.classList.add('visible') });
                     
                     attachGlobalListeners();
                     attachCalculatorListeners();
                     attachSubViewListeners();
                     attachModalListeners();
-                    initNavWheel();
                     initDustBackground();
                     createTooltips();
                     
                 } catch (error) {
-                    console.error("Initialization Failed:", error);
                     document.body.innerHTML = "App initialization error. Please refresh or contact support.";
                 }
             };
@@ -1973,13 +1979,40 @@
                         }
                         gsap.to(inputContainerWrapper, { y: '0%', autoAlpha: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
                     }
+                    gsap.to([inputContainerWrapper, resultsContainer], { minHeight: '', duration: 0.3 });
                 } else { 
                     body.classList.add('results-focused');
                     if (window.innerWidth <= 1024) {
-                        gsap.to(inputContainerWrapper, { y: '-20px', autoAlpha: 0.6, scale: 0.98, duration: 0.4, ease: 'power2.out' });
+                        gsap.to(inputContainerWrapper, { y: '0', autoAlpha: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
                         gsap.to(resultsContainer, { y: '0%', autoAlpha: 1, duration: 0.4, ease: 'power2.out' });
                     }
+                    adjustContainerHeights();
                 }
+            }
+            
+            function adjustContainerHeights() {
+                if (window.innerWidth <= 1024) {
+                    gsap.set([inputContainerWrapper, resultsContainer], { clearProps: "minHeight" });
+                    return;
+                }
+
+                gsap.set([inputContainerWrapper, resultsContainer], { clearProps: "minHeight" });
+                
+                gsap.ticker.add(function measureAndAnimate() {
+                    gsap.ticker.remove(measureAndAnimate); 
+                    
+                    const inputHeight = inputContainerWrapper.offsetHeight;
+                    const resultHeight = resultsContainer.offsetHeight;
+                    const maxHeight = Math.max(inputHeight, resultHeight);
+
+                    if (maxHeight > 0) {
+                        gsap.to([inputContainerWrapper, resultsContainer], {
+                            minHeight: maxHeight,
+                            duration: 0.3,
+                            ease: 'power2.out'
+                        });
+                    }
+                });
             }
 
             const flipState = {};
@@ -2041,12 +2074,17 @@
                     const minWidth = 100;
                     const maxWidth = 400;
                     const rightPadding = 45; 
+                    const charWidth = 22;
                     let newWidth;
-                    if (input.value.trim() === '') {
+            
+                    const isOnlyAndEmpty = inputContainer.children.length === 1 && getRawValue(input).trim() === '';
+                    
+                    if (isOnlyAndEmpty) {
                         newWidth = maxWidth;
                     } else {
-                        const charWidth = body.classList.contains('results-focused') ? 16 : 22;
-                        newWidth = Math.max(minWidth, Math.min(maxWidth, ((getRawValue(input).length + 3) * charWidth) + rightPadding));
+                        const contentLength = getRawValue(input).length;
+                        const effectiveLength = contentLength === 0 ? 1 : contentLength;
+                        newWidth = Math.max(minWidth, Math.min(maxWidth, ((effectiveLength + 2) * charWidth) + rightPadding));
                     }
                     inputWrapper.style.width = newWidth + 'px';
                     requestAnimationFrame(playInputFlipAnimation);
@@ -2381,16 +2419,13 @@
             function displayResults(resultsData) { 
                 resultsContainer.classList.add('visible-true');
                 multiCopyBtn.style.display = 'inline-flex';
-                if (window.innerWidth <= 1024) {
-                    setInputState(false);
-                } else {
-                    setInputState(false);
-                }
+                setInputState(false);
                 exitMultiCopyMode();
                 
                 const tableBody = resultOutput.querySelector('tbody') || resultOutput.appendChild(document.createElement('table')).appendChild(document.createElement('tbody'));
                 tableBody.innerHTML = '';
                 
+                const newRows = [];
                 resultsData.forEach((item) => {
                     const tr = document.createElement('tr');
                     tr.draggable = !isTouchDevice && mode !== 'g2w';
@@ -2436,12 +2471,19 @@
                     }
                     
                     tableBody.appendChild(tr);
-                    gsap.from(tr, {
-                        duration: CONFIG.animation.durationNormal * animSpeedMultiplier,
-                        opacity: 0,
-                        y: 15 * animSpeedMultiplier,
-                        ease: "power2.out",
-                    });
+                    newRows.push(tr);
+                });
+
+                if (window.innerWidth > 1024) {
+                    adjustContainerHeights();
+                }
+                
+                gsap.from(newRows, {
+                    duration: CONFIG.animation.durationNormal * animSpeedMultiplier,
+                    opacity: 0,
+                    y: 15 * animSpeedMultiplier,
+                    stagger: 0.05 * animSpeedMultiplier,
+                    ease: "power2.out",
                 });
 
                 setTimeout(() => {
@@ -2518,9 +2560,8 @@
                         for (const range of ranges) {
                             if (W_target <= lastWave) break;
                             const currentRangeEnd = W_target < range.end ? W_target : range.end;
-                            
                             const cardsInRange = wavesToCards(currentRangeEnd) - wavesToCards(lastWave);
-
+                            html += `<hr>`;
                             html += `<div class="process-subtitle">${t.process.w2cSegmentTitle.replace('{start}', lastWave + 1n).replace('{end}', currentRangeEnd)}</div>`;
                             if (range.cycle.length === 5) { 
                                 html += `<p>$$ c(w) \\text{ cycle: } [1, 1, 2, 1, 3] $$</p>`;
@@ -2528,14 +2569,19 @@
                                 html += `<p>$$ c(w) = \\begin{cases} ${range.cycle[0]} & \\text{if } w \\text{ is odd} \\\\ ${range.cycle[1]} & \\text{if } w \\text{ is even} \\end{cases} $$</p>`;
                             }
                             html += `<p>$$ C_{${lastWave+1n} \\rightarrow ${currentRangeEnd}} = \\sum_{w=${lastWave+1n}}^{${currentRangeEnd}} c(w) = ${formatBigIntWithCommas(cardsInRange)} $$</p>`;
-
                             totalCards += cardsInRange;
                             sumParts.push(formatBigIntWithCommas(cardsInRange));
                             lastWave = currentRangeEnd;
                         }
 
                         html += `<hr><div class="process-subtitle">${t.process.w2cFinalTotalLabel}</div>`;
-                        html += `<p>$$ C(${W_target}) = ${sumParts.join(' + ')} = \\color{var(--primary-color)}{${formatBigIntWithCommas(totalCards)}} $$</p>`;
+                        let sumString = sumParts.join(' + ');
+                        if (sumString.length > 50) { 
+                             sumString = sumParts.join(' + \\\\ &\\quad ');
+                             html += `<p>$$ \\begin{align*} C(${W_target}) &= ${sumString} \\\\ &= \\color{var(--primary-color)}{${formatBigIntWithCommas(totalCards)}} \\end{align*} $$</p>`;
+                        } else {
+                             html += `<p>$$ C(${W_target}) = ${sumString} = \\color{var(--primary-color)}{${formatBigIntWithCommas(totalCards)}} $$</p>`;
+                        }
                     
                     } else if (mode === 'g2w') {
                          const { inputType, inputRank, cards, result } = JSON.parse(extraData);
@@ -2545,11 +2591,11 @@
                          html += `<div class="process-subtitle">${t.process.g2wStep1Title}</div>`;
                          html += `<p>${t.process.formula}: $$ \\text{${t.reward.boxes}} = \\lceil \\frac{\\text{${t.calculator[inputType]}}}{\\text{${t.process.resourcePerBox}}} \\rceil $$</p>`;
                          html += `<p>${t.process.calculation}: $$ \\lceil \\frac{${formatBigIntWithCommas(inputBig)}}{${formatBigIntWithCommas(resourcePerBox)}} \\rceil = ${formatBigIntWithCommas(BigInt(cards) / CONFIG.cardsPerBox)} $$</p>`;
-                         
+                         html += `<hr>`;
                          html += `<div class="process-subtitle">${t.process.g2wStep2Title}</div>`;
                          html += `<p>${t.process.formula}: $$ C = \\text{${t.reward.boxes}} \\times ${CONFIG.cardsPerBox} $$</p>`;
                          html += `<p>${t.process.calculation}: $$ ${formatBigIntWithCommas(BigInt(cards) / CONFIG.cardsPerBox)} \\times ${CONFIG.cardsPerBox} = ${formatBigIntWithCommas(cards)} $$</p>`;
-
+                         html += `<hr>`;
                          html += `<div class="process-subtitle">${t.process.g2wStep3Title}</div>`;
                          html += `<p>${t.process.c2wStep3Info}</p>`;
                          html += `<p>${t.process.finalResult}: $$ W(${formatBigIntWithCommas(cards)}) = \\color{var(--primary-color)}{${formatBigIntWithCommas(result)}} $$</p>`;
@@ -2578,13 +2624,11 @@
                     }
                 } catch (err) {
                     html = `<h3>Error</h3><p>An error occurred while generating the process details.</p>`;
-                    console.error("Error in updateProcessDetails", err);
                 }
                 
                 processDetailsContent.innerHTML = html;
                 if (window.MathJax && window.MathJax.typesetPromise) {
                      window.MathJax.typesetPromise([processDetailsContent]).catch(function (err) {
-                        console.error('MathJax Typeset Error: ' + err.message);
                         processDetailsContent.innerHTML += `<p style="color:var(--error-color)">Math formula rendering failed.</p>`;
                     });
                 }
@@ -2593,8 +2637,13 @@
             function attachSubViewListeners() {
                 navItems.forEach(item => {
                     item.addEventListener('click', () => {
-                        const targetPanelId = item.dataset.target + 'Panel';
-                        showSubView(targetPanelId);
+                        const target = item.dataset.target;
+                        if (target === 'calculator') {
+                            if(activeSubView) hideSubView(activeSubView);
+                        } else {
+                            const targetPanelId = target + 'Panel';
+                            showSubView(targetPanelId);
+                        }
                     });
                 });
                 backButtons.forEach(button => {
@@ -2641,16 +2690,15 @@
                 panel.classList.add('visible');
                 gsap.fromTo(panel, { autoAlpha: 0 }, { autoAlpha: 1, duration: CONFIG.animation.durationNormal * animSpeedMultiplier, ease: CONFIG.animation.easeStandard });
                 
-                navWheel.classList.add('visible', 'is-open');
-                updateNavWheelActiveState();
+                updateSideNavActiveState();
 
                 try {
                     if (panelId === 'commonPanel') populateTablesForPanel();
                     else if (panelId === 'chartPanel') requestAnimationFrame(() => setTimeout(() => { generateChartForPanel(); }, 50));
                     else if (panelId === 'historyPanel') renderHistoryPanel();
-                } catch (e) { console.error("Error in showSubView specific panel logic:", e); }
+                } catch (e) { }
 
-                gsap.to([topBar, mainView, bottomNavBar, settingsToggleGlobal], {
+                gsap.to([topBar, mainView, settingsToggleGlobal], {
                     autoAlpha: prefersReducedMotion ? 1 : 0.3,
                     duration: CONFIG.animation.durationShort * animSpeedMultiplier,
                     pointerEvents: 'none',
@@ -2676,15 +2724,11 @@
 
                 if (activeSubView === panelId) activeSubView = null;
                 
-                if (!activeSubView) {
-                    navWheel.classList.remove('is-open');
-                    navWheel.classList.remove('visible');
-                }
-                updateNavWheelActiveState();
+                updateSideNavActiveState();
                 
                 if (!activeSubView) {
                     const restoreDelay = immediate ? 0 : duration * 0.5;
-                    gsap.to([topBar, mainView, bottomNavBar, settingsToggleGlobal], {
+                    gsap.to([topBar, mainView, settingsToggleGlobal], {
                         autoAlpha: 1,
                         duration: CONFIG.animation.durationShort * animSpeedMultiplier,
                         pointerEvents: 'auto',
@@ -2746,7 +2790,7 @@
 
                 let adaptedData = originalChartData.slice(
                     Math.max(0, startIndex - 1), 
-                    Math.min(originalChartData.length, endIndex + 1)
+                    Math.min(originalChartData.length, endIndex + 2)
                 );
                 
                 if (adaptedData.length > 0 && adaptedData[0].x > xMin) {
@@ -2837,7 +2881,7 @@
             function generateChartForPanel() {
                 if (!chartPanelCanvas || !t) return;
                 const chartAvailable = typeof Chart !== 'undefined' && Chart.registry.plugins.get('annotation') && Chart.registry.plugins.get('datalabels') && Chart.registry.plugins.get('zoom');
-                if (!chartAvailable) { console.error("Chart or required plugins not available."); return; }
+                if (!chartAvailable) { return; }
                 const ctx = chartPanelCanvas.getContext("2d"); if (!ctx) return;
                 if (!chartPanelCanvas.offsetParent) { requestAnimationFrame(generateChartForPanel); return; }
                 
@@ -2871,7 +2915,7 @@
                             pointHoverBorderColor: primaryActiveColor, 
                             fill: false, 
                             tension: 0, 
-                            borderWidth: 1.5, 
+                            borderWidth: 2, 
                             stepped: false 
                         }] },
                         options: { 
@@ -2892,34 +2936,38 @@
                             scales: { 
                                 x: { 
                                     type: "linear", 
-                                    title: { display: true, text: t.chart.xAxis, font: { size: isMobile ? 11 : 13 }, color: axisColor }, 
+                                    title: { display: true, text: t.chart.xAxis, font: { size: isMobile ? 12 : 14, weight: 'bold' }, color: axisColor, padding: {top: 10} }, 
                                     min: 0, 
                                     max: maxWaves,
                                     ticks: { 
                                         color: axisColor,
+                                        font: { size: isMobile ? 10 : 12 },
                                         autoSkip: true,
                                         maxTicksLimit: 15,
-                                        callback: function(value) {
+                                        callback: function(value, index, ticks) {
+                                            if (index === ticks.length - 1) return '';
                                             return formatBigIntWithCommas(BigInt(Math.round(value)));
                                         }
                                     }, 
-                                    grid: { display: true, color: gridColor, borderDash: [3, 3] },
+                                    grid: { display: true, color: gridColor, borderDash: [3, 3], lineWidth: 1.5 },
                                 },
                                 y: { 
                                     type: 'linear', 
-                                    title: { display: true, text: t.chart.yAxis, font: { size: isMobile ? 11 : 13 }, color: axisColor }, 
+                                    title: { display: true, text: t.chart.yAxis, font: { size: isMobile ? 12 : 14, weight: 'bold' }, color: axisColor, padding: {bottom: 10} }, 
                                     min: 0, 
                                     beginAtZero: true, 
                                     max: CONFIG.chart.yAxisInitialMax, 
                                     ticks: { 
                                         color: axisColor, 
+                                        font: { size: isMobile ? 10 : 12 },
                                         autoSkip: true,
                                         maxTicksLimit: 12,
-                                        callback: function(value) {
+                                        callback: function(value, index, ticks) {
+                                            if (index === ticks.length - 1) return '';
                                             return formatBigIntWithCommas(BigInt(Math.round(value)));
                                         }
                                     }, 
-                                    grid: { display: true, color: gridColor, borderDash: [3, 3] } 
+                                    grid: { display: true, color: gridColor, borderDash: [3, 3], lineWidth: 1.5 } 
                                 } 
                             }
                         }
@@ -3036,9 +3084,6 @@
                             hideModal(overlay);
                         }
                     });
-                    if (navWheel && navWheel.classList.contains('is-open') && !navWheel.contains(event.target) && !event.target.closest('[data-target]')) {
-                        if (!activeSubView) navWheel.classList.remove('is-open');
-                    }
                 });
 
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
@@ -3075,20 +3120,6 @@
                          } 
                     }
                 });
-                
-                if(navWheel) {
-                    navWheel.querySelectorAll('.wheel-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            const target = item.dataset.target;
-                            if (!target) return;
-                            if (target === 'calculator') {
-                                if (activeSubView) hideSubView(activeSubView);
-                            } else {
-                                showSubView(target + 'Panel');
-                            }
-                        });
-                    });
-                }
             }
             
             function enterMultiCopyMode() {
@@ -3146,7 +3177,7 @@
                        textToCopy += `${formatBigIntWithCommas(inputVal)} ${inputUnit} → ${formatBigIntWithCommas(outputVal)} ${outputUnit}\n`;
                     }
                 });
-                navigator.clipboard.writeText(textToCopy.trim()).then(() => showNotification(t?.copied || 'Copied')).catch(err => console.error('Failed to copy selected results:', err));
+                navigator.clipboard.writeText(textToCopy.trim()).then(() => showNotification(t?.copied || 'Copied')).catch(err => ('Failed to copy selected results:', err));
                 
                 exitMultiCopyMode();
             }
@@ -3299,7 +3330,6 @@
 
                     showRangeResultModal(fromInput, toInput, inputDiff, outputDiff, mode);
                 } catch (err) {
-                    console.error("Drag-drop calculation error:", err);
                     showNotification("Error during range calculation.");
                 }
             }
@@ -3476,7 +3506,7 @@
                 longNumModal.querySelector('.copy-icon').addEventListener('click', (e) => {
                      e.stopPropagation();
                      const fullNumber = longNumberDisplay.textContent;
-                     navigator.clipboard.writeText(fullNumber.replace(/,/g, '')).then(() => showNotification(t?.copied || 'Copied')).catch(err => console.error('Failed to copy long number:', err));
+                     navigator.clipboard.writeText(fullNumber.replace(/,/g, '')).then(() => showNotification(t?.copied || 'Copied')).catch(err => ('Failed to copy long number:', err));
                      hideModal(longNumModalOverlay);
                 });
                 modalOverlays.forEach(overlay => {
@@ -3485,27 +3515,14 @@
                 });
             }
             
-            function updateNavWheelActiveState() {
-                navWheel.querySelectorAll('.wheel-item').forEach(item => {
+            function updateSideNavActiveState() {
+                sideNavBar.querySelectorAll('.nav-item').forEach(item => {
                     const target = item.dataset.target;
                     const isActive = (target === 'calculator' && !activeSubView) || (activeSubView && target + 'Panel' === activeSubView);
                     item.classList.toggle('active', isActive);
                 });
             }
 
-            function initNavWheel() {
-                if (!isTouchDevice) {
-                    navWheel.addEventListener('mouseenter', () => {
-                         navWheel.classList.add('is-open');
-                    });
-                    navWheel.addEventListener('mouseleave', () => {
-                         if (!activeSubView) {
-                             navWheel.classList.remove('is-open');
-                         }
-                    });
-                }
-            }
-            
             function updateRewardRankOptions(selectElement) {
                  if (!selectElement || !t || !t.units || !t.units.rank) return;
                  const currentVal = selectElement.value || lastRank;
@@ -3595,7 +3612,7 @@
                     const inputVal = clickedRow.dataset.inputValue;
                     const outputVal = clickedRow.dataset.outputValue;
                     const textToCopy = `${formatBigIntWithCommas(inputVal)} ${mode === 'w2c' ? t.units.waveSingle : t.units.cardSingle} → ${formatBigIntWithCommas(outputVal)} ${mode === 'w2c' ? t.units.cardSingle : t.units.waveSingle}`;
-                    navigator.clipboard.writeText(textToCopy).then(() => showNotification(t?.copied || 'Copied')).catch(err => console.error('Failed to copy item:', err));
+                    navigator.clipboard.writeText(textToCopy).then(() => showNotification(t?.copied || 'Copied')).catch(err => ('Failed to copy item:', err));
                 } else if (processItemBtn) {
                     e.stopPropagation();
                     const clickedRow = processItemBtn.closest('tr');
@@ -4080,7 +4097,7 @@
             gsap.set(selectionIndicator,{xPercent:-50,yPercent:-50,scale:1,autoAlpha:0});
             cursorStartIdleTimer();
 
-            document.addEventListener("mousemove", e => { if (body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); cursorShowCursor(); const clientX = e.clientX; const clientY = e.clientY; if(cursorRafMoveId) return; cursorRafMoveId = requestAnimationFrame(() => { gsap.set(cursor, { x: clientX, y: clientY }); let dx = clientX - cursorLastClientX; let dy = clientY - cursorLastClientY; cursorLastClientX = clientX; cursorLastClientY = clientY; 
+            window.addEventListener("mousemove", e => { if (body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); cursorShowCursor(); const clientX = e.clientX; const clientY = e.clientY; if(cursorRafMoveId) return; cursorRafMoveId = requestAnimationFrame(() => { gsap.set(cursor, { x: clientX, y: clientY }); let dx = clientX - cursorLastClientX; let dy = clientY - cursorLastClientY; cursorLastClientX = clientX; cursorLastClientY = clientY; 
                 if (cursorState === 'text' || cursorState === 'textSelect') {
                     const el = document.elementFromPoint(clientX, clientY);
                     if(el) {
@@ -4121,7 +4138,7 @@
             body.addEventListener("mouseover", e => { if (body.classList.contains('native-cursor')) { setCursorState('default'); return; } if (isPanningChart) return; if ((cursorIsSelectingText && !cursorJustStartedSelection)) return; 
                 const target = e.target; let newState = "default"; cursorTargetHeight = 25;
                 const isDisabled = target.closest("[disabled]");
-                const isInteractiveButton = target.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb");
+                const isInteractiveButton = target.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .resource-toggle label, #pan-thumb");
                 const isLink = target.closest("a:not([disabled])");
                 const isSelect = target.closest("select:not([disabled])");
                 const isCheckboxLabel = target.closest('input[type="checkbox"]:not([disabled]), label[for]');
@@ -4137,7 +4154,7 @@
             document.querySelectorAll("input:not([type='checkbox']), textarea, select").forEach(element => { element.addEventListener("focus", () => { if(body.classList.contains('native-cursor')) return; cursorKillBreathing(); setCursorState(element.hasAttribute("disabled") ? "disabled" : "input"); }); element.addEventListener("blur", (e) => { if(body.classList.contains('native-cursor')) return; cursorStartIdleTimer(); setTimeout(() => { const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); if (!elementUnderCursor || elementUnderCursor !== element || cursorIsSelectingText) { if (!cursorIsSelectingText) { if (elementUnderCursor) { elementUnderCursor.dispatchEvent(new MouseEvent("mouseover", { view: window, bubbles: true, cancelable: true })); } else { setCursorState("default"); } } } else { if (!element.hasAttribute("disabled")) { setCursorState("text"); } } }, 10); }); });
             document.addEventListener("selectionchange", () => { if (body.classList.contains('native-cursor')) return; cursorKillBreathing(); if (cursorRafSelectId) cancelAnimationFrame(cursorRafSelectId); cursorRafSelectId = requestAnimationFrame(cursorUpdateSelectionBoxVisibility); });
             function cursorUpdateSelectionBoxVisibility() { if (body.classList.contains('native-cursor')) { cursorHideSelectionBox(); return; }; const selection = window.getSelection(); let hasVisibleSelection = false; if (selection && selection.type === "Range" && selection.rangeCount > 0) { const range = selection.getRangeAt(0); if (!range.collapsed && selection.toString().trim().length > 0) { const rects = range.getClientRects(); if (rects.length > 0) { hasVisibleSelection = true; let bounds = { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity }; for (const rect of rects) { bounds.left = Math.min(bounds.left, rect.left); bounds.top = Math.min(bounds.top, rect.top); bounds.right = Math.max(bounds.right, rect.right); bounds.bottom = Math.max(bounds.bottom, rect.bottom); } let left = bounds.left; let top = bounds.top; let width = bounds.right - left; let height = bounds.bottom - top; cursorShowSelectionBox(); gsap.to(selectionBox, { left: left - SELECTION_BOX_PADDING_X, top: top - SELECTION_BOX_PADDING_Y, width: width + (2 * SELECTION_BOX_PADDING_X), height: height + (2 * SELECTION_BOX_PADDING_Y), duration: ANIM_DURATION_FAST, ease: EASE_STANDARD, onStart: () => { if (cursorState !== "textSelect") setCursorState("textSelect"); }, overwrite: true }); } } } if (!hasVisibleSelection) { cursorHideSelectionBox(); if (cursorIsSelectingText) { cursorRestoreCursorStateAfterSelection(); } } }
-            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .wheel-item, .resource-toggle label, #pan-thumb"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])');
+            function cursorRestoreCursorStateAfterSelection() { if (body.classList.contains('native-cursor') || isPanningChart) return; const elementUnderCursor = document.elementFromPoint(cursorLastClientX, cursorLastClientY); let newState = "default"; cursorTargetHeight = 25; if (elementUnderCursor) { const isDisabled = elementUnderCursor.closest("[disabled]"); const isInteractiveButton = elementUnderCursor.closest("button:not([disabled]), .mode-toggle:not([disabled]), .mode-select-btn, #settingsToggleGlobal, .back-button, .nav-item, .result-btn, .clear-single-input, #languageList button, .copy-icon, .input-action-btn, .chart-zoom-buttons button, .reward-symbol, .result-item-btn, .resource-toggle label, #pan-thumb"); const isLink = elementUnderCursor.closest("a:not([disabled])"); const isSelect = elementUnderCursor.closest("select:not([disabled])"); const isCheckboxLabel = elementUnderCursor.closest('input[type="checkbox"]:not([disabled]), label[for]'); const isCardContainer = elementUnderCursor.closest(".card-container:not(.negative-cards)"); const isLongNumber = elementUnderCursor.closest(".long-number"); const isTextInputElement = elementUnderCursor.closest('input.calc-input:not([disabled]), input[type="text"]:not(.calc-input):not([disabled]), textarea:not([disabled])');
                 const isChartCanvas = elementUnderCursor.closest("#chartPanelCanvas, #chartZoomSlider");
                 const isResultOutputCell = elementUnderCursor.closest(".result-output-cell");
                 const isGeneralTextContent = elementUnderCursor.closest("p:not(#calculationHint):not(#resultInteractionHint), span:not(.input-number):not(.result-number):not(.long-number-full), h1, h2, h3:not(.modal-content-container h3), h4, h5, h6, li, dt, dd, code, pre, .card-container.negative-cards span, .table-box h3");
